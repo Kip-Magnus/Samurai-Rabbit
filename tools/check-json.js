@@ -24,17 +24,17 @@ function checkFile(filepath) {
   try {
     const raw = fs.readFileSync(filepath, 'utf8');
     JSON.parse(raw);
-    console.log(`  \x1b[32m✅\x1b[0m ${rel}`);
+    console.log('  \x1b[32m\u2705\x1b[0m ' + rel);
   } catch (e) {
     errorCount++;
-    console.log(`  \x1b[31m❌\x1b[0m ${rel}`);
-    console.log(`     ${e.message}`);
+    console.log('  \x1b[31m\u274c\x1b[0m ' + rel);
+    console.log('     ' + e.message);
   }
 }
 
 function walkDir(dir) {
   if (!fs.existsSync(dir)) {
-    console.log(`\x1b[31m❌ Directory not found: ${dir}\x1b[0m`);
+    console.log('\x1b[31m\u274c Directory not found: ' + dir + '\x1b[0m');
     process.exit(1);
   }
 
@@ -51,17 +51,17 @@ function walkDir(dir) {
   }
 }
 
-console.log('\n\x1b[1m═══ SAMURAI USAGI — JSON SYNTAX CHECK ═══\x1b[0m\n');
+console.log('\n\x1b[1m\u2550\u2550\u2550 SAMURAI USAGI \u2014 JSON SYNTAX CHECK \u2550\u2550\u2550\x1b[0m\n');
 
 walkDir(DATA_DIR);
 
-console.log(`\n\x1b[1m═══ RESULTS ═══\x1b[0m`);
-console.log(`  Files checked: ${fileCount}`);
+console.log('\n\x1b[1m\u2550\u2550\u2550 RESULTS \u2550\u2550\u2550\x1b[0m');
+console.log('  Files checked: ' + fileCount);
 
 if (errorCount === 0) {
-  console.log(`  \x1b[32m\x1b[1mALL JSON VALID ✝\x1b[0m\n`);
+  console.log('  \x1b[32m\x1b[1mALL JSON VALID \u271d\x1b[0m\n');
   process.exit(0);
 } else {
-  console.log(`  \x1b[31m\x1b[1m${errorCount} file(s) have syntax errors\x1b[0m\n`);
+  console.log('  \x1b[31m\x1b[1m' + errorCount + ' file(s) have syntax errors\x1b[0m\n');
   process.exit(1);
 }
