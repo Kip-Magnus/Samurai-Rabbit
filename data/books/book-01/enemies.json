@@ -1,0 +1,159 @@
+{
+  "book": "book-01",
+  "era_scaling": {"base_level": 5, "max_level": 15},
+  "tier_1": [
+    {
+      "id": "roman_rat",
+      "name": "Sewer Rat",
+      "species": "beast",
+      "hp": [16, 22], "stats": {"atk": [5, 7], "def": [2, 3], "spd": [6, 8], "spr": [1, 2]},
+      "rewards": {"xp": 12, "gold": 4, "drops": [{"item": "rat_tail", "chance": 0.2}]},
+      "abilities": [{"id": "bite", "name": "Foul Bite", "mult": 1.2, "status": "poison", "chance": 0.2}],
+      "ai_pattern": "aggressive"
+    },
+    {
+      "id": "roman_thief",
+      "name": "Street Thief",
+      "species": "rodent",
+      "hp": [18, 26], "stats": {"atk": [6, 8], "def": [3, 4], "spd": [7, 9], "spr": [2, 3]},
+      "rewards": {"xp": 15, "gold": 8, "drops": [{"item": "roman_denarius", "chance": 0.3}]},
+      "abilities": [{"id": "steal", "name": "Pickpocket", "stealsGold": 5}],
+      "ai_pattern": "hit_and_run"
+    }
+  ],
+  "tier_2": [
+    {
+      "id": "legionary",
+      "name": "Roman Legionary",
+      "species": "wolf",
+      "hp": [30, 42], "stats": {"atk": [9, 12], "def": [7, 9], "spd": [4, 6], "spr": [3, 4]},
+      "rewards": {"xp": 22, "gold": 15, "drops": [{"item": "roman_gladius", "chance": 0.08}, {"item": "soldiers_ration", "chance": 0.25}]},
+      "abilities": [
+        {"id": "shield_bash", "name": "Shield Bash", "mult": 1.3, "status": "stun", "chance": 0.25},
+        {"id": "testudo", "name": "Testudo", "buff": "def_up", "dur": 2}
+      ],
+      "ai_pattern": "defensive"
+    },
+    {
+      "id": "praetorian",
+      "name": "Praetorian Guard",
+      "species": "wolf",
+      "hp": [40, 55], "stats": {"atk": [11, 15], "def": [9, 12], "spd": [5, 7], "spr": [4, 6]},
+      "rewards": {"xp": 35, "gold": 20, "drops": [{"item": "praetorian_cloak", "chance": 0.05}]},
+      "abilities": [
+        {"id": "pilum", "name": "Pilum Throw", "mult": 1.5, "ranged": true},
+        {"id": "formation", "name": "Formation Advance", "buff": "atk_up", "party": true}
+      ],
+      "ai_pattern": "tactical"
+    },
+    {
+      "id": "gnostic_whisper",
+      "name": "Whisper of Gnosis",
+      "species": "spirit",
+      "hp": [25, 35], "stats": {"atk": [4, 6], "def": [3, 4], "spd": [5, 7], "spr": [12, 16]},
+      "rewards": {"xp": 28, "gold": 12},
+      "weaknesses": ["holy"],
+      "resistances": ["physical"],
+      "abilities": [
+        {"id": "body_prison", "name": "Body Is A Prison", "status": "despair", "chance": 0.35},
+        {"id": "false_wisdom", "name": "False Wisdom", "status": "confusion", "chance": 0.3}
+      ],
+      "ai_pattern": "spiritual"
+    }
+  ],
+  "tier_3": [
+    {
+      "id": "arena_lion",
+      "name": "Arena Lion",
+      "species": "beast",
+      "hp": [50, 70], "stats": {"atk": [14, 18], "def": [6, 8], "spd": [8, 10], "spr": [2, 3]},
+      "rewards": {"xp": 40, "gold": 0},
+      "abilities": [
+        {"id": "pounce", "name": "Pounce", "mult": 1.6, "acc": 0.8},
+        {"id": "roar", "name": "Terrifying Roar", "status": "fear", "chance": 0.4, "party": true}
+      ],
+      "ai_pattern": "predator"
+    },
+    {
+      "id": "fire_spirit",
+      "name": "Spirit of the Great Fire",
+      "species": "spirit",
+      "hp": [35, 50], "stats": {"atk": [8, 12], "def": [4, 5], "spd": [6, 8], "spr": [10, 14]},
+      "rewards": {"xp": 35, "gold": 15},
+      "weaknesses": ["holy", "water"],
+      "abilities": [
+        {"id": "burn", "name": "Tongues of Flame", "status": "burn", "chance": 0.4},
+        {"id": "accusation", "name": "False Accusation", "status": "fear", "chance": 0.3}
+      ],
+      "ai_pattern": "spiritual"
+    }
+  ],
+  "mini_bosses": [
+    {
+      "id": "centurion_marcus",
+      "name": "Centurion Marcus",
+      "species": "wolf",
+      "hp": [120, 150], "stats": {"atk": [16, 20], "def": [14, 17], "spd": [6, 8], "spr": [5, 7]},
+      "rewards": {"xp": 80, "gold": 40, "drops": [{"item": "centurion_helm", "chance": 0.5}]},
+      "abilities": [
+        {"id": "rally_troops", "name": "Rally Legionaries", "summon": "legionary"},
+        {"id": "gladius_combo", "name": "Gladius Combo", "mult": 1.8, "hits": 2},
+        {"id": "discipline", "name": "Roman Discipline", "buff": "def_up", "dur": 3}
+      ],
+      "dialogue": "Another Christian rat. Nero wants you all. Dead or converted — he does not care which.",
+      "ai_pattern": "tactical"
+    },
+    {
+      "id": "arena_lion_pack",
+      "name": "Arena Lions",
+      "formation": ["arena_lion", "arena_lion", "arena_lion"],
+      "arena_encounter": true,
+      "pre_battle_dialogue": "The gates open. Three lions emerge, starved for days. The crowd screams with delight."
+    }
+  ],
+  "bosses": [
+    {
+      "id": "the_accuser_b01",
+      "name": "The Accuser",
+      "subtitle": "Senator Petronius",
+      "species": "spirit",
+      "hp": 999,
+      "stats": {"atk": 0, "def": 99, "spd": 12, "spr": 35},
+      "rewards": {"xp": 150},
+      "accuser": true,
+      "survivalTurns": 10,
+      "abilities": [
+        {"id": "reasonable_doubt", "name": "A Reasonable Doubt", "status": "despair", "chance": 0.45, "dialogue": "Peter denied Him three times. You are not even an apostle. What makes you think you are strong enough?"},
+        {"id": "compromise", "name": "Offer of Compromise", "status": "confusion", "chance": 0.4, "dialogue": "One pinch of incense. The gods of Rome are stone. Your God will understand."},
+        {"id": "fear_of_fire", "name": "Fear of the Fire", "status": "fear", "chance": 0.5, "dialogue": "They will wrap you in pitch-soaked cloth. You will burn alive. Is your faith worth that pain?"},
+        {"id": "drain_conviction", "name": "Erode Conviction", "drainMp": 10, "dialogue": "Look at what your faith has brought these people. Hiding in tunnels. Dying in arenas. What kind of salvation is this?"}
+      ]
+    }
+  ],
+  "encounter_tables": [
+    {"area_id": "catacomb_tunnels", "encounter_rate": 0.12, "formations": [
+      {"enemies": ["roman_rat", "roman_rat"], "level_range": [4, 7]},
+      {"enemies": ["gnostic_whisper"], "level_range": [5, 8]},
+      {"enemies": ["roman_rat", "roman_rat", "roman_rat"], "level_range": [4, 6]}
+    ]},
+    {"area_id": "roman_streets", "encounter_rate": 0.15, "formations": [
+      {"enemies": ["roman_thief", "roman_thief"], "level_range": [5, 8]},
+      {"enemies": ["legionary"], "level_range": [6, 9]},
+      {"enemies": ["legionary", "legionary"], "level_range": [7, 10]},
+      {"enemies": ["fire_spirit"], "level_range": [8, 11]}
+    ]},
+    {"area_id": "trastevere", "encounter_rate": 0.10, "formations": [
+      {"enemies": ["roman_thief"], "level_range": [5, 7]},
+      {"enemies": ["gnostic_whisper", "gnostic_whisper"], "level_range": [6, 9]}
+    ]},
+    {"area_id": "undercroft", "encounter_rate": 0.15, "formations": [
+      {"enemies": ["arena_lion"], "level_range": [8, 11]},
+      {"enemies": ["legionary", "legionary"], "level_range": [7, 10]}
+    ]},
+    {"area_id": "appian_way", "encounter_rate": 0.15, "formations": [
+      {"enemies": ["praetorian", "legionary"], "level_range": [9, 12]},
+      {"enemies": ["fire_spirit", "gnostic_whisper"], "level_range": [9, 13]},
+      {"enemies": ["praetorian", "praetorian"], "level_range": [10, 13]}
+    ]}
+  ]
+}
