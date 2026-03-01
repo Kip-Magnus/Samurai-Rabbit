@@ -1,61 +1,550 @@
 [
   {
-    "id": "falling_beam",
-    "name": "Falling Beam",
+    "_category": "═══ TIER 1: EARLY ENCOUNTERS (Levels 1-4) ═══"
+  },
+
+  {
+    "id": "wild_boar",
+    "name": "Wild Boar",
     "era": "book-00",
     "tier": 1,
-    "stats": { "hp": [1, 1], "atk": [10, 15], "def": [0, 0], "spd": [1, 1], "spr": [0, 0] },
+    "species": "beast",
+    "stats": { "hp": [14, 18], "atk": [4, 6], "def": [3, 4], "spd": [3, 4], "spr": [0, 0] },
+    "weakness": ["holy"],
+    "resistance": [],
+    "immune": [],
+    "behavior": {
+      "ai": "aggressive",
+      "patterns": [
+        { "action": "attack", "weight": 70, "name": "Tusk Charge", "power_mult": 1.0 },
+        { "action": "heavy_attack", "weight": 30, "name": "Gore", "power_mult": 1.4, "accuracy": 0.75 }
+      ]
+    },
+    "drops": { "xp": [6, 10], "gold": [3, 6], "items": [{ "id": "medicinal_herb", "chance": 0.15 }] },
+    "lore": "A tusked boar rooting through the burned fields. Frightened and aggressive. It charges at anything that moves.",
+    "areas": ["village_outskirts", "mountain_path"],
+    "sprite": { "species": "beast", "palette": ["#5c4033", "#8b6914", "#2d1b0e"], "frameWidth": 32, "frameHeight": 32 }
+  },
+
+  {
+    "id": "mountain_snake",
+    "name": "Pit Viper",
+    "era": "book-00",
+    "tier": 1,
+    "species": "beast",
+    "stats": { "hp": [10, 14], "atk": [3, 5], "def": [2, 3], "spd": [5, 7], "spr": [0, 0] },
+    "weakness": ["holy"],
+    "resistance": [],
+    "immune": [],
+    "behavior": {
+      "ai": "aggressive",
+      "patterns": [
+        { "action": "attack", "weight": 60, "name": "Bite", "power_mult": 0.9 },
+        { "action": "poison_attack", "weight": 40, "name": "Venom Strike", "power_mult": 0.6, "status": "poison", "status_chance": 0.4 }
+      ]
+    },
+    "drops": { "xp": [5, 8], "gold": [2, 5], "items": [{ "id": "antidote_herb", "chance": 0.2 }] },
+    "lore": "A mamushi viper coiled in the grass. Quick and venomous. The mountain paths are full of them after the fire disturbed their nests.",
+    "areas": ["mountain_path"],
+    "sprite": { "species": "beast", "palette": ["#4a5a3a", "#2d3b1f", "#8b7355"], "frameWidth": 24, "frameHeight": 16 }
+  },
+
+  {
+    "id": "ashigaru_scout",
+    "name": "Ashigaru Scout",
+    "era": "book-00",
+    "tier": 1,
+    "species": "fox",
+    "stats": { "hp": [16, 22], "atk": [5, 7], "def": [4, 6], "spd": [4, 5], "spr": [1, 2] },
     "weakness": [],
     "resistance": [],
     "immune": [],
     "behavior": {
+      "ai": "pack_hunter",
+      "patterns": [
+        { "action": "attack", "weight": 60, "name": "Spear Thrust", "power_mult": 1.0 },
+        { "action": "call_reinforcement", "weight": 20, "name": "Signal Whistle", "summon": "ashigaru_scout", "condition": "alone" },
+        { "action": "flee", "weight": 20, "name": "Fall Back", "condition": "alone" }
+      ]
+    },
+    "drops": { "xp": [8, 12], "gold": [5, 10], "items": [{ "id": "rice_ball", "chance": 0.12 }] },
+    "lore": "A foot soldier scouting for hidden Christians. Young, nervous, following orders. He doesn't want to be here either.",
+    "areas": ["village_outskirts", "bamboo_forest"],
+    "sprite": { "species": "fox", "palette": ["#5c4d3c", "#8b7355", "#3a3a3a"], "frameWidth": 32, "frameHeight": 48 },
+    "_design_note": "Appears in groups of 2-3. Flees when alone. Teaches the player that not all enemies need killing — sometimes they run."
+  },
+
+  {
+    "id": "falling_beam",
+    "name": "Falling Beam",
+    "era": "book-00",
+    "tier": 1,
+    "species": "environmental",
+    "stats": { "hp": [1, 1], "atk": [8, 14], "def": [0, 0], "spd": [1, 1], "spr": [0, 0] },
+    "weakness": [],
+    "resistance": ["physical"],
+    "immune": ["holy", "poison"],
+    "behavior": {
       "ai": "environmental",
       "patterns": [
-        { "action": "collapse", "weight": 100, "condition": "player_adjacent" }
+        { "action": "collapse", "weight": 100, "name": "Crash Down", "power_mult": 1.5, "condition": "always" }
       ]
     },
     "drops": { "xp": [0, 0], "gold": [0, 0], "items": [] },
-    "lore": "A burning roof beam crashing down in the chapel fire. Dodge or be crushed.",
-    "sprite": { "sheetId": "env_burning_beam", "palette": ["#8b4513", "#ff4500", "#ffd700"], "frameWidth": 32, "frameHeight": 40 }
+    "lore": "A burning roof beam crashing down in the chapel fire. Dodge or be crushed. It hits once then is gone.",
+    "areas": ["burning_chapel"],
+    "sprite": { "species": "environmental", "palette": ["#8b4513", "#ff4500", "#ffd700"], "frameWidth": 32, "frameHeight": 40 },
+    "_design_note": "One-shot enemy. Hits hard once then dies. Teaches guard timing."
   },
+
   {
     "id": "smoke_cloud",
     "name": "Choking Smoke",
     "era": "book-00",
     "tier": 1,
-    "stats": { "hp": [1, 1], "atk": [5, 8], "def": [0, 0], "spd": [3, 3], "spr": [0, 0] },
+    "species": "environmental",
+    "stats": { "hp": [1, 1], "atk": [3, 6], "def": [0, 0], "spd": [8, 8], "spr": [0, 0] },
     "weakness": [],
     "resistance": ["physical"],
-    "immune": [],
+    "immune": ["holy", "poison"],
     "behavior": {
       "ai": "environmental",
       "patterns": [
-        { "action": "suffocate", "weight": 70, "condition": "always" },
-        { "action": "obscure_vision", "weight": 30, "condition": "always" }
+        { "action": "dot_attack", "weight": 70, "name": "Suffocate", "power_mult": 0.5, "status": "poison", "status_chance": 0.6 },
+        { "action": "debuff", "weight": 30, "name": "Obscure Vision", "debuff": "accuracy_down", "duration": 3 }
       ]
     },
     "drops": { "xp": [0, 0], "gold": [0, 0], "items": [] },
-    "lore": "Thick black smoke filling the burning chapel. It steals breath and sight.",
-    "sprite": { "sheetId": "env_smoke", "palette": ["#2d2d2d", "#4a4a4a", "#6b6b6b"], "frameWidth": 32, "frameHeight": 32 }
+    "lore": "Thick black smoke filling the burning chapel. It steals breath and sight. Move through quickly.",
+    "areas": ["burning_chapel"],
+    "sprite": { "species": "environmental", "palette": ["#2d2d2d", "#4a4a4a", "#6b6b6b"], "frameWidth": 32, "frameHeight": 32 }
   },
+
+  {
+    "_category": "═══ TIER 2: MID ENCOUNTERS (Levels 4-8) ═══"
+  },
+
+  {
+    "id": "ashigaru_spear",
+    "name": "Ashigaru Spearman",
+    "era": "book-00",
+    "tier": 2,
+    "species": "wolf",
+    "stats": { "hp": [28, 40], "atk": [8, 11], "def": [6, 9], "spd": [4, 6], "spr": [2, 3] },
+    "weakness": [],
+    "resistance": [],
+    "immune": [],
+    "behavior": {
+      "ai": "aggressive",
+      "patterns": [
+        { "action": "attack", "weight": 55, "name": "Spear Thrust", "power_mult": 1.0 },
+        { "action": "heavy_attack", "weight": 25, "name": "Lunging Strike", "power_mult": 1.4, "accuracy": 0.8 },
+        { "action": "defend", "weight": 20, "name": "Brace Spear", "def_boost": 4 }
+      ]
+    },
+    "drops": { "xp": [14, 22], "gold": [8, 16], "items": [{ "id": "rice_ball", "chance": 0.15 }, { "id": "medicinal_herb", "chance": 0.1 }] },
+    "lore": "A trained soldier of the daimyo's garrison. Disciplined. Follows the edict without question. He braces his spear when he sees you reaching for something.",
+    "areas": ["bamboo_forest", "mountain_path", "village_outskirts"],
+    "sprite": { "species": "wolf", "palette": ["#3a3a3a", "#5c4d3c", "#8b7355"], "frameWidth": 32, "frameHeight": 48 }
+  },
+
+  {
+    "id": "patrol_archer",
+    "name": "Patrol Archer",
+    "era": "book-00",
+    "tier": 2,
+    "species": "fox",
+    "stats": { "hp": [22, 32], "atk": [9, 13], "def": [4, 6], "spd": [6, 8], "spr": [2, 4] },
+    "weakness": [],
+    "resistance": [],
+    "immune": [],
+    "behavior": {
+      "ai": "tactical",
+      "patterns": [
+        { "action": "attack", "weight": 50, "name": "Arrow Shot", "power_mult": 1.1, "range": "back_row" },
+        { "action": "debuff", "weight": 25, "name": "Pinning Shot", "power_mult": 0.7, "status": "slow", "status_chance": 0.5 },
+        { "action": "heavy_attack", "weight": 25, "name": "Aimed Shot", "power_mult": 1.6, "accuracy": 0.65, "condition": "player_hp_above_50pct" }
+      ]
+    },
+    "drops": { "xp": [15, 25], "gold": [10, 18], "items": [{ "id": "antidote_herb", "chance": 0.1 }] },
+    "lore": "A bowman patrolling the mountain roads. Fast and precise. He'll pin you down with shots while the spearmen close in.",
+    "areas": ["mountain_path", "bamboo_forest"],
+    "sprite": { "species": "fox", "palette": ["#5c4d3c", "#7a6852", "#3a3a3a"], "frameWidth": 32, "frameHeight": 48 },
+    "_design_note": "Teaches the player about speed — archers act first and debuff. Use prayer to counter."
+  },
+
+  {
+    "id": "shadow_doubt",
+    "name": "Whisper of Doubt",
+    "era": "book-00",
+    "tier": 2,
+    "species": "spiritual",
+    "stats": { "hp": [20, 30], "atk": [2, 4], "def": [2, 3], "spd": [7, 9], "spr": [8, 12] },
+    "weakness": ["holy"],
+    "resistance": ["physical"],
+    "immune": [],
+    "behavior": {
+      "ai": "spiritual",
+      "patterns": [
+        { "action": "spirit_attack", "weight": 40, "name": "Creeping Doubt", "power_mult": 0.8, "uses": "spr", "status": "fear", "status_chance": 0.35 },
+        { "action": "spirit_attack", "weight": 30, "name": "Whispered Lie", "power_mult": 0.5, "uses": "spr", "status": "confusion", "status_chance": 0.3 },
+        { "action": "debuff", "weight": 30, "name": "Sap Will", "debuff": "spr_down", "duration": 3 }
+      ]
+    },
+    "drops": { "xp": [18, 28], "gold": [0, 0], "items": [{ "id": "holy_water_vial", "chance": 0.1 }] },
+    "lore": "A formless shadow that slithers at the edge of vision. It whispers that God has abandoned this place. That the fire proves your prayers are empty. It is weak to holy light — faith dispels doubt.",
+    "areas": ["mountain_path", "coast_road"],
+    "sprite": { "species": "spiritual", "palette": ["#1a0a2e", "#3d1f6d", "#6b3fa0"], "frameWidth": 32, "frameHeight": 40 },
+    "_design_note": "The player's first spiritual enemy. Resists physical damage. Teaches that prayer (holy damage) is essential, not optional. This is the Accuser's influence given form."
+  },
+
+  {
+    "id": "wild_wolf",
+    "name": "Mountain Wolf",
+    "era": "book-00",
+    "tier": 2,
+    "species": "beast",
+    "stats": { "hp": [25, 35], "atk": [7, 10], "def": [4, 6], "spd": [6, 8], "spr": [1, 2] },
+    "weakness": ["holy"],
+    "resistance": [],
+    "immune": [],
+    "behavior": {
+      "ai": "pack_hunter",
+      "patterns": [
+        { "action": "attack", "weight": 50, "name": "Bite", "power_mult": 1.0 },
+        { "action": "heavy_attack", "weight": 25, "name": "Lunge", "power_mult": 1.3, "accuracy": 0.8 },
+        { "action": "howl", "weight": 25, "name": "Howl", "buff_allies": "atk_up", "duration": 2, "condition": "allies_alive" }
+      ]
+    },
+    "drops": { "xp": [12, 20], "gold": [0, 0], "items": [{ "id": "wolf_pelt", "chance": 0.2 }] },
+    "lore": "A grey wolf driven down from the mountains by the fires. Hunts in pairs. When one howls, the other strikes harder.",
+    "areas": ["mountain_path"],
+    "sprite": { "species": "wolf", "palette": ["#6b6b6b", "#4a4a4a", "#8b8b8b"], "frameWidth": 32, "frameHeight": 32 },
+    "_design_note": "Appears in pairs. The Howl buff teaches players to prioritize targets — kill the howler first."
+  },
+
+  {
+    "_category": "═══ TIER 3: LATE ENCOUNTERS (Levels 7-12) ═══"
+  },
+
+  {
+    "id": "samurai_enforcer",
+    "name": "Samurai Enforcer",
+    "era": "book-00",
+    "tier": 3,
+    "species": "wolf",
+    "stats": { "hp": [55, 80], "atk": [14, 19], "def": [10, 14], "spd": [6, 8], "spr": [4, 6] },
+    "weakness": [],
+    "resistance": ["holy"],
+    "immune": [],
+    "behavior": {
+      "ai": "tactical",
+      "patterns": [
+        { "action": "attack", "weight": 40, "name": "Katana Slash", "power_mult": 1.2 },
+        { "action": "heavy_attack", "weight": 20, "name": "Cross Cut", "power_mult": 1.8, "accuracy": 0.7 },
+        { "action": "defend", "weight": 20, "name": "Iaijutsu Stance", "def_boost": 6, "next_attack_bonus": 1.5 },
+        { "action": "intimidate", "weight": 20, "name": "Declaration", "status": "fear", "status_chance": 0.3 }
+      ]
+    },
+    "drops": { "xp": [30, 50], "gold": [20, 35], "items": [{ "id": "rice_ball", "chance": 0.2 }, { "id": "medicinal_herb", "chance": 0.15 }] },
+    "lore": "A samurai of the daimyo's inner guard. He has killed Christians before. His blade is efficient and his eyes are cold. He resists holy power — faith in one's duty is still faith.",
+    "areas": ["coast_road"],
+    "sprite": { "species": "wolf", "palette": ["#1a1a2e", "#2d2d4a", "#c9a959"], "frameWidth": 32, "frameHeight": 48 },
+    "_design_note": "RESISTS holy damage. The samurai's conviction is real even if his cause is wrong. The player must use physical attacks AND prayer together. This is the game teaching that faith alone without action (James 2:17) is insufficient."
+  },
+
+  {
+    "id": "shade_of_grief",
+    "name": "Shade of Grief",
+    "era": "book-00",
+    "tier": 3,
+    "species": "spiritual",
+    "stats": { "hp": [40, 60], "atk": [4, 6], "def": [3, 5], "spd": [5, 7], "spr": [14, 18] },
+    "weakness": ["holy"],
+    "resistance": ["physical"],
+    "immune": ["poison"],
+    "behavior": {
+      "ai": "spiritual",
+      "patterns": [
+        { "action": "spirit_attack", "weight": 30, "name": "Weight of Loss", "power_mult": 1.2, "uses": "spr" },
+        { "action": "spirit_attack", "weight": 25, "name": "Memory of Fire", "power_mult": 0.8, "uses": "spr", "status": "despair", "status_chance": 0.4 },
+        { "action": "drain", "weight": 25, "name": "Consume Hope", "drain_hp": true, "power_mult": 0.6, "uses": "spr" },
+        { "action": "debuff_aoe", "weight": 20, "name": "Pall of Mourning", "debuff": "all_stats_down", "amount": 1, "duration": 3 }
+      ]
+    },
+    "drops": { "xp": [35, 55], "gold": [0, 0], "items": [{ "id": "holy_water_vial", "chance": 0.15 }, { "id": "obaas_cross", "chance": 0.01, "_note": "Only if cross not yet obtained via story" }] },
+    "lore": "The grief of the burning chapel given shadow-form. It takes the shape of what you lost — the outline of Obaa-chan, of the chapel walls, of a life that was. It feeds on sorrow. Only the light of faith can dispel it.",
+    "areas": ["coast_road", "mountain_summit"],
+    "sprite": { "species": "spiritual", "palette": ["#0a0a1a", "#1a1a3d", "#4a4a7a"], "frameWidth": 32, "frameHeight": 48 },
+    "_design_note": "Emotionally heavy enemy. Its attacks target spirit and inflict despair. Lux Aeterna or Vade Retro destroy it quickly. Without holy damage, it's a war of attrition — and it drains HP."
+  },
+
   {
     "id": "burning_debris",
     "name": "Burning Debris",
     "era": "book-00",
     "tier": 1,
-    "stats": { "hp": [1, 1], "atk": [8, 12], "def": [0, 0], "spd": [1, 1], "spr": [0, 0] },
+    "species": "environmental",
+    "stats": { "hp": [1, 1], "atk": [6, 10], "def": [0, 0], "spd": [2, 2], "spr": [0, 0] },
     "weakness": [],
     "resistance": [],
-    "immune": [],
+    "immune": ["holy", "poison"],
     "behavior": {
       "ai": "environmental",
       "patterns": [
-        { "action": "scatter_fire", "weight": 60, "condition": "always" },
-        { "action": "block_path", "weight": 40, "condition": "always" }
+        { "action": "attack", "weight": 60, "name": "Scatter Fire", "power_mult": 1.0, "status": "burn", "status_chance": 0.3 },
+        { "action": "debuff", "weight": 40, "name": "Block Path", "debuff": "slow", "duration": 2 }
       ]
     },
     "drops": { "xp": [0, 0], "gold": [0, 0], "items": [] },
     "lore": "Scattered wreckage of the chapel, still burning. Find a way through.",
-    "sprite": { "sheetId": "env_debris", "palette": ["#8b4513", "#ff6347", "#ffa500"], "frameWidth": 24, "frameHeight": 24 }
+    "areas": ["burning_chapel"],
+    "sprite": { "species": "environmental", "palette": ["#8b4513", "#ff6347", "#ffa500"], "frameWidth": 24, "frameHeight": 24 }
+  },
+
+  {
+    "_category": "═══ MINI-BOSSES ═══"
+  },
+
+  {
+    "id": "captain_hideki",
+    "name": "Captain Hideki",
+    "era": "book-00",
+    "tier": "mini_boss",
+    "species": "wolf",
+    "stats": { "hp": [100, 130], "atk": [14, 18], "def": [12, 15], "spd": [6, 7], "spr": [5, 8] },
+    "weakness": [],
+    "resistance": ["holy"],
+    "immune": [],
+    "behavior": {
+      "ai": "tactical",
+      "patterns": [
+        { "action": "attack", "weight": 35, "name": "Disciplined Strike", "power_mult": 1.2 },
+        { "action": "heavy_attack", "weight": 20, "name": "Armor-Piercing Thrust", "power_mult": 1.6, "ignore_def_pct": 0.5 },
+        { "action": "command", "weight": 25, "name": "Rally Troops", "summon": "ashigaru_scout", "max_summons": 2, "condition": "turn_3_or_later" },
+        { "action": "intimidate", "weight": 20, "name": "'Surrender the priest!'", "status": "fear", "status_chance": 0.4, "dialogue": "Hand over the Jesuit. No one else needs to die." }
+      ]
+    },
+    "drops": { "xp": [65, 90], "gold": [35, 60], "items": [{ "id": "soldiers_ration", "chance": 0.5 }, { "id": "iron_guard", "chance": 0.15 }] },
+    "lore": "Captain of the garrison sent to enforce the edict. A wolf in armor who believes he serves order. He is not evil — he is obedient, which may be worse. He calls reinforcements if the fight drags on.",
+    "areas": ["bamboo_forest"],
+    "encounter_type": "scripted",
+    "story_trigger": "act_2_patrol_encounter",
+    "sprite": { "species": "wolf", "palette": ["#2d2d4a", "#1a1a2e", "#c9a959", "#8b0000"], "frameWidth": 32, "frameHeight": 48 },
+    "_design_note": "First real boss test. Summons scouts if fight goes long — teaches the player to be aggressive, not turtle. His 'Surrender the priest' line is a moral moment, not just combat flavor."
+  },
+
+  {
+    "id": "despair_manifest",
+    "name": "The Despair",
+    "era": "book-00",
+    "tier": "mini_boss",
+    "species": "spiritual",
+    "stats": { "hp": [90, 120], "atk": [3, 5], "def": [4, 6], "spd": [5, 7], "spr": [16, 22] },
+    "weakness": ["holy"],
+    "resistance": ["physical"],
+    "immune": ["poison"],
+    "behavior": {
+      "ai": "spiritual",
+      "patterns": [
+        { "action": "spirit_attack", "weight": 25, "name": "Drowning Sorrow", "power_mult": 1.0, "uses": "spr", "status": "despair", "status_chance": 0.5 },
+        { "action": "spirit_attack", "weight": 25, "name": "She Died for Nothing", "power_mult": 1.3, "uses": "spr", "condition": "obaa_martyred_flag" },
+        { "action": "drain", "weight": 20, "name": "Feed on Tears", "drain_hp": true, "power_mult": 0.8, "uses": "spr" },
+        { "action": "aoe_debuff", "weight": 15, "name": "Blanket of Ash", "debuff": "spr_down", "amount": 3, "duration": 4 },
+        { "action": "spirit_attack", "weight": 15, "name": "God's Silence", "power_mult": 0.6, "uses": "spr", "status": "mp_drain", "drain_mp": 5 }
+      ]
+    },
+    "drops": { "xp": [80, 110], "gold": [0, 0], "items": [{ "id": "prayer_beads", "chance": 0.3 }] },
+    "lore": "A mass of shadow that formed from the smoke of the burning chapel. It has Obaa-chan's silhouette, distorted. It speaks with what sounds like her voice, saying the things grief whispers at 3 AM. It is the Accuser's first real weapon in Book Zero: weaponized grief.",
+    "areas": ["mountain_path"],
+    "encounter_type": "scripted",
+    "story_trigger": "act_3_grief_manifestation",
+    "sprite": { "species": "spiritual", "palette": ["#0a0a1a", "#1a1a3d", "#4a3060", "#f5f0e8"], "frameWidth": 40, "frameHeight": 56 },
+    "_design_note": "The emotional gut-punch boss. Uses Obaa-chan's silhouette. Attacks drain MP (spirit) not just HP. The player must use holy damage and keep their spirit stat up. The line 'She Died for Nothing' only triggers if Obaa-chan has been martyred — the game reads your story state."
+  },
+
+  {
+    "_category": "═══ BOSSES ═══"
+  },
+
+  {
+    "id": "commander_mori",
+    "name": "Commander Mori",
+    "era": "book-00",
+    "tier": "boss",
+    "species": "wolf",
+    "stats": { "hp": [250, 320], "atk": [20, 26], "def": [14, 18], "spd": [7, 9], "spr": [8, 12] },
+    "weakness": [],
+    "resistance": ["holy"],
+    "immune": [],
+    "behavior": {
+      "ai": "tactical",
+      "phases": [
+        {
+          "name": "Controlled Fury",
+          "hp_threshold": 1.0,
+          "patterns": [
+            { "action": "attack", "weight": 35, "name": "Naginata Sweep", "power_mult": 1.3 },
+            { "action": "heavy_attack", "weight": 20, "name": "Overhead Cleave", "power_mult": 1.8, "accuracy": 0.75 },
+            { "action": "defend", "weight": 20, "name": "Iron Stance", "def_boost": 8 },
+            { "action": "command", "weight": 25, "name": "Bring the fumi-e!", "special": "fumi_e_test", "condition": "turn_5_or_later" }
+          ]
+        },
+        {
+          "name": "Unmasked Wrath",
+          "hp_threshold": 0.4,
+          "patterns": [
+            { "action": "heavy_attack", "weight": 40, "name": "Furious Assault", "power_mult": 2.0, "accuracy": 0.8 },
+            { "action": "attack", "weight": 30, "name": "Wild Slash", "power_mult": 1.5 },
+            { "action": "intimidate", "weight": 30, "name": "'Your God cannot save you!'", "status": "fear", "status_chance": 0.5, "spr_damage": 5, "dialogue": "Where is your God now, little rabbit?" }
+          ],
+          "_note": "Phase 2: Mori loses his composure. Hits harder but no more defense. The mask of duty cracks."
+        }
+      ],
+      "martyr_mode_extra_phase": {
+        "name": "Final Stand",
+        "hp_threshold": 0.15,
+        "patterns": [
+          { "action": "heavy_attack", "weight": 50, "name": "Execution Strike", "power_mult": 2.5, "accuracy": 0.7 },
+          { "action": "attack", "weight": 30, "name": "Desperate Slash", "power_mult": 1.8 },
+          { "action": "spirit_attack", "weight": 20, "name": "'I will end this myself.'", "uses": "spr", "power_mult": 1.0, "status": "despair", "status_chance": 0.6 }
+        ],
+        "_note": "Martyr difficulty only. Mori refuses to die. His duty is absolute."
+      }
+    },
+    "drops": { "xp": [180, 250], "gold": [100, 150], "items": [{ "id": "moris_seal", "chance": 1.0 }] },
+    "lore": "The commander who burned the chapel. A wolf who has served the daimyo for twenty years. He is not a monster — he is a man who has made order his god. His naginata is longer than Usagi's blade. His conviction is harder than his armor. He resists holy damage because his faith in duty is genuine, even if misdirected.",
+    "areas": ["coast_road"],
+    "encounter_type": "boss",
+    "story_trigger": "act_3_mori_confrontation",
+    "pre_battle_dialogue": "mori_boss_dialogue",
+    "post_battle_dialogue": "mori_defeat_dialogue",
+    "victory_conditions": {
+      "standard": "Reduce HP to 0",
+      "pacifist": "If charity >= 5, Forgiveness miracle can end the fight. Mori drops his weapon. Double XP. Different ending dialogue.",
+      "_note": "The pacifist option is harder to unlock but more rewarding. CCC 2844: forgiveness of enemies."
+    },
+    "sprite": { "species": "wolf", "palette": ["#1a1a2e", "#2d2d4a", "#c9a959", "#8b0000", "#e8e0d8"], "frameWidth": 40, "frameHeight": 56 },
+    "_design_note": "The main boss of Book Zero. Multi-phase. The fumi-e test is a moral choice DURING combat — Mori orders a servant to bring the sacred image. Usagi can step on it (instant battle end, massive virtue penalty) or refuse (fight continues, virtue bonus). This is the game's thesis: the test of faith happens in the heat of battle, not in calm reflection."
+  },
+
+  {
+    "_category": "═══ THE ACCUSER ═══"
+  },
+
+  {
+    "id": "the_accuser_b00",
+    "name": "The Accuser",
+    "era": "book-00",
+    "tier": "accuser",
+    "species": "spiritual",
+    "stats": { "hp": [999, 999], "atk": [0, 0], "def": [99, 99], "spd": [10, 10], "spr": [30, 30] },
+    "weakness": [],
+    "resistance": ["physical", "holy"],
+    "immune": ["poison", "all_status"],
+    "behavior": {
+      "ai": "spiritual",
+      "cannot_be_killed": true,
+      "survival_turns": 8,
+      "patterns": [
+        { "action": "spirit_attack", "weight": 25, "name": "Whisper of Despair", "power_mult": 0.8, "uses": "spr", "status": "despair", "status_chance": 0.5, "counter_virtue": "hope", "counter_level": 3, "dialogue": "She prayed. Every day. And the fire still came." },
+        { "action": "spirit_attack", "weight": 20, "name": "Veil of Fear", "power_mult": 0.6, "uses": "spr", "status": "fear", "status_chance": 0.45, "counter_virtue": "fortitude", "counter_level": 3, "dialogue": "The soldiers are coming. You can hear their boots. Run." },
+        { "action": "spirit_attack", "weight": 20, "name": "Honeyed Lie", "power_mult": 0.5, "uses": "spr", "status": "confusion", "status_chance": 0.4, "counter_virtue": "prudence", "counter_level": 3, "dialogue": "Step on the image. It is only wood. God will understand." },
+        { "action": "drain", "weight": 15, "name": "Consume Faith", "drain_mp": 8, "dialogue": "Your prayers grow quieter. Have you noticed?" },
+        { "action": "debuff", "weight": 10, "name": "Memory Fade", "debuff": "all_stats_down", "amount": 2, "duration": 3, "dialogue": "What were the words? The prayer. You almost remember." },
+        { "action": "taunt", "weight": 10, "name": "The Accusation", "special": "virtue_challenge", "dialogue": "You carry a blade and call yourself a pilgrim. You killed those soldiers and call yourself faithful. Tell me — which commandment was that?" }
+      ],
+      "_victory_condition": "Survive 8 turns. The Accuser retreats. You do not defeat him — you endure him. CCC 395: 'The power of Satan is, nonetheless, not infinite.'",
+      "retreat_dialogue": "...You will hear me again. Every era. Every century. I have time.",
+      "bonus_if_no_status_effects_taken": "If the player resists ALL spiritual attacks (high virtue), bonus virtue reward + unique dialogue: 'Interesting. You are... harder than I expected.'"
+    },
+    "drops": { "xp": [100, 100], "gold": [0, 0], "items": [] },
+    "lore": "Not a boss to be beaten. A spiritual adversary to be endured. He speaks the worst truths you already believe about yourself. He cannot be killed because he is not a creature — he is the Accuser (CCC 391-395). His attacks are questions, doubts, and twisted truths. Your defense is virtue. Your weapon is perseverance.",
+    "areas": ["mountain_summit"],
+    "encounter_type": "accuser",
+    "story_trigger": "act_4_accuser_encounter",
+    "pre_battle_dialogue": "accuser_appears_dialogue",
+    "post_battle_dialogue": "accuser_retreat_dialogue",
+    "sprite": { "species": "spiritual", "palette": ["#0a0a0a", "#1a0a2e", "#3d1f6d", "#6b3fa0", "#c9a959"], "frameWidth": 48, "frameHeight": 64 },
+    "_design_note": "The most important fight in the game. You CANNOT win by attacking. Physical and holy damage barely scratch him. The only way to 'win' is to survive 8 turns while resisting his status effects through high virtue. Every attack has a dialogue line that hits harder than the damage. The Accusation is the cruelest — it uses YOUR gameplay choices against you. If you killed soldiers earlier, he names it. This is spiritual warfare."
+  },
+
+  {
+    "_category": "═══ ENCOUNTER TABLES ═══"
+  },
+
+  {
+    "_encounter_tables": {
+      "burning_chapel": {
+        "rate": "high",
+        "formations": [
+          { "weight": 40, "enemies": ["falling_beam"] },
+          { "weight": 35, "enemies": ["smoke_cloud", "burning_debris"] },
+          { "weight": 25, "enemies": ["falling_beam", "smoke_cloud"] }
+        ],
+        "level_range": [1, 3],
+        "_note": "Tutorial combat area. Environmental only. Teaches dodge/guard."
+      },
+      "village_outskirts": {
+        "rate": "medium",
+        "formations": [
+          { "weight": 30, "enemies": ["wild_boar"] },
+          { "weight": 25, "enemies": ["ashigaru_scout", "ashigaru_scout"] },
+          { "weight": 20, "enemies": ["wild_boar", "mountain_snake"] },
+          { "weight": 15, "enemies": ["ashigaru_scout", "ashigaru_scout", "ashigaru_scout"] },
+          { "weight": 10, "enemies": ["ashigaru_spear"] }
+        ],
+        "level_range": [1, 5]
+      },
+      "bamboo_forest": {
+        "rate": "medium",
+        "formations": [
+          { "weight": 25, "enemies": ["ashigaru_spear"] },
+          { "weight": 25, "enemies": ["ashigaru_scout", "ashigaru_spear"] },
+          { "weight": 20, "enemies": ["wild_wolf", "wild_wolf"] },
+          { "weight": 15, "enemies": ["patrol_archer", "ashigaru_scout"] },
+          { "weight": 15, "enemies": ["shadow_doubt"] }
+        ],
+        "level_range": [3, 7],
+        "boss": "captain_hideki"
+      },
+      "mountain_path": {
+        "rate": "medium_high",
+        "formations": [
+          { "weight": 20, "enemies": ["wild_wolf", "wild_wolf"] },
+          { "weight": 20, "enemies": ["patrol_archer", "ashigaru_spear"] },
+          { "weight": 20, "enemies": ["shadow_doubt", "shadow_doubt"] },
+          { "weight": 15, "enemies": ["shade_of_grief"] },
+          { "weight": 15, "enemies": ["samurai_enforcer"] },
+          { "weight": 10, "enemies": ["patrol_archer", "ashigaru_spear", "ashigaru_scout"] }
+        ],
+        "level_range": [5, 9],
+        "boss": "despair_manifest"
+      },
+      "coast_road": {
+        "rate": "high",
+        "formations": [
+          { "weight": 25, "enemies": ["samurai_enforcer"] },
+          { "weight": 20, "enemies": ["ashigaru_spear", "patrol_archer"] },
+          { "weight": 20, "enemies": ["shade_of_grief"] },
+          { "weight": 15, "enemies": ["samurai_enforcer", "ashigaru_scout"] },
+          { "weight": 10, "enemies": ["samurai_enforcer", "patrol_archer"] },
+          { "weight": 10, "enemies": ["shade_of_grief", "shadow_doubt"] }
+        ],
+        "level_range": [7, 10],
+        "boss": "commander_mori"
+      },
+      "mountain_summit": {
+        "rate": "none",
+        "encounters": [],
+        "boss": "the_accuser_b00",
+        "_note": "No random encounters. Only the Accuser. This is a sacred confrontation."
+      },
+      "hidden_chapel": {
+        "rate": "none",
+        "encounters": [],
+        "_note": "Sacred space. No combat ever. CCC 1324: The Eucharist is the source and summit of the Christian life. You rest here."
+      }
+    }
   }
 ]
