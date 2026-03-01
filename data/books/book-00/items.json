@@ -1,77 +1,82 @@
-[
-  {
-    "id": "obaas_cross",
-    "name": "Obaa-chan's Cross",
-    "type": "key_item",
-    "rarity": "unique",
-    "description": "A small wooden cross carved from camphor wood — from a beam of the old Nagasaki church. It grows warm near hidden Christian artifacts.",
-    "canDrop": false,
-    "canSell": false,
-    "effect": { "passive": "faith_skill_boost_5pct", "detect": "hidden_christian_artifacts" },
-    "scaling": { "virtue": "faith", "formula": "boost increases with faith level" }
+{
+  "_meta": {
+    "book": "book-00",
+    "era": "1587 Shimabara, Japan",
+    "item_philosophy": "Nothing is bought from a shop. Everything is scavenged, dropped, crafted, given, or found. This is persecution."
   },
-  {
-    "id": "pilgrims_blade",
-    "name": "Blade of the Pilgrim",
-    "type": "weapon_katana",
-    "rarity": "unique",
-    "baseStats": { "atk": 5, "spd": 2, "crit": 3 },
-    "description": "A simple, unadorned blade given by The Messenger. Its story is not yet written.",
-    "canDrop": false,
-    "canSell": false,
-    "scaling": { "virtue": "faith", "formula": "atk + (faith * 1.5)" }
-  },
-  {
-    "id": "breviary_page",
-    "name": "Breviary Page",
-    "type": "lore_item",
-    "rarity": "rare",
-    "description": "A damp page from Father Tomas's breviary. Written in Portuguese: 'God of my fathers, I am leaving these people without a shepherd. Send them another. Send them a saint.'",
-    "canDrop": false,
-    "canSell": false,
-    "effect": null
-  },
-  {
-    "id": "mikos_flower",
-    "name": "Miko's Flower",
-    "type": "key_item",
-    "rarity": "common",
-    "description": "A small purple wildflower with a bent stem, given by a shy little girl. It seems like nothing. Keep it anyway.",
-    "canDrop": false,
-    "canSell": false,
-    "effect": null,
-    "futurePayoff": "book-05"
-  },
-  {
-    "id": "rice_cake",
-    "name": "Rice Cake",
-    "type": "consumable",
-    "rarity": "common",
-    "description": "Simple pressed rice. Restores a small amount of strength.",
-    "canDrop": true,
-    "canSell": true,
-    "sellPrice": 5,
-    "effect": { "heal": 15 }
-  },
-  {
-    "id": "herbal_poultice",
-    "name": "Herbal Poultice",
-    "type": "consumable",
-    "rarity": "common",
-    "description": "Medicinal herbs from Obaa-chan's garden, bound in a cloth. Eases pain.",
-    "canDrop": true,
-    "canSell": true,
-    "sellPrice": 12,
-    "effect": { "heal": 30 }
-  },
-  {
-    "id": "holy_water_vial",
-    "name": "Holy Water",
-    "type": "consumable",
-    "rarity": "uncommon",
-    "description": "A small vial of blessed water from Father Tomas. Purifies and restores spirit.",
-    "canDrop": true,
-    "canSell": false,
-    "effect": { "healMp": 15, "cureStatus": ["despair"] }
-  }
-]
+  "consumables": [
+    { "id": "rice_ball", "name": "Rice Ball", "type": "consumable", "subtype": "food", "rarity": "common", "description": "A simple onigiri wrapped in a leaf. Cold, dense, sustaining.", "effect": { "heal_hp": 20 }, "sell_price": 3, "max_stack": 20 },
+    { "id": "rice_cake", "name": "Rice Cake", "type": "consumable", "subtype": "food", "rarity": "common", "description": "Pressed mochi. Obaa-chan made these every New Year.", "effect": { "heal_hp": 15 }, "sell_price": 5, "max_stack": 20 },
+    { "id": "soldiers_ration", "name": "Soldier's Ration", "type": "consumable", "subtype": "food", "rarity": "uncommon", "description": "Dried rice, salt fish, pickled plum. Standard garrison issue. Tastes like duty.", "effect": { "heal_hp": 40 }, "sell_price": 8, "max_stack": 10 },
+    { "id": "medicinal_herb", "name": "Medicinal Herb", "type": "consumable", "subtype": "healing", "rarity": "common", "description": "Wild herbs from the mountain. Obaa-chan knew every plant by name.", "effect": { "heal_hp": 30 }, "sell_price": 6, "max_stack": 20 },
+    { "id": "herbal_poultice", "name": "Herbal Poultice", "type": "consumable", "subtype": "healing", "rarity": "common", "description": "Medicinal herbs bound in cloth. Obaa-chan's recipe.", "effect": { "heal_hp": 50 }, "sell_price": 12, "max_stack": 15 },
+    { "id": "mountain_ginseng", "name": "Mountain Ginseng", "type": "consumable", "subtype": "healing", "rarity": "rare", "description": "A gnarled root from deep mountain shade. Bitter, powerful. Restores body and spirit.", "effect": { "heal_hp": 80, "heal_mp": 15 }, "sell_price": 25, "max_stack": 5 },
+    { "id": "antidote_herb", "name": "Antidote Herb", "type": "consumable", "subtype": "status_cure", "rarity": "common", "description": "A bitter root that neutralizes mamushi venom. Chew and swallow.", "effect": { "cure_status": ["poison"] }, "sell_price": 5, "max_stack": 15 },
+    { "id": "smelling_salts", "name": "Smelling Salts", "type": "consumable", "subtype": "status_cure", "rarity": "uncommon", "description": "Sharp mineral salts. One sniff and the fog clears.", "effect": { "cure_status": ["confusion", "fear"] }, "sell_price": 10, "max_stack": 10 },
+    { "id": "camphor_oil", "name": "Camphor Oil", "type": "consumable", "subtype": "buff", "rarity": "uncommon", "description": "Distilled from camphor laurel. Sharp, clarifying. Sharpens senses for battle.", "effect": { "buff": "spd_up", "amount": 3, "duration": 5 }, "sell_price": 15, "max_stack": 10 },
+    { "id": "incense_stick", "name": "Incense Stick", "type": "consumable", "subtype": "buff", "rarity": "uncommon", "description": "Sandalwood incense from Father Tomas's supplies. Deepens prayer.", "effect": { "buff": "spr_up", "amount": 4, "duration": 5, "heal_mp": 10 }, "sell_price": 18, "max_stack": 5 },
+    { "id": "smoke_bomb", "name": "Smoke Pot", "type": "consumable", "subtype": "battle", "rarity": "uncommon", "description": "A clay pot of burning powder. Crack it and run.", "effect": { "flee_guaranteed": true }, "sell_price": 15, "max_stack": 5 },
+    { "id": "throwing_stone", "name": "River Stone", "type": "consumable", "subtype": "battle", "rarity": "common", "description": "A smooth stone from the river. David killed Goliath with one. You're no David.", "effect": { "damage": 15, "stun_chance": 0.2, "stun_duration": 1 }, "sell_price": 1, "max_stack": 20 }
+  ],
+  "sacramentals": [
+    { "id": "holy_water_vial", "name": "Holy Water", "type": "sacramental", "subtype": "holy_water", "rarity": "uncommon", "ccc": [1668], "description": "Blessed water from Father Tomas. Purifies and restores spirit. Can bless equipment.", "effect": { "heal_mp": 20, "cure_status": ["despair", "fear"], "battle_holy_damage": 30 }, "can_bless_equipment": true, "blessing_method": "holy_water_blessing", "sell_price": 0, "max_stack": 5 },
+    { "id": "chrism_oil", "name": "Sacred Chrism", "type": "sacramental", "subtype": "chrism", "rarity": "legendary", "ccc": [1241, 1289, 1297], "description": "Oil mixed with balsam, consecrated by a bishop. In all of hidden Japan, this may be the last vial.", "effect": { "blessing_only": true }, "can_bless_equipment": true, "blessing_method": "chrism_anointing", "sell_price": 0, "max_stack": 1 },
+    { "id": "blessed_candle", "name": "Blessed Candle", "type": "sacramental", "subtype": "blessed_object", "rarity": "rare", "ccc": [1671], "description": "Beeswax candle blessed at Candlemas. Its light reveals hidden things and repels shadow.", "effect": { "reveal_hidden": true, "spiritual_damage_aura": 5, "duration_steps": 200 }, "sell_price": 0, "max_stack": 3 },
+    { "id": "prayer_beads", "name": "Prayer Beads", "type": "sacramental", "subtype": "blessed_object", "rarity": "uncommon", "description": "Wooden beads worn smooth by decades of Hail Marys. Not a rosary — too dangerous to carry openly.", "effect": { "mp_regen_passive": 1, "battle_rosary_free_once": true }, "sell_price": 0, "max_stack": 1 },
+    { "id": "blessed_salt", "name": "Blessed Salt", "type": "sacramental", "subtype": "blessed_object", "rarity": "uncommon", "ccc": [1671], "description": "Salt blessed by a priest. Purifies places and wards evil.", "effect": { "camp_bonus": "full_mp", "battle_holy_damage": 25 }, "sell_price": 0, "max_stack": 5 }
+  ],
+  "weapons": [
+    { "id": "farmers_sickle", "name": "Farmer's Sickle", "slot": "weapon", "subtype": "improvised", "rarity": "common", "base_stats": { "atk": 3, "spd": 1 }, "description": "A rice-harvesting sickle. Not a weapon. But it has an edge.", "quality_range": [0, 3], "default_quality": 2 },
+    { "id": "pilgrims_blade", "name": "Pilgrim's Blade", "slot": "weapon", "subtype": "katana", "rarity": "unique", "base_stats": { "atk": 7, "spd": 2, "spr": 3 }, "description": "Given by the Messenger. Its story is not yet written. It hums faintly during prayer.", "quality_range": [4, 4], "default_quality": 4, "scaling": { "virtue": "faith", "formula": "atk + faith * 1.5" }, "can_drop": false, "can_sell": false },
+    { "id": "bamboo_staff", "name": "Bamboo Staff", "slot": "weapon", "subtype": "staff", "rarity": "common", "base_stats": { "atk": 4, "def": 2, "spr": 2 }, "description": "A length of hardened bamboo. Walking stick, weapon, and prayer focus.", "quality_range": [1, 5], "default_quality": 3 },
+    { "id": "soldiers_spear", "name": "Soldier's Yari", "slot": "weapon", "subtype": "katana", "rarity": "uncommon", "base_stats": { "atk": 9, "spd": 1 }, "description": "An ashigaru's spear. Functional, impersonal, made for a hand that follows orders.", "quality_range": [2, 5], "default_quality": 3 },
+    { "id": "hidden_cross_dagger", "name": "Cross Dagger", "slot": "weapon", "subtype": "cross_blade", "rarity": "rare", "base_stats": { "atk": 5, "spr": 6, "holy_damage_pct": 10 }, "description": "A dagger with a cross-shaped guard. Hidden in the chapel altar stone. Deals holy damage.", "quality_range": [3, 6], "default_quality": 4, "scaling": { "virtue": "faith", "formula": "spr + faith * 2" } },
+    { "id": "moris_naginata", "name": "Mori's Naginata", "slot": "weapon", "subtype": "katana", "rarity": "rare", "base_stats": { "atk": 14, "spd": -1, "def": 2 }, "description": "Commander Mori's polearm. Carrying it feels wrong — or right, depending on who you've become.", "quality_range": [5, 6], "default_quality": 5, "moral_weight": "The Accuser will comment on this." }
+  ],
+  "garments": [
+    { "id": "farmers_kosode", "name": "Farmer's Kosode", "slot": "garment", "subtype": "kosode", "rarity": "common", "base_stats": { "def": 2 }, "description": "Plain cotton, patched and re-patched. It smells like earth and rice straw. Home.", "quality_range": [1, 3], "default_quality": 2 },
+    { "id": "travelers_kimono", "name": "Traveler's Kimono", "slot": "garment", "subtype": "kimono", "rarity": "common", "base_stats": { "def": 4, "spd": 1 }, "description": "Sturdy traveling kimono in dark indigo. Blends with shadows.", "quality_range": [2, 5], "default_quality": 3 },
+    { "id": "padded_jacket", "name": "Padded Jacket", "slot": "garment", "subtype": "armor_light", "rarity": "uncommon", "base_stats": { "def": 7, "spd": -1 }, "description": "Quilted cotton over a stiff core. Not real armor, but it turns a blade.", "quality_range": [2, 5], "default_quality": 3 },
+    { "id": "priests_cassock", "name": "Priest's Cassock", "slot": "garment", "subtype": "cassock", "rarity": "rare", "base_stats": { "def": 3, "spr": 8 }, "description": "Father Tomas's cassock. Wearing it marks you as clergy — both shield and target.", "quality_range": [3, 5], "default_quality": 4, "scaling": { "virtue": "faith", "formula": "spr + faith * 1" }, "moral_weight": "NPCs react differently." },
+    { "id": "soldiers_do", "name": "Soldier's Dō", "slot": "garment", "subtype": "armor_light", "rarity": "rare", "base_stats": { "def": 10, "spd": -2, "spr": -2 }, "description": "Light chest armor from a fallen soldier. The daimyo's crest. Protection at what cost?", "quality_range": [3, 6], "default_quality": 4, "moral_weight": "Negative SPR: spiritual cost of wearing the persecutor's armor." },
+    { "id": "pilgrims_cloak", "name": "Pilgrim's Cloak", "slot": "garment", "subtype": "cloak", "rarity": "uncommon", "base_stats": { "def": 4, "spr": 4, "spd": 1 }, "description": "Rough-woven cloak with a deep hood. Hides your face, blocks rain.", "quality_range": [2, 5], "default_quality": 3 }
+  ],
+  "headgear": [
+    { "id": "sedge_hat", "name": "Sedge Hat", "slot": "head", "subtype": "sedge_hat", "rarity": "common", "base_stats": { "def": 1, "spd": 1 }, "description": "Wide-brimmed farmer's hat. Keeps the sun off and the face hidden.", "quality_range": [1, 4], "default_quality": 2 },
+    { "id": "monks_hood", "name": "Monk's Hood", "slot": "head", "subtype": "hood", "rarity": "uncommon", "base_stats": { "spr": 3, "def": 1 }, "description": "Deep hood on shoulder cloth. A Christian wearing one is hiding in plain sight.", "quality_range": [2, 5], "default_quality": 3 },
+    { "id": "iron_hachimaki", "name": "Iron Hachimaki", "slot": "head", "subtype": "headband", "rarity": "uncommon", "base_stats": { "def": 3, "atk": 1 }, "description": "Reinforced headband with thin iron plate.", "quality_range": [2, 5], "default_quality": 3 },
+    { "id": "prayer_veil", "name": "Prayer Veil", "slot": "head", "subtype": "veil", "rarity": "rare", "base_stats": { "spr": 5, "mp_regen_battle": 1 }, "description": "Thin linen veil used during hidden Mass. Restores 1 MP per turn.", "quality_range": [3, 5], "default_quality": 3 }
+  ],
+  "accessories": [
+    { "id": "straw_sandals", "name": "Straw Sandals", "slot": "accessory", "subtype": "tool", "rarity": "common", "base_stats": { "spd": 2 }, "description": "Woven waraji. Light on the feet. Every pilgrim makes their own.", "quality_range": [1, 4], "default_quality": 2 },
+    { "id": "iron_guard", "name": "Iron Wrist Guard", "slot": "accessory", "subtype": "tool", "rarity": "uncommon", "base_stats": { "def": 3, "atk": 1 }, "description": "Leather bracer reinforced with iron. Protects the forearm.", "quality_range": [2, 5], "default_quality": 3 },
+    { "id": "travelers_pouch", "name": "Traveler's Pouch", "slot": "accessory", "subtype": "tool", "rarity": "common", "base_stats": { "inventory_bonus": 5 }, "description": "Leather pouch on the belt. Carry more.", "quality_range": [2, 4], "default_quality": 3 },
+    { "id": "mothers_ring", "name": "Mother's Ring", "slot": "accessory", "subtype": "ring", "rarity": "rare", "base_stats": { "spr": 3, "charity": 1 }, "description": "Simple copper ring found in the chapel ashes. It's warm.", "quality_range": [3, 3], "default_quality": 3, "passive": "heal_bonus_5pct" },
+    { "id": "foxs_charm", "name": "Fox's Charm", "slot": "accessory", "subtype": "charm", "rarity": "uncommon", "base_stats": { "spd": 3, "evasion_pct": 5 }, "description": "Carved fox on leather cord. You run faster with it.", "quality_range": [2, 5], "default_quality": 3 }
+  ],
+  "relics": [
+    { "id": "obaas_cross", "name": "Obaa-chan's Cross", "slot": "relic", "subtype": "cross", "rarity": "unique", "base_stats": { "spr": 5, "faith": 1 }, "description": "Small wooden cross from camphor wood. Grows warm near hidden Christian artifacts.", "quality_range": [4, 4], "default_quality": 4, "can_drop": false, "can_sell": false, "passive": "detect_hidden_artifacts", "scaling": { "virtue": "faith", "formula": "spr + faith * 2" } },
+    { "id": "scapular_carmel", "name": "Brown Scapular", "slot": "relic", "subtype": "scapular", "rarity": "rare", "base_stats": { "spr": 3, "hope": 1 }, "passive": "death_save_once_per_book" },
+    { "id": "scapular_immaculate", "name": "Green Scapular", "slot": "relic", "subtype": "scapular", "rarity": "rare", "base_stats": { "spr": 2, "charity": 1 }, "passive": "regen_1pct_per_turn" },
+    { "id": "scapular_seven_sorrows", "name": "Black Scapular", "slot": "relic", "subtype": "scapular", "rarity": "rare", "base_stats": { "spr": 4 }, "passive": "immune_despair" }
+  ],
+  "materials": [
+    { "id": "wolf_pelt", "name": "Wolf Pelt", "type": "material", "subtype": "organic", "rarity": "common", "description": "Thick grey fur. Ichiro can work it into a padded jacket.", "sell_price": 8, "max_stack": 10, "trade_for": "padded_jacket" },
+    { "id": "iron_scraps", "name": "Iron Scraps", "type": "material", "subtype": "metal", "rarity": "common", "description": "Bent nails, broken fittings. A craftsman could use these.", "sell_price": 5, "max_stack": 20, "use": "equipment_upgrade" },
+    { "id": "fine_cloth", "name": "Fine Cloth", "type": "material", "subtype": "cloth", "rarity": "uncommon", "description": "Well-woven cotton. Rare in a village this poor.", "sell_price": 12, "max_stack": 10, "use": "garment_upgrade" },
+    { "id": "camphor_wood", "name": "Camphor Wood", "type": "material", "subtype": "organic", "rarity": "uncommon", "description": "Fragrant wood sacred to the Kakure. A craftsman could make something holy.", "sell_price": 15, "max_stack": 5, "use": "holy_item_craft" },
+    { "id": "chapel_ash", "name": "Chapel Ash", "type": "material", "subtype": "rare", "rarity": "rare", "description": "Ash from the burned chapel, gathered reverently. The ash remembers.", "sell_price": 0, "max_stack": 3, "use": "devotion_grace_catalyst" }
+  ],
+  "key_items": [
+    { "id": "moris_seal", "name": "Mori's Seal", "type": "key_item", "rarity": "unique", "description": "Commander Mori's personal seal. A document could be forged. A gate opened. A prisoner freed.", "use": "opens_coastal_gate_or_forges_travel_pass" },
+    { "id": "accuser_resistance_badge", "name": "Mark of Endurance", "type": "key_item", "rarity": "legendary", "description": "Not physical. A change in the soul. Quiet certainty after enduring the Accuser without a wound.", "effect": { "permanent": "spiritual_resist_10pct" } },
+    { "id": "breviary_page", "name": "Breviary Page", "type": "key_item", "rarity": "rare", "description": "From Father Tomas's breviary. Portuguese: 'Send them another. Send them a saint.'", "read_bonus": { "spr": 1 } },
+    { "id": "mikos_flower", "name": "Miko's Flower", "type": "key_item", "rarity": "common", "description": "Small purple wildflower with a bent stem. It seems like nothing. Keep it anyway.", "future_payoff": "book-05" },
+    { "id": "fumi_e_fragment", "name": "Fumi-e Fragment", "type": "key_item", "rarity": "unique", "description": "Broken piece of the brass fumi-e. You broke it instead of stepping on it.", "effect": { "permanent": "fortitude +1" } }
+  ],
+  "lore_items": [
+    { "id": "kakure_prayer_scroll", "name": "Kakure Prayer Scroll", "type": "lore_item", "rarity": "rare", "description": "The Orasho — garbled Latin prayers passed down in Japanese for generations. The faith burns clear.", "read_bonus": { "spr": 1, "faith": 0.5 } },
+    { "id": "tomas_journal", "name": "Father Tomas's Journal", "type": "lore_item", "rarity": "rare", "description": "Water-stained Portuguese and Latin. 'Am I a shepherd or a fool?'", "read_bonus": { "spr": 1, "prudence": 0.5 } },
+    { "id": "soldiers_letter", "name": "Soldier's Unsent Letter", "type": "lore_item", "rarity": "uncommon", "description": "'Mother — they pray as they burn. I can't sleep.'", "read_bonus": { "charity": 0.5 } }
+  ]
+}
