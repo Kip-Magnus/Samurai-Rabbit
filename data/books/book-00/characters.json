@@ -1,0 +1,273 @@
+[
+  {
+    "id": "usagi",
+    "name": "Usagi",
+    "fullName": "Usagi",
+    "role": "player",
+    "species": "rabbit",
+    "era": "book-00",
+    "appearance": {
+      "furColor": "#a0784c",
+      "eyeColor": "#4a6741",
+      "height": "medium",
+      "build": "lean",
+      "distinguishing": "kind eyes, calloused farmer hands",
+      "outfit": {
+        "base": "farmer_kosode",
+        "palette": ["#7a6852", "#5c4d3c", "#e8dcc8"],
+        "accessories": ["straw_sandals", "sedge_hat"]
+      }
+    },
+    "personality": {
+      "archetype": "reluctant_hero",
+      "traits": ["gentle", "anxious", "dutiful", "grieving"],
+      "speechStyle": "simple, honest, questions more than statements",
+      "voiceTone": "quiet_earnest"
+    },
+    "combatStats": {
+      "hp": 35, "mp": 10, "atk": 4, "def": 5, "spd": 6, "spr": 8
+    },
+    "narrativeFlags": {
+      "hasBeenCalled": false,
+      "hasBlade": false,
+      "hasCross": false
+    }
+  },
+  {
+    "id": "obaa_chan",
+    "name": "Obaa-chan",
+    "fullName": "Maria Hana",
+    "role": "npc_key",
+    "species": "rabbit",
+    "era": "book-00",
+    "appearance": {
+      "furColor": "#f5f0e8",
+      "eyeColor": "#4a3728",
+      "height": "small",
+      "build": "frail",
+      "distinguishing": "bent back, gnarled hands, hidden cross necklace",
+      "outfit": {
+        "base": "plain_kimono",
+        "palette": ["#7a6852", "#5c4d3c", "#f5f0e8"],
+        "accessories": ["wooden_cross_hidden", "prayer_beads"]
+      }
+    },
+    "personality": {
+      "archetype": "believer",
+      "traits": ["fierce", "gentle", "unwavering", "maternal"],
+      "speechStyle": "short sentences, proverbs, scripture echoes",
+      "voiceTone": "warm_weathered"
+    },
+    "combatStats": null,
+    "narrativeFlags": {
+      "isMartyred": false,
+      "crossGiven": false
+    }
+  },
+  {
+    "id": "father_tomas",
+    "name": "Father Tomas",
+    "fullName": "Father Tomas de Almeida, S.J.",
+    "role": "npc_key",
+    "species": "fox",
+    "era": "book-00",
+    "appearance": {
+      "furColor": "#8b5e3c",
+      "eyeColor": "#5a7d4f",
+      "height": "tall",
+      "build": "thin",
+      "distinguishing": "sun-darkened fur, exhausted kind eyes, slight accent",
+      "outfit": {
+        "base": "peasant_disguise",
+        "palette": ["#5c4d3c", "#3d3226", "#8b7d6b"],
+        "accessories": ["hidden_cassock", "breviary"]
+      }
+    },
+    "personality": {
+      "archetype": "mentor",
+      "traits": ["wise", "tired", "resolute", "compassionate"],
+      "speechStyle": "measured, theological, occasionally Latin phrases",
+      "voiceTone": "calm_deep"
+    },
+    "combatStats": null,
+    "narrativeFlags": {
+      "hasLeftVillage": false,
+      "breviaryClaimed": false
+    }
+  },
+  {
+    "id": "ichiro",
+    "name": "Ichiro",
+    "fullName": "Ichiro",
+    "role": "npc_companion",
+    "species": "rabbit",
+    "era": "book-00",
+    "appearance": {
+      "furColor": "#2d2d2d",
+      "eyeColor": "#6b4423",
+      "height": "medium",
+      "build": "lean",
+      "distinguishing": "sharp features, restless eyes, better clothes than most",
+      "outfit": {
+        "base": "merchant_son_kosode",
+        "palette": ["#4a5568", "#2d3748", "#a0aec0"],
+        "accessories": []
+      }
+    },
+    "personality": {
+      "archetype": "doubter",
+      "traits": ["smart", "pragmatic", "afraid", "loyal_underneath"],
+      "speechStyle": "quick, argumentative, practical questions",
+      "voiceTone": "sharp_nervous"
+    },
+    "combatStats": null,
+    "narrativeFlags": {
+      "trustLevel": 0,
+      "steppedOnFumie": false
+    }
+  },
+  {
+    "id": "captain_mori",
+    "name": "Captain Mori",
+    "fullName": "Mori Katsunaga",
+    "role": "antagonist",
+    "species": "wolf",
+    "era": "book-00",
+    "appearance": {
+      "furColor": "#4a4a4a",
+      "eyeColor": "#1a1a1a",
+      "height": "tall",
+      "build": "lean_strong",
+      "distinguishing": "lacquered armor, silver chrysanthemum tsuba, never raises voice",
+      "outfit": {
+        "base": "samurai_armor_light",
+        "palette": ["#2d2d2d", "#4a4a4a", "#c0c0c0"],
+        "accessories": ["chrysanthemum_katana"]
+      }
+    },
+    "personality": {
+      "archetype": "warrior",
+      "traits": ["polite", "precise", "coldly_courteous", "patriotic"],
+      "speechStyle": "formal, calm, gives choices rather than threats",
+      "voiceTone": "soft_dangerous"
+    },
+    "combatStats": null,
+    "narrativeFlags": {
+      "hasArrivedInVillage": false
+    }
+  },
+  {
+    "id": "gennosuke",
+    "name": "Gennosuke",
+    "fullName": "Gennosuke",
+    "role": "npc_minor",
+    "species": "rabbit",
+    "era": "book-00",
+    "appearance": {
+      "furColor": "#8b7355",
+      "eyeColor": "#4a3728",
+      "height": "medium",
+      "build": "stocky",
+      "distinguishing": "weathered face, smells of salt and fish",
+      "outfit": {
+        "base": "fisherman_tunic",
+        "palette": ["#5c7a8a", "#3d5a6b", "#c9a959"],
+        "accessories": ["fishing_hat"]
+      }
+    },
+    "personality": {
+      "archetype": "believer",
+      "traits": ["gruff", "superstitious", "kind_beneath"],
+      "speechStyle": "short, observations about the sea and weather",
+      "voiceTone": "gravel_warm"
+    },
+    "combatStats": null,
+    "narrativeFlags": {}
+  },
+  {
+    "id": "setsuko",
+    "name": "Setsuko",
+    "fullName": "Setsuko",
+    "role": "npc_minor",
+    "species": "rabbit",
+    "era": "book-00",
+    "appearance": {
+      "furColor": "#c4a882",
+      "eyeColor": "#5a3e28",
+      "height": "medium",
+      "build": "slight",
+      "distinguishing": "tired eyes, always holding Miko's hand",
+      "outfit": {
+        "base": "peasant_kimono",
+        "palette": ["#8b6f5c", "#6b5545", "#d4c5b2"],
+        "accessories": []
+      }
+    },
+    "personality": {
+      "archetype": "believer",
+      "traits": ["protective", "torn", "pragmatic_love"],
+      "speechStyle": "worried questions, always about Miko",
+      "voiceTone": "strained_tender"
+    },
+    "combatStats": null,
+    "narrativeFlags": {}
+  },
+  {
+    "id": "miko",
+    "name": "Miko",
+    "fullName": "Miko",
+    "role": "npc_minor",
+    "species": "rabbit",
+    "era": "book-00",
+    "appearance": {
+      "furColor": "#d4b896",
+      "eyeColor": "#5a3e28",
+      "height": "child",
+      "build": "small",
+      "distinguishing": "always carrying a wildflower, shy smile",
+      "outfit": {
+        "base": "child_kimono",
+        "palette": ["#e8b4b8", "#d49ba0", "#f5e6d3"],
+        "accessories": ["wildflower"]
+      }
+    },
+    "personality": {
+      "archetype": "innocent",
+      "traits": ["shy", "curious", "gives_gifts"],
+      "speechStyle": "single words, giggles, offers things",
+      "voiceTone": "tiny_bright"
+    },
+    "combatStats": null,
+    "narrativeFlags": {
+      "flowerGiven": false
+    }
+  },
+  {
+    "id": "the_messenger",
+    "name": "The Messenger",
+    "fullName": null,
+    "role": "npc_celestial",
+    "species": "unknown",
+    "era": "all",
+    "appearance": {
+      "furColor": "#ffeedd",
+      "eyeColor": "#ffd700",
+      "height": "tall",
+      "build": "luminous",
+      "distinguishing": "indeterminate species, ancient eyes, light emanates from form",
+      "outfit": {
+        "base": "robes_of_light",
+        "palette": ["#ffd700", "#fff8e7", "#c9a959"],
+        "accessories": []
+      }
+    },
+    "personality": {
+      "archetype": "celestial",
+      "traits": ["urgent", "cryptic", "neither_warm_nor_cold", "ancient"],
+      "speechStyle": "short sentences, answers questions with questions, echoes scripture",
+      "voiceTone": "everywhere_at_once"
+    },
+    "combatStats": null,
+    "narrativeFlags": {}
+  }
+]
