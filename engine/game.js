@@ -2087,15 +2087,7 @@ export function createGame(config = {}) {
     input: {
       touch: { capture: true },
     },
-    scene: [
-      // Boot loads data and generates sprites
-      {
-        key: 'BootScene',
-        extend: BootScene.prototype,
-        init: BootScene.prototype.init,
-        create: BootScene.prototype.create,
-      },
-    ],
+    scene: [],
   };
 
   const game = new Phaser.Game(phaserConfig);
