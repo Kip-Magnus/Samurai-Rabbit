@@ -1,0 +1,1310 @@
+{
+  "_meta": {
+    "description": "Complete weapon catalog for Samurai Usagi. 130+ weapons across 7 classes.",
+    "quality_grades": ["Broken(0)", "Chipped(1)", "Rusted(2)", "Worn(3)", "Standard(4)", "Well-Made(5)", "Master-Forged(6)", "Artificer(7)"],
+    "quality_multipliers": [0.3, 0.5, 0.65, 0.8, 1.0, 1.2, 1.5, 1.75],
+    "rarity_tiers": ["common", "uncommon", "rare", "epic", "legendary", "unique"],
+    "stat_formula": "final = base * quality_multiplier + scaling_bonus + blessing_bonus"
+  },
+
+  "katana": {
+    "class_name": "Katana",
+    "class_desc": "The blade path. Speed and precision. Each cut is a prayer.",
+    "stat_focus": "ATK, SPD",
+    "weapons": [
+      {
+        "id": "rusty_tanto",
+        "name": "Rusty Tantō",
+        "rarity": "common",
+        "base_stats": { "atk": 2, "spd": 2 },
+        "quality_range": [0, 2],
+        "default_quality": 1,
+        "description": "A short knife so corroded it might break on bone. Someone threw this away. You picked it up.",
+        "found_in": "book-00",
+        "drop_source": "ashigaru_scout"
+      },
+      {
+        "id": "farmers_sickle",
+        "name": "Farmer's Sickle",
+        "rarity": "common",
+        "base_stats": { "atk": 3, "spd": 1 },
+        "quality_range": [0, 3],
+        "default_quality": 2,
+        "description": "A rice-harvesting sickle. Not a weapon. But it has an edge.",
+        "found_in": "book-00",
+        "starting_weapon": true
+      },
+      {
+        "id": "fish_knife",
+        "name": "Fish Gutting Knife",
+        "rarity": "common",
+        "base_stats": { "atk": 4, "spd": 3, "def": -1 },
+        "quality_range": [1, 3],
+        "default_quality": 2,
+        "description": "Made for filleting, not fighting. Fast as water, fragile as glass. The fishermen keep them sharp enough to shave.",
+        "found_in": "book-00"
+      },
+      {
+        "id": "ashigaru_katana",
+        "name": "Ashigaru's Katana",
+        "rarity": "uncommon",
+        "base_stats": { "atk": 7, "spd": 1 },
+        "quality_range": [2, 4],
+        "default_quality": 3,
+        "description": "Mass-produced blade given to foot soldiers. Functional, unremarkable. A thousand of these were forged the same day.",
+        "found_in": "book-00",
+        "drop_source": "ashigaru_spear"
+      },
+      {
+        "id": "soldiers_yari",
+        "name": "Soldier's Yari",
+        "rarity": "uncommon",
+        "base_stats": { "atk": 9, "spd": 1 },
+        "quality_range": [2, 5],
+        "default_quality": 3,
+        "description": "An ashigaru's spear. Functional, impersonal, made for a hand that follows orders.",
+        "found_in": "book-00"
+      },
+      {
+        "id": "pilgrims_blade",
+        "name": "Pilgrim's Blade",
+        "rarity": "unique",
+        "base_stats": { "atk": 7, "spd": 2, "spr": 3 },
+        "quality_range": [4, 4],
+        "default_quality": 4,
+        "scaling": { "virtue": "faith", "formula": "atk + faith * 1.5" },
+        "can_drop": false,
+        "can_sell": false,
+        "description": "Given by the Messenger. Its story is not yet written. It hums faintly during prayer.",
+        "found_in": "book-00",
+        "grows_with_player": true,
+        "level_scaling": { "per_10_levels": { "atk": 2, "spr": 1 } }
+      },
+      {
+        "id": "moris_naginata",
+        "name": "Mori's Naginata",
+        "rarity": "rare",
+        "base_stats": { "atk": 14, "spd": -1, "def": 2 },
+        "quality_range": [5, 6],
+        "default_quality": 5,
+        "description": "Commander Mori's polearm. Carrying it feels wrong — or right, depending on who you've become.",
+        "found_in": "book-00",
+        "moral_weight": "The Accuser will comment on this. SPR -1 if Charity < 3."
+      },
+      {
+        "id": "roman_gladius",
+        "name": "Roman Gladius",
+        "rarity": "uncommon",
+        "base_stats": { "atk": 10, "spd": 2 },
+        "quality_range": [3, 5],
+        "default_quality": 4,
+        "description": "Short, brutal, efficient. The sword that conquered the world. It still smells of iron and dust.",
+        "found_in": "book-01",
+        "drop_source": "roman_legionary"
+      },
+      {
+        "id": "neros_gilded_blade",
+        "name": "Nero's Gilded Blade",
+        "rarity": "epic",
+        "base_stats": { "atk": 16, "spd": 3, "spr": -3 },
+        "quality_range": [5, 7],
+        "default_quality": 6,
+        "description": "Taken from the emperor's private collection. Gold inlay, jeweled pommel. Beautiful. Profane. Wielding it corrodes the spirit.",
+        "found_in": "book-01",
+        "moral_weight": "SPR penalty. The Accuser approves if you equip this.",
+        "passive": "gold_drop_bonus_20pct"
+      },
+      {
+        "id": "desert_scimitar",
+        "name": "Desert Scimitar",
+        "rarity": "uncommon",
+        "base_stats": { "atk": 11, "spd": 3, "def": -1 },
+        "quality_range": [3, 5],
+        "default_quality": 4,
+        "description": "Curved blade from the Egyptian markets. Fast, light, meant for horseback. It sings through dry air.",
+        "found_in": "book-02"
+      },
+      {
+        "id": "athanasian_sword",
+        "name": "Athanasian Sword",
+        "rarity": "rare",
+        "base_stats": { "atk": 12, "spd": 1, "spr": 5 },
+        "quality_range": [4, 6],
+        "default_quality": 5,
+        "scaling": { "virtue": "faith", "formula": "atk + faith * 1" },
+        "description": "A blade carried by guards who protected Athanasius through five exiles. The word 'homoousios' is etched into the fuller.",
+        "found_in": "book-02"
+      },
+      {
+        "id": "crusader_longsword",
+        "name": "Crusader Longsword",
+        "rarity": "uncommon",
+        "base_stats": { "atk": 15, "spd": -1, "def": 3 },
+        "quality_range": [3, 6],
+        "default_quality": 4,
+        "description": "Heavy cruciform blade. The crossguard forms a cross — by accident or design, no one remembers which.",
+        "found_in": "book-03"
+      },
+      {
+        "id": "saladins_mercy",
+        "name": "Saladin's Mercy",
+        "rarity": "epic",
+        "base_stats": { "atk": 18, "spd": 2, "spr": 2, "charity": 1 },
+        "quality_range": [5, 7],
+        "default_quality": 6,
+        "description": "A Damascus steel blade given by the Sultan to a Christian knight who showed mercy to prisoners. It cuts clean and heals the conscience.",
+        "found_in": "book-03",
+        "passive": "heal_5pct_on_kill_if_charity_5"
+      },
+      {
+        "id": "templar_blade",
+        "name": "Templar's Blade",
+        "rarity": "rare",
+        "base_stats": { "atk": 16, "def": 2, "spr": 3 },
+        "quality_range": [4, 6],
+        "default_quality": 5,
+        "description": "Non nobis, Domine. Not unto us, Lord. The Templars' motto is acid-etched into the blade. It weighs less than it should.",
+        "found_in": "book-03"
+      },
+      {
+        "id": "mongol_dao",
+        "name": "Mongol Dao",
+        "rarity": "uncommon",
+        "base_stats": { "atk": 13, "spd": 4, "def": -2 },
+        "quality_range": [3, 5],
+        "default_quality": 4,
+        "description": "Taken from a dead rider. Light, curved, made for speed. It still hums with the wind of the steppe.",
+        "found_in": "book-04"
+      },
+      {
+        "id": "shimabara_katana",
+        "name": "Shimabara Katana",
+        "rarity": "rare",
+        "base_stats": { "atk": 17, "spd": 2, "spr": 1 },
+        "quality_range": [4, 6],
+        "default_quality": 5,
+        "description": "Forged by a Christian swordsmith who hid crosses in the grain of the steel. Under magnification, the hamon pattern forms a rosary.",
+        "found_in": "book-05",
+        "passive": "holy_damage_5pct"
+      },
+      {
+        "id": "lepanto_cutlass",
+        "name": "Lepanto Cutlass",
+        "rarity": "uncommon",
+        "base_stats": { "atk": 14, "spd": 3 },
+        "quality_range": [3, 5],
+        "default_quality": 4,
+        "description": "Naval blade from the Holy League galleys. Salt-crusted, heavy, made for close quarters on a rocking deck.",
+        "found_in": "book-06"
+      },
+      {
+        "id": "jacobin_saber",
+        "name": "Jacobin Saber",
+        "rarity": "uncommon",
+        "base_stats": { "atk": 15, "spd": 2, "spr": -2 },
+        "quality_range": [3, 5],
+        "default_quality": 4,
+        "description": "Revolution steel. 'Liberté' is stamped on the blade. The liberty it cut was mostly from heads.",
+        "found_in": "book-07",
+        "moral_weight": "SPR penalty reflects the revolution's spiritual cost."
+      },
+      {
+        "id": "resistance_knife",
+        "name": "Resistance Knife",
+        "rarity": "uncommon",
+        "base_stats": { "atk": 11, "spd": 4 },
+        "quality_range": [2, 5],
+        "default_quality": 3,
+        "description": "Smuggled into the camp inside a loaf of bread. Small, sharp, desperate.",
+        "found_in": "book-08"
+      },
+      {
+        "id": "blade_of_intercession",
+        "name": "Blade of Intercession",
+        "rarity": "legendary",
+        "base_stats": { "atk": 25, "spd": 3, "spr": 10 },
+        "quality_range": [7, 7],
+        "default_quality": 7,
+        "scaling": { "virtue": "faith", "formula": "atk + faith * 3 + hope * 2" },
+        "description": "The Pilgrim's Blade, transformed. It no longer hums — it sings. Every prayer Usagi ever prayed is folded into the steel. It cuts sin, not flesh.",
+        "found_in": "final_book",
+        "evolves_from": "pilgrims_blade",
+        "evolution_condition": "Faith ≥ 9, 500+ battles with Pilgrim's Blade, Devotion Grace tier 3",
+        "passive": "all_attacks_holy_virtue_scaling"
+      }
+    ]
+  },
+
+  "staff": {
+    "class_name": "Staff",
+    "class_desc": "The pilgrim's path. Balance and spirit. Moses held one. So did Francis.",
+    "stat_focus": "SPR, DEF, balanced ATK",
+    "weapons": [
+      {
+        "id": "broken_branch",
+        "name": "Broken Branch",
+        "rarity": "common",
+        "base_stats": { "atk": 1, "def": 1 },
+        "quality_range": [0, 1],
+        "default_quality": 0,
+        "description": "A stick. You picked it up off the ground. It's a stick.",
+        "found_in": "book-00"
+      },
+      {
+        "id": "bamboo_staff",
+        "name": "Bamboo Staff",
+        "rarity": "common",
+        "base_stats": { "atk": 4, "def": 2, "spr": 2 },
+        "quality_range": [1, 5],
+        "default_quality": 3,
+        "description": "A length of hardened bamboo. Walking stick, weapon, and prayer focus.",
+        "found_in": "book-00"
+      },
+      {
+        "id": "oak_walking_stick",
+        "name": "Oak Walking Stick",
+        "rarity": "common",
+        "base_stats": { "atk": 5, "def": 3, "spr": 1 },
+        "quality_range": [2, 4],
+        "default_quality": 3,
+        "description": "Heavy, knotted oak. More club than staff. It has seen mountains.",
+        "found_in": "book-00"
+      },
+      {
+        "id": "fishing_pole",
+        "name": "Fishing Pole",
+        "rarity": "common",
+        "base_stats": { "atk": 2, "spd": 3, "spr": 1 },
+        "quality_range": [1, 3],
+        "default_quality": 2,
+        "description": "Flexible bamboo with a broken line. Peter was a fisherman. There are worse role models.",
+        "found_in": "book-00"
+      },
+      {
+        "id": "pilgrims_walking_staff",
+        "name": "Pilgrim's Walking Staff",
+        "rarity": "uncommon",
+        "base_stats": { "atk": 6, "def": 3, "spr": 4 },
+        "quality_range": [3, 5],
+        "default_quality": 4,
+        "description": "Hardened ash wood, wrapped in leather at the grip. Countless miles in its grain.",
+        "found_in": "book-00"
+      },
+      {
+        "id": "franciscan_staff",
+        "name": "Franciscan Staff",
+        "rarity": "rare",
+        "base_stats": { "atk": 3, "def": 2, "spr": 10 },
+        "quality_range": [4, 6],
+        "default_quality": 5,
+        "scaling": { "virtue": "charity", "formula": "spr_damage = spr * 1.5" },
+        "description": "A walking staff, nothing more. Francis refused all weapons. 'The Lord is my strength.' Deals holy damage based on SPR.",
+        "found_in": "book-00",
+        "vocation_locked": "franciscan"
+      },
+      {
+        "id": "roman_vinewood_staff",
+        "name": "Centurion's Vine Staff",
+        "rarity": "uncommon",
+        "base_stats": { "atk": 8, "def": 4 },
+        "quality_range": [3, 5],
+        "default_quality": 4,
+        "description": "The centurion's symbol of authority. A vine rod, used to discipline legionaries. It commands respect — or fear.",
+        "found_in": "book-01"
+      },
+      {
+        "id": "catacomb_torch_staff",
+        "name": "Catacomb Torch-Staff",
+        "rarity": "uncommon",
+        "base_stats": { "atk": 6, "def": 2, "spr": 3 },
+        "quality_range": [2, 4],
+        "default_quality": 3,
+        "description": "A staff with a socket for a torch. In the catacombs, light is life. It still smells of pitch and prayer.",
+        "found_in": "book-01",
+        "passive": "reveal_dark_areas"
+      },
+      {
+        "id": "desert_hermits_crook",
+        "name": "Desert Hermit's Crook",
+        "rarity": "rare",
+        "base_stats": { "atk": 5, "def": 4, "spr": 8 },
+        "quality_range": [4, 6],
+        "default_quality": 5,
+        "description": "Sun-bleached acacia wood shaped by Anthony the Great's own hands. It leans toward prayer.",
+        "found_in": "book-02",
+        "passive": "mp_regen_1_per_turn"
+      },
+      {
+        "id": "athanasius_crozier",
+        "name": "Athanasius's Crozier",
+        "rarity": "epic",
+        "base_stats": { "atk": 7, "def": 5, "spr": 12 },
+        "quality_range": [5, 7],
+        "default_quality": 6,
+        "scaling": { "virtue": "faith", "formula": "spr + faith * 2.5" },
+        "description": "The bishop's pastoral staff. Five times exiled, five times returned. This staff stood against an empire and won.",
+        "found_in": "book-02",
+        "passive": "immune_exile_effects_spr_scaling"
+      },
+      {
+        "id": "crusader_banner_pole",
+        "name": "Crusader Banner Pole",
+        "rarity": "uncommon",
+        "base_stats": { "atk": 9, "def": 5, "spr": 2 },
+        "quality_range": [3, 5],
+        "default_quality": 4,
+        "description": "The crossbar of a fallen standard. The banner is gone but the pole remembers what it carried.",
+        "found_in": "book-03"
+      },
+      {
+        "id": "shepherd_of_hermas",
+        "name": "Shepherd of Hermas",
+        "rarity": "rare",
+        "base_stats": { "atk": 6, "def": 3, "spr": 9 },
+        "quality_range": [4, 6],
+        "default_quality": 5,
+        "description": "Named after the early Christian text. A staff that teaches patience. Each impact resonates with a hymn only the faithful hear.",
+        "found_in": "book-03"
+      },
+      {
+        "id": "polish_oak_staff",
+        "name": "Polish Oak Staff",
+        "rarity": "uncommon",
+        "base_stats": { "atk": 10, "def": 6, "spr": 2 },
+        "quality_range": [3, 5],
+        "default_quality": 4,
+        "description": "Cut from a tree split by lightning near the Vistula. Hard as iron, heavy as grief.",
+        "found_in": "book-04"
+      },
+      {
+        "id": "kakure_prayer_staff",
+        "name": "Kakure Prayer Staff",
+        "rarity": "rare",
+        "base_stats": { "atk": 5, "def": 3, "spr": 11 },
+        "quality_range": [4, 6],
+        "default_quality": 5,
+        "scaling": { "virtue": "hope", "formula": "spr + hope * 2" },
+        "description": "A staff carved with hidden Christian symbols — fish, anchors, the Chi-Rho — disguised as decorative patterns. Two hundred years of secret prayers soaked into the wood.",
+        "found_in": "book-05"
+      },
+      {
+        "id": "galley_oar_staff",
+        "name": "Galley Oar Fragment",
+        "rarity": "uncommon",
+        "base_stats": { "atk": 11, "def": 4 },
+        "quality_range": [2, 5],
+        "default_quality": 3,
+        "description": "Broken oar from a Holy League galley. It pulled Christians through the water. Now it swings through air.",
+        "found_in": "book-06"
+      },
+      {
+        "id": "carmelite_walking_stick",
+        "name": "Carmelite Walking Stick",
+        "rarity": "rare",
+        "base_stats": { "atk": 4, "def": 2, "spr": 13 },
+        "quality_range": [5, 6],
+        "default_quality": 5,
+        "description": "Carried by the Prioress of Compiègne. She leaned on it climbing the scaffold steps. It still stands straight.",
+        "found_in": "book-07",
+        "passive": "immune_fear"
+      },
+      {
+        "id": "kolbes_cane",
+        "name": "Kolbe's Walking Cane",
+        "rarity": "epic",
+        "base_stats": { "atk": 5, "def": 3, "spr": 15, "charity": 2 },
+        "quality_range": [6, 7],
+        "default_quality": 6,
+        "scaling": { "virtue": "charity", "formula": "spr + charity * 3" },
+        "description": "Maximilian Kolbe used this to walk before the starvation bunker. After, he didn't need to walk. He was carried.",
+        "found_in": "book-08",
+        "passive": "sacrifice_self_to_save_ally_once_per_battle"
+      },
+      {
+        "id": "rod_of_moses",
+        "name": "Rod of Moses",
+        "rarity": "legendary",
+        "base_stats": { "atk": 10, "def": 8, "spr": 20 },
+        "quality_range": [7, 7],
+        "default_quality": 7,
+        "scaling": { "virtue": "faith", "formula": "spr + faith * 4 + total_virtue * 0.5" },
+        "description": "Not the original — but something like it. A staff that has been prayed over by so many saints it has developed its own gravity. Seas part. Walls fall. The impossible kneels.",
+        "found_in": "final_book",
+        "passive": "all_miracles_25pct_stronger_barrier_once_per_battle"
+      }
+    ]
+  },
+
+  "cross_blade": {
+    "class_name": "Cross-Blade",
+    "class_desc": "A blade shaped like the Cross. It cuts and blesses in the same motion.",
+    "stat_focus": "ATK, SPR, holy damage",
+    "weapons": [
+      {
+        "id": "broken_cross_shard",
+        "name": "Broken Cross Shard",
+        "rarity": "common",
+        "base_stats": { "atk": 2, "spr": 2 },
+        "quality_range": [0, 2],
+        "default_quality": 1,
+        "description": "A splintered piece of a wooden cross. It cuts, barely. But it remembers what it was.",
+        "found_in": "book-00"
+      },
+      {
+        "id": "hidden_cross_dagger",
+        "name": "Cross Dagger",
+        "rarity": "rare",
+        "base_stats": { "atk": 5, "spr": 6, "holy_damage_pct": 10 },
+        "quality_range": [3, 6],
+        "default_quality": 4,
+        "scaling": { "virtue": "faith", "formula": "spr + faith * 2" },
+        "description": "A dagger with a cross-shaped guard. Hidden in the chapel altar stone. Deals holy damage.",
+        "found_in": "book-00"
+      },
+      {
+        "id": "nail_cross_blade",
+        "name": "Nail-Cross Blade",
+        "rarity": "uncommon",
+        "base_stats": { "atk": 6, "spr": 4 },
+        "quality_range": [2, 4],
+        "default_quality": 3,
+        "description": "Three iron nails bound in a cross shape, edges filed sharp. Crude. Desperate. Faithful.",
+        "found_in": "book-00"
+      },
+      {
+        "id": "jesuit_cross_blade",
+        "name": "Jesuit Cross-Blade",
+        "rarity": "rare",
+        "base_stats": { "atk": 8, "spr": 7, "holy_damage_pct": 8 },
+        "quality_range": [4, 6],
+        "default_quality": 5,
+        "description": "A processional cross refitted as a weapon. The vertical beam is sharpened. The Jesuit paradox — faith and action, prayer and sword.",
+        "found_in": "book-00",
+        "vocation_locked": "jesuit"
+      },
+      {
+        "id": "catacomb_cross",
+        "name": "Catacomb Cross",
+        "rarity": "uncommon",
+        "base_stats": { "atk": 7, "spr": 5 },
+        "quality_range": [2, 5],
+        "default_quality": 3,
+        "description": "Carved from catacomb stone. It was a grave marker before it was a weapon. The dead lend it weight.",
+        "found_in": "book-01"
+      },
+      {
+        "id": "petrine_cross",
+        "name": "Petrine Cross",
+        "rarity": "epic",
+        "base_stats": { "atk": 10, "spr": 10, "holy_damage_pct": 15 },
+        "quality_range": [5, 7],
+        "default_quality": 6,
+        "scaling": { "virtue": "faith", "formula": "spr + faith * 2.5" },
+        "description": "Shaped like Peter's inverted cross — the cross of humility, not blasphemy. It glows near papal relics.",
+        "found_in": "book-01",
+        "passive": "healing_received_plus_15pct"
+      },
+      {
+        "id": "nicene_blade",
+        "name": "Nicene Blade",
+        "rarity": "rare",
+        "base_stats": { "atk": 9, "spr": 8, "holy_damage_pct": 10 },
+        "quality_range": [4, 6],
+        "default_quality": 5,
+        "description": "Forged during the Council of Nicaea. 'Homoousios' is hammered into the steel. It burns Arian enemies.",
+        "found_in": "book-02",
+        "passive": "bonus_damage_vs_heretical_enemies_25pct"
+      },
+      {
+        "id": "dominican_truth_blade",
+        "name": "Dominican Truth Blade",
+        "rarity": "rare",
+        "base_stats": { "atk": 9, "spr": 9, "holy_damage_pct": 10 },
+        "quality_range": [4, 6],
+        "default_quality": 5,
+        "description": "'Veritas' on one side, John 8:32 on the other. Bonus damage against deception and spiritual enemies.",
+        "found_in": "book-02",
+        "vocation_locked": "dominican"
+      },
+      {
+        "id": "true_cross_relic_blade",
+        "name": "True Cross Relic Blade",
+        "rarity": "epic",
+        "base_stats": { "atk": 12, "spr": 12, "holy_damage_pct": 20 },
+        "quality_range": [5, 7],
+        "default_quality": 6,
+        "description": "A sliver of the True Cross, set into a blade of Damascus steel. Every strike echoes with Calvary. Demonic enemies recoil on contact.",
+        "found_in": "book-03",
+        "passive": "demon_recoil_stun_1_turn"
+      },
+      {
+        "id": "teutonic_cross_sword",
+        "name": "Teutonic Cross-Sword",
+        "rarity": "uncommon",
+        "base_stats": { "atk": 13, "spr": 4, "def": 3 },
+        "quality_range": [3, 5],
+        "default_quality": 4,
+        "description": "Heavy blade of the Teutonic Knights. The black cross on white. Discipline over devotion.",
+        "found_in": "book-04"
+      },
+      {
+        "id": "liegnitz_memorial_blade",
+        "name": "Liegnitz Memorial Blade",
+        "rarity": "rare",
+        "base_stats": { "atk": 14, "spr": 6, "hope": 1 },
+        "quality_range": [4, 6],
+        "default_quality": 5,
+        "description": "Forged from the melted swords of those who fell at Liegnitz. It carries their prayers and their defiance.",
+        "found_in": "book-04",
+        "passive": "atk_plus_2_when_outnumbered"
+      },
+      {
+        "id": "kakure_hidden_cross",
+        "name": "Kakure Hidden Cross",
+        "rarity": "rare",
+        "base_stats": { "atk": 8, "spr": 11, "holy_damage_pct": 12 },
+        "quality_range": [4, 6],
+        "default_quality": 5,
+        "description": "Looks like a simple farming tool. Unfolds into a cross-shaped blade. Two centuries of hidden faith folded into its hinges.",
+        "found_in": "book-05"
+      },
+      {
+        "id": "rosary_chain_blade",
+        "name": "Rosary Chain Blade",
+        "rarity": "rare",
+        "base_stats": { "atk": 10, "spr": 8 },
+        "quality_range": [4, 6],
+        "default_quality": 5,
+        "description": "A rosary whose beads are sharpened steel. Each decade draws blood and prayer simultaneously.",
+        "found_in": "book-06",
+        "passive": "mp_regen_1_per_3_attacks"
+      },
+      {
+        "id": "carmelite_scissors",
+        "name": "Carmelite Scissors",
+        "rarity": "uncommon",
+        "base_stats": { "atk": 7, "spr": 6 },
+        "quality_range": [3, 5],
+        "default_quality": 4,
+        "description": "Used to cut cloth for the convent's habits. The Prioress took her last vows with these in her pocket.",
+        "found_in": "book-07"
+      },
+      {
+        "id": "kolbes_cross",
+        "name": "Kolbe's Makeshift Cross",
+        "rarity": "epic",
+        "base_stats": { "atk": 6, "spr": 16, "charity": 2, "holy_damage_pct": 15 },
+        "quality_range": [5, 7],
+        "default_quality": 6,
+        "scaling": { "virtue": "charity", "formula": "spr + charity * 4" },
+        "description": "Two pieces of wood from the starvation bunker, bound with wire. He fashioned it in the dark so the dying men could see the cross one last time.",
+        "found_in": "book-08",
+        "passive": "allies_heal_10pct_when_usagi_takes_damage"
+      },
+      {
+        "id": "crux_invicta",
+        "name": "Crux Invicta",
+        "rarity": "legendary",
+        "base_stats": { "atk": 20, "spr": 25, "holy_damage_pct": 30, "def": 5 },
+        "quality_range": [7, 7],
+        "default_quality": 7,
+        "scaling": { "virtue": "faith", "formula": "atk + faith * 3, spr + total_virtue * 1" },
+        "description": "The Unconquered Cross. Forged from every cross-blade Usagi has ever carried — the nail-cross, the catacomb stone, the Petrine inversion, the Shimabara fold, the starvation wire. They are all here. Every prayer. Every wound. Every refusal to break. It does not glow. It burns.",
+        "found_in": "final_book",
+        "evolves_from": "hidden_cross_dagger",
+        "evolution_condition": "Carried a cross-blade in every book. Faith ≥ 10.",
+        "passive": "accuser_takes_double_damage_all_holy_attacks_AoE_splash"
+      }
+    ]
+  },
+
+  "improvised": {
+    "class_name": "Improvised",
+    "class_desc": "Sickles, hoes, chains, rocks. Whatever is at hand. David killed Goliath with a sling.",
+    "stat_focus": "Varied, creative passives",
+    "weapons": [
+      {
+        "id": "bare_fists_tool",
+        "name": "Bare Hands",
+        "rarity": "common",
+        "base_stats": { "atk": 1 },
+        "quality_range": [0, 0],
+        "default_quality": 0,
+        "description": "Nothing. You have nothing. God uses what He finds.",
+        "found_in": "all"
+      },
+      {
+        "id": "river_stone",
+        "name": "River Stone",
+        "rarity": "common",
+        "base_stats": { "atk": 3, "stun_chance": 10 },
+        "quality_range": [0, 2],
+        "default_quality": 1,
+        "description": "Smooth, heavy, fits the palm. David killed a giant with one. You're no David. But God doesn't need giants.",
+        "found_in": "book-00"
+      },
+      {
+        "id": "hoe_blade",
+        "name": "Sharpened Hoe",
+        "rarity": "common",
+        "base_stats": { "atk": 4, "def": 1 },
+        "quality_range": [1, 3],
+        "default_quality": 2,
+        "description": "A farming hoe with the edge filed down to something dangerous. Still smells like earth.",
+        "found_in": "book-00"
+      },
+      {
+        "id": "chain_flail",
+        "name": "Chain Flail",
+        "rarity": "uncommon",
+        "base_stats": { "atk": 7, "spd": -1 },
+        "quality_range": [2, 4],
+        "default_quality": 3,
+        "description": "Iron chain with a weighted end. Swings wide, hits hard, asks no questions about honor.",
+        "found_in": "book-00"
+      },
+      {
+        "id": "roof_tile",
+        "name": "Roof Tile",
+        "rarity": "common",
+        "base_stats": { "atk": 5, "spd": 1 },
+        "quality_range": [0, 2],
+        "default_quality": 1,
+        "description": "Ceramic roof tile, edge chipped sharp. Abimelech was killed by a woman dropping one from a tower. Never underestimate masonry.",
+        "found_in": "book-00"
+      },
+      {
+        "id": "iron_pot_lid",
+        "name": "Iron Pot Lid",
+        "rarity": "common",
+        "base_stats": { "atk": 2, "def": 5, "spd": -1 },
+        "quality_range": [1, 3],
+        "default_quality": 2,
+        "description": "Heavy iron lid from a rice pot. Better shield than weapon. Obaa-chan cooked with this for forty years.",
+        "found_in": "book-00"
+      },
+      {
+        "id": "anchor_hook",
+        "name": "Anchor Hook",
+        "rarity": "uncommon",
+        "base_stats": { "atk": 8, "spd": -2, "def": 2 },
+        "quality_range": [2, 4],
+        "default_quality": 3,
+        "description": "Bent iron from a fishing boat anchor. Heavy, brutal, and shaped like an early Christian symbol.",
+        "found_in": "book-01"
+      },
+      {
+        "id": "colosseum_chain",
+        "name": "Colosseum Chain",
+        "rarity": "uncommon",
+        "base_stats": { "atk": 9, "spd": 1 },
+        "quality_range": [3, 5],
+        "default_quality": 3,
+        "description": "Chain from the arena gates. It held lions. Now it holds your rage.",
+        "found_in": "book-01"
+      },
+      {
+        "id": "potters_wheel_disk",
+        "name": "Potter's Wheel Disk",
+        "rarity": "uncommon",
+        "base_stats": { "atk": 6, "spd": 3 },
+        "quality_range": [2, 4],
+        "default_quality": 3,
+        "description": "Heavy clay disk. Thrown like a discus, it breaks bones. 'Behold, like clay in the potter's hand, so are you in My hand.'",
+        "found_in": "book-02"
+      },
+      {
+        "id": "tent_stake",
+        "name": "Tent Stake",
+        "rarity": "common",
+        "base_stats": { "atk": 5, "spd": 2 },
+        "quality_range": [1, 3],
+        "default_quality": 2,
+        "description": "Iron tent peg from a Crusader camp. Jael killed Sisera with one. Improvised weapons have biblical precedent.",
+        "found_in": "book-03"
+      },
+      {
+        "id": "siege_rubble",
+        "name": "Siege Rubble",
+        "rarity": "uncommon",
+        "base_stats": { "atk": 10, "spd": -2 },
+        "quality_range": [2, 4],
+        "default_quality": 3,
+        "description": "A chunk of wall from Acre. The castle fell; this piece didn't. It carries the weight of a kingdom.",
+        "found_in": "book-03"
+      },
+      {
+        "id": "mongol_bola",
+        "name": "Mongol Bola",
+        "rarity": "uncommon",
+        "base_stats": { "atk": 7, "spd": 2 },
+        "quality_range": [2, 5],
+        "default_quality": 3,
+        "description": "Weighted stones on leather cords. Spin and release. The Mongols used these to tangle horses' legs.",
+        "found_in": "book-04",
+        "passive": "slow_chance_20pct"
+      },
+      {
+        "id": "shimabara_pitchfork",
+        "name": "Shimabara Pitchfork",
+        "rarity": "uncommon",
+        "base_stats": { "atk": 9, "def": 1 },
+        "quality_range": [2, 4],
+        "default_quality": 3,
+        "description": "A farmer's pitchfork from the Shimabara Rebellion. The peasants fought with these against samurai swords. Some of them won.",
+        "found_in": "book-05"
+      },
+      {
+        "id": "galley_anchor_chain",
+        "name": "Galley Anchor Chain",
+        "rarity": "rare",
+        "base_stats": { "atk": 12, "def": 3, "spd": -2 },
+        "quality_range": [3, 5],
+        "default_quality": 4,
+        "description": "Heavy chain that held a Holy League galley in place at Lepanto. Wrapped around the fist, it is devastating.",
+        "found_in": "book-06"
+      },
+      {
+        "id": "guillotine_bolt",
+        "name": "Guillotine Bolt",
+        "rarity": "rare",
+        "base_stats": { "atk": 11, "spd": 1, "spr": -1 },
+        "quality_range": [3, 5],
+        "default_quality": 4,
+        "description": "A bolt from the guillotine mechanism. You took it so the machine couldn't work. It didn't help. They had more bolts.",
+        "found_in": "book-07",
+        "moral_weight": "Carrying this is an act of defiance — and futility."
+      },
+      {
+        "id": "barbed_wire_wrap",
+        "name": "Barbed Wire Wrap",
+        "rarity": "uncommon",
+        "base_stats": { "atk": 8, "spd": 1 },
+        "quality_range": [2, 4],
+        "default_quality": 3,
+        "description": "Barbed wire from the camp fence, wrapped around a stick. Every swing draws your blood too. ATK scales with missing HP.",
+        "found_in": "book-08",
+        "passive": "damage_scales_with_missing_hp"
+      },
+      {
+        "id": "jawbone_of_samson",
+        "name": "Jawbone of Samson",
+        "rarity": "legendary",
+        "base_stats": { "atk": 30, "spd": 2 },
+        "quality_range": [7, 7],
+        "default_quality": 7,
+        "description": "Not literally. But something with the same energy — the most absurd, impossible, shouldn't-work-but-does weapon in the game. God's sense of humor made manifest. It hits like a building falling on someone.",
+        "found_in": "final_book",
+        "passive": "triple_damage_when_outnumbered_3_to_1_stun_guaranteed"
+      }
+    ]
+  },
+
+  "fist": {
+    "class_name": "Fist",
+    "class_desc": "No weapon. The body itself becomes prayer. The ascetic's path.",
+    "stat_focus": "SPD, scaling ATK, SPR synergy",
+    "weapons": [
+      {
+        "id": "bare_hands",
+        "name": "Bare Hands",
+        "rarity": "common",
+        "base_stats": { "atk": 1, "spd": 3 },
+        "quality_range": [0, 0],
+        "default_quality": 0,
+        "description": "Nothing but skin and bone and will. The ascetic's weapon.",
+        "found_in": "all",
+        "level_scaling": { "per_level": { "atk": 0.5 } }
+      },
+      {
+        "id": "cloth_hand_wraps",
+        "name": "Cloth Hand Wraps",
+        "rarity": "common",
+        "base_stats": { "atk": 3, "spd": 3 },
+        "quality_range": [1, 3],
+        "default_quality": 2,
+        "description": "Strips of cotton wound around the knuckles. Protects your hands, not your enemies.",
+        "found_in": "book-00"
+      },
+      {
+        "id": "leather_fighting_gloves",
+        "name": "Leather Fighting Gloves",
+        "rarity": "common",
+        "base_stats": { "atk": 5, "spd": 2, "def": 1 },
+        "quality_range": [2, 4],
+        "default_quality": 3,
+        "description": "Hardened leather over the knuckles. The grip is stiff. The impact is not.",
+        "found_in": "book-00"
+      },
+      {
+        "id": "iron_knuckles",
+        "name": "Iron Knuckles",
+        "rarity": "uncommon",
+        "base_stats": { "atk": 8, "spd": 1 },
+        "quality_range": [2, 5],
+        "default_quality": 3,
+        "description": "Cast iron wrapped around the fingers. Crude. Effective. The opposite of elegant.",
+        "found_in": "book-00"
+      },
+      {
+        "id": "prayer_bead_wraps",
+        "name": "Prayer Bead Wraps",
+        "rarity": "uncommon",
+        "base_stats": { "atk": 4, "spr": 5, "spd": 2 },
+        "quality_range": [3, 5],
+        "default_quality": 4,
+        "description": "Rosary beads woven into hand wraps. Every punch is a Hail Mary. Every block is an Our Father.",
+        "found_in": "book-00",
+        "passive": "mp_regen_1_per_3_attacks"
+      },
+      {
+        "id": "roman_caestus",
+        "name": "Roman Caestus",
+        "rarity": "uncommon",
+        "base_stats": { "atk": 9, "spd": 1, "def": 1 },
+        "quality_range": [3, 5],
+        "default_quality": 4,
+        "description": "Gladiator's boxing glove — leather straps reinforced with iron and lead. One punch breaks ribs.",
+        "found_in": "book-01"
+      },
+      {
+        "id": "desert_father_wraps",
+        "name": "Desert Father's Wraps",
+        "rarity": "rare",
+        "base_stats": { "atk": 5, "spr": 8, "spd": 3 },
+        "quality_range": [4, 6],
+        "default_quality": 5,
+        "scaling": { "virtue": "temperance", "formula": "spr_as_atk = spr * 0.5" },
+        "description": "Linen wraps blessed by Anthony the Great. They have been prayed in for decades. The fists they cover deal holy damage.",
+        "found_in": "book-02",
+        "passive": "unarmed_holy_damage"
+      },
+      {
+        "id": "monks_discipline_bands",
+        "name": "Monk's Discipline Bands",
+        "rarity": "uncommon",
+        "base_stats": { "atk": 6, "def": 3, "spr": 4 },
+        "quality_range": [3, 5],
+        "default_quality": 4,
+        "description": "Iron bands worn tight around the wrists as penance. They hurt the wearer more than the enemy. That's the point.",
+        "found_in": "book-02"
+      },
+      {
+        "id": "gauntlet_of_godfrey",
+        "name": "Gauntlet of Godfrey",
+        "rarity": "rare",
+        "base_stats": { "atk": 11, "def": 4, "spd": -1 },
+        "quality_range": [4, 6],
+        "default_quality": 5,
+        "description": "Chain mail gauntlet from the Crusader commander. It shook the hand of both saint and sinner.",
+        "found_in": "book-03"
+      },
+      {
+        "id": "mongol_horsehide_gloves",
+        "name": "Mongol Horsehide Gloves",
+        "rarity": "uncommon",
+        "base_stats": { "atk": 8, "spd": 3 },
+        "quality_range": [3, 5],
+        "default_quality": 4,
+        "description": "Thick horsehide, bone-reinforced. Mongol warriors wrestled in these. Fast, brutal, no wasted motion.",
+        "found_in": "book-04"
+      },
+      {
+        "id": "shimabara_rebel_wraps",
+        "name": "Shimabara Rebel Wraps",
+        "rarity": "uncommon",
+        "base_stats": { "atk": 7, "spd": 2, "spr": 3 },
+        "quality_range": [3, 5],
+        "default_quality": 4,
+        "description": "Cloth torn from a rebel's banner, wrapped around fists that refused to bow. +10% ATK when HP < 50%.",
+        "found_in": "book-05",
+        "passive": "atk_10pct_below_50hp"
+      },
+      {
+        "id": "galley_slave_chains",
+        "name": "Galley Slave Chains",
+        "rarity": "rare",
+        "base_stats": { "atk": 10, "def": 2, "spd": 1 },
+        "quality_range": [3, 6],
+        "default_quality": 4,
+        "description": "Broken chains still clasped to wrist-irons. The slave is free. The chains remain. They remember every stroke of the oar.",
+        "found_in": "book-06",
+        "passive": "cannot_be_immobilized"
+      },
+      {
+        "id": "carmelite_discipline",
+        "name": "Carmelite Discipline",
+        "rarity": "rare",
+        "base_stats": { "atk": 4, "spr": 12, "spd": 2 },
+        "quality_range": [4, 6],
+        "default_quality": 5,
+        "scaling": { "virtue": "temperance", "formula": "spr + temperance * 3" },
+        "description": "The knotted cord of self-mortification. Each blow dealt to an enemy also deals 5% to Usagi. But the SPR scaling is immense.",
+        "found_in": "book-07",
+        "passive": "self_damage_5pct_spr_scaling"
+      },
+      {
+        "id": "camp_survivor_fists",
+        "name": "Survivor's Fists",
+        "rarity": "rare",
+        "base_stats": { "atk": 9, "spd": 4, "spr": 5 },
+        "quality_range": [4, 6],
+        "default_quality": 5,
+        "description": "No wraps. No gloves. Just hands that have dug graves, carried the dying, and prayed over the dead. They are stronger than any weapon.",
+        "found_in": "book-08",
+        "passive": "atk_scales_with_battles_survived"
+      },
+      {
+        "id": "hands_of_the_saint",
+        "name": "Hands of the Saint",
+        "rarity": "legendary",
+        "base_stats": { "atk": 20, "spr": 25, "spd": 5 },
+        "quality_range": [7, 7],
+        "default_quality": 7,
+        "scaling": { "virtue": "faith", "formula": "atk = level * 0.8 + total_virtue * 2" },
+        "description": "Not a weapon. Usagi's own hands, transformed by a lifetime of prayer. They glow faintly. They heal what they touch and break what they strike. The stigmata have opened.",
+        "found_in": "final_book",
+        "passive": "all_attacks_heal_10pct_dealt_as_holy_damage_stigmata_counter"
+      }
+    ]
+  },
+
+  "spear": {
+    "class_name": "Spear",
+    "class_desc": "The soldier's weapon. Reach, discipline, formation.",
+    "stat_focus": "ATK, DEF, reach mechanics",
+    "weapons": [
+      {
+        "id": "sharpened_stick",
+        "name": "Sharpened Stick",
+        "rarity": "common",
+        "base_stats": { "atk": 2, "spd": 1 },
+        "quality_range": [0, 1],
+        "default_quality": 0,
+        "description": "A pointed stick. The first weapon ever made. You are continuing a proud tradition.",
+        "found_in": "all"
+      },
+      {
+        "id": "bamboo_spear",
+        "name": "Bamboo Spear",
+        "rarity": "common",
+        "base_stats": { "atk": 5, "spd": 1, "def": 1 },
+        "quality_range": [1, 3],
+        "default_quality": 2,
+        "description": "Hardened bamboo with a fire-sharpened tip. The weapon of peasant rebellions across Asia.",
+        "found_in": "book-00"
+      },
+      {
+        "id": "ashigaru_yari",
+        "name": "Ashigaru Yari",
+        "rarity": "uncommon",
+        "base_stats": { "atk": 9, "spd": 0, "def": 2 },
+        "quality_range": [2, 5],
+        "default_quality": 3,
+        "description": "Standard-issue spear for foot soldiers. Three meters of ash wood and an iron point. It does what it's told.",
+        "found_in": "book-00"
+      },
+      {
+        "id": "fishing_harpoon",
+        "name": "Fishing Harpoon",
+        "rarity": "common",
+        "base_stats": { "atk": 6, "spd": 2 },
+        "quality_range": [1, 4],
+        "default_quality": 2,
+        "description": "Barbed iron on a wooden shaft. Made for tuna, used for survival. The barbs make wounds that don't close.",
+        "found_in": "book-00",
+        "passive": "bleed_chance_15pct"
+      },
+      {
+        "id": "roman_pilum",
+        "name": "Roman Pilum",
+        "rarity": "uncommon",
+        "base_stats": { "atk": 10, "spd": -1 },
+        "quality_range": [3, 5],
+        "default_quality": 4,
+        "description": "The javelin that conquered the Mediterranean. Thrown, it bends on impact so it can't be thrown back. Held, it's a passable spear.",
+        "found_in": "book-01",
+        "passive": "throwable_1_5x_damage_one_use"
+      },
+      {
+        "id": "praetorian_spear",
+        "name": "Praetorian Spear",
+        "rarity": "rare",
+        "base_stats": { "atk": 13, "def": 3, "spd": 0 },
+        "quality_range": [4, 6],
+        "default_quality": 5,
+        "description": "The emperor's personal guard carried these. Gold-banded, perfectly balanced. It has tasted imperial blood.",
+        "found_in": "book-01"
+      },
+      {
+        "id": "desert_sarissa",
+        "name": "Desert Sarissa",
+        "rarity": "uncommon",
+        "base_stats": { "atk": 11, "spd": -2, "def": 4 },
+        "quality_range": [3, 5],
+        "default_quality": 4,
+        "description": "Long pike from the Egyptian garrison. Unwieldy alone, devastating in formation.",
+        "found_in": "book-02"
+      },
+      {
+        "id": "crusader_lance",
+        "name": "Crusader Lance",
+        "rarity": "rare",
+        "base_stats": { "atk": 16, "spd": -1, "def": 2 },
+        "quality_range": [4, 6],
+        "default_quality": 5,
+        "description": "Cavalry lance with a cruciform guard. Designed for the charge — one impact, one prayer, one life.",
+        "found_in": "book-03",
+        "passive": "first_strike_2x_damage_once_per_battle"
+      },
+      {
+        "id": "holy_lance_replica",
+        "name": "Holy Lance (Replica)",
+        "rarity": "epic",
+        "base_stats": { "atk": 14, "spr": 8, "holy_damage_pct": 12, "def": 2 },
+        "quality_range": [5, 7],
+        "default_quality": 6,
+        "description": "Modeled after the Lance of Longinus. Not the original — that was lost centuries ago. But faith doesn't care about provenance.",
+        "found_in": "book-03",
+        "scaling": { "virtue": "faith", "formula": "spr + faith * 2" }
+      },
+      {
+        "id": "mongol_lance",
+        "name": "Mongol Cavalry Lance",
+        "rarity": "uncommon",
+        "base_stats": { "atk": 13, "spd": 2 },
+        "quality_range": [3, 5],
+        "default_quality": 4,
+        "description": "Light lance from a Mongol rider. Designed for speed, not formation. Strike and withdraw.",
+        "found_in": "book-04"
+      },
+      {
+        "id": "polish_winged_lance",
+        "name": "Polish Winged Hussar Lance",
+        "rarity": "rare",
+        "base_stats": { "atk": 18, "spd": 1, "def": 1 },
+        "quality_range": [4, 6],
+        "default_quality": 5,
+        "description": "The weapon of Poland's legendary cavalry. The wooden wings on the hussar's back whistled in the charge — psychological warfare. The lance itself is pure physics.",
+        "found_in": "book-04",
+        "passive": "charge_damage_bonus_50pct"
+      },
+      {
+        "id": "shimabara_bamboo_pike",
+        "name": "Shimabara Bamboo Pike",
+        "rarity": "uncommon",
+        "base_stats": { "atk": 8, "def": 2, "spr": 2 },
+        "quality_range": [2, 4],
+        "default_quality": 3,
+        "description": "The rebels at Shimabara faced samurai with bamboo. They held the castle for months. Faith is its own fortification.",
+        "found_in": "book-05"
+      },
+      {
+        "id": "naval_boarding_pike",
+        "name": "Naval Boarding Pike",
+        "rarity": "uncommon",
+        "base_stats": { "atk": 12, "spd": 0, "def": 3 },
+        "quality_range": [3, 5],
+        "default_quality": 4,
+        "description": "Short, heavy pike for boarding actions at Lepanto. Designed for the cramped quarters of a galley deck.",
+        "found_in": "book-06"
+      },
+      {
+        "id": "revolutionary_pike",
+        "name": "Revolutionary Pike",
+        "rarity": "uncommon",
+        "base_stats": { "atk": 11, "spd": 1 },
+        "quality_range": [3, 5],
+        "default_quality": 4,
+        "description": "The mob's weapon of choice. Crude iron on rough wood. It carried heads through the streets of Paris.",
+        "found_in": "book-07",
+        "moral_weight": "Carrying this makes certain NPCs hostile."
+      },
+      {
+        "id": "camp_fence_stake",
+        "name": "Camp Fence Stake",
+        "rarity": "uncommon",
+        "base_stats": { "atk": 7, "spd": 2 },
+        "quality_range": [1, 4],
+        "default_quality": 2,
+        "description": "Wooden stake pulled from the camp fence. It held barbed wire. Now it holds defiance.",
+        "found_in": "book-08"
+      },
+      {
+        "id": "spear_of_destiny",
+        "name": "Spear of Destiny",
+        "rarity": "legendary",
+        "base_stats": { "atk": 22, "spr": 20, "def": 5, "holy_damage_pct": 25 },
+        "quality_range": [7, 7],
+        "default_quality": 7,
+        "scaling": { "virtue": "faith", "formula": "atk + faith * 3, spr + hope * 3" },
+        "description": "The spear that pierced Christ's side. From the wound flowed blood and water — death and life in one thrust. It is the most dangerous and the most sacred weapon in existence. It does not obey the wielder. The wielder obeys it.",
+        "found_in": "final_book",
+        "passive": "kills_cannot_resurrect_heals_30pct_party_on_kill"
+      }
+    ]
+  },
+
+  "bow": {
+    "class_name": "Bow",
+    "class_desc": "The watchman's path. Distance and patience. A single arrow at the right moment.",
+    "stat_focus": "ATK, SPD, critical chance",
+    "weapons": [
+      {
+        "id": "makeshift_sling",
+        "name": "Makeshift Sling",
+        "rarity": "common",
+        "base_stats": { "atk": 3, "spd": 2 },
+        "quality_range": [0, 2],
+        "default_quality": 1,
+        "description": "A strip of leather and two cords. It throws stones. It's how David did it.",
+        "found_in": "book-00"
+      },
+      {
+        "id": "hunting_shortbow",
+        "name": "Hunting Shortbow",
+        "rarity": "common",
+        "base_stats": { "atk": 5, "spd": 2 },
+        "quality_range": [1, 3],
+        "default_quality": 2,
+        "description": "Small bamboo bow for hunting birds and rabbits. Usagi tries not to think about the irony.",
+        "found_in": "book-00"
+      },
+      {
+        "id": "yumi_halfbow",
+        "name": "Yumi Half-Bow",
+        "rarity": "uncommon",
+        "base_stats": { "atk": 8, "spd": 1 },
+        "quality_range": [2, 4],
+        "default_quality": 3,
+        "description": "Traditional Japanese asymmetric bow, cut down for foot use. The grip sits below center — physics, not aesthetics.",
+        "found_in": "book-00"
+      },
+      {
+        "id": "ashigaru_longbow",
+        "name": "Ashigaru Longbow",
+        "rarity": "uncommon",
+        "base_stats": { "atk": 10, "spd": 0 },
+        "quality_range": [2, 5],
+        "default_quality": 3,
+        "description": "Full-sized yumi from a soldier's kit. Powerful but slow to draw. Volley fire, not precision.",
+        "found_in": "book-00"
+      },
+      {
+        "id": "roman_composite_bow",
+        "name": "Roman Composite Bow",
+        "rarity": "uncommon",
+        "base_stats": { "atk": 9, "spd": 2 },
+        "quality_range": [3, 5],
+        "default_quality": 4,
+        "description": "Horn, wood, and sinew layered together. The technology of empires compressed into a curve.",
+        "found_in": "book-01"
+      },
+      {
+        "id": "colosseum_crossbow",
+        "name": "Arena Crossbow",
+        "rarity": "rare",
+        "base_stats": { "atk": 14, "spd": -2, "crit": 10 },
+        "quality_range": [3, 5],
+        "default_quality": 4,
+        "description": "Mechanical crossbow from the arena. Slow to reload but devastating. The crowd loved it.",
+        "found_in": "book-01",
+        "passive": "crit_bonus_10"
+      },
+      {
+        "id": "egyptian_recurve",
+        "name": "Egyptian Recurve Bow",
+        "rarity": "uncommon",
+        "base_stats": { "atk": 11, "spd": 1 },
+        "quality_range": [3, 5],
+        "default_quality": 4,
+        "description": "Desert-crafted recurve. The dry heat keeps the laminations tight. Accurate at distance.",
+        "found_in": "book-02"
+      },
+      {
+        "id": "saracen_horse_bow",
+        "name": "Saracen Horse Bow",
+        "rarity": "uncommon",
+        "base_stats": { "atk": 10, "spd": 3 },
+        "quality_range": [3, 5],
+        "default_quality": 4,
+        "description": "Short, powerful bow designed for mounted archery. Fast draw, fast flight, fast kill.",
+        "found_in": "book-03"
+      },
+      {
+        "id": "english_longbow",
+        "name": "English Longbow",
+        "rarity": "rare",
+        "base_stats": { "atk": 16, "spd": -1 },
+        "quality_range": [4, 6],
+        "default_quality": 5,
+        "description": "Six feet of yew. The weapon that won Agincourt. A lifetime to master. One second to kill.",
+        "found_in": "book-03",
+        "passive": "armor_pierce_20pct"
+      },
+      {
+        "id": "mongol_composite",
+        "name": "Mongol Composite Bow",
+        "rarity": "rare",
+        "base_stats": { "atk": 14, "spd": 3 },
+        "quality_range": [4, 6],
+        "default_quality": 5,
+        "description": "The weapon that conquered the world. Horn, birch, and ibex sinew. Fires from horseback at full gallop.",
+        "found_in": "book-04",
+        "passive": "double_attack_if_spd_highest"
+      },
+      {
+        "id": "kakure_bamboo_bow",
+        "name": "Kakure Bamboo Bow",
+        "rarity": "uncommon",
+        "base_stats": { "atk": 9, "spd": 2, "spr": 3 },
+        "quality_range": [3, 5],
+        "default_quality": 4,
+        "description": "Bamboo bow with Christian symbols carved into the grip. The arrows whisper the Orasho as they fly.",
+        "found_in": "book-05"
+      },
+      {
+        "id": "lepanto_naval_crossbow",
+        "name": "Lepanto Naval Crossbow",
+        "rarity": "rare",
+        "base_stats": { "atk": 15, "spd": -1, "crit": 8 },
+        "quality_range": [4, 6],
+        "default_quality": 5,
+        "description": "Heavy crossbow used on the galley decks. It punched through Ottoman shields at fifty paces.",
+        "found_in": "book-06"
+      },
+      {
+        "id": "revolutionary_musket_bow",
+        "name": "Converted Musket Bow",
+        "rarity": "uncommon",
+        "base_stats": { "atk": 12, "spd": 0, "crit": 5 },
+        "quality_range": [3, 5],
+        "default_quality": 4,
+        "description": "A musket stock rigged with a bow mechanism after the powder ran out. Improvisation meets desperation.",
+        "found_in": "book-07"
+      },
+      {
+        "id": "resistance_slingshot",
+        "name": "Resistance Slingshot",
+        "rarity": "uncommon",
+        "base_stats": { "atk": 7, "spd": 4 },
+        "quality_range": [2, 4],
+        "default_quality": 3,
+        "description": "Surgical tubing and a Y-shaped stick. The resistance used these for silent attacks. David's technology, refined.",
+        "found_in": "book-08"
+      },
+      {
+        "id": "bow_of_the_watchman",
+        "name": "Bow of the Watchman",
+        "rarity": "legendary",
+        "base_stats": { "atk": 24, "spd": 4, "spr": 8, "crit": 15 },
+        "quality_range": [7, 7],
+        "default_quality": 7,
+        "scaling": { "virtue": "prudence", "formula": "atk + prudence * 3 + justice * 2" },
+        "description": "An arrow of light that finds its mark across any distance, through any deception, past any defense. The bow is not a physical object — it is the shape Usagi's hands make when he draws back a prayer and releases it.",
+        "found_in": "final_book",
+        "passive": "cannot_miss_reveals_hidden_tracks_across_dimensions"
+      }
+    ]
+  }
+}
