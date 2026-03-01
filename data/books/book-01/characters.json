@@ -1,0 +1,101 @@
+{
+  "book": "book-01",
+  "characters": [
+    {
+      "id": "priscilla",
+      "name": "Priscilla",
+      "species": "mouse",
+      "role": "guide",
+      "description": "A Roman Christian widow who leads the catacomb community. Practical, courageous, exhausted.",
+      "personality": "Protective, shrewd, deeply faithful but worn thin by years of hiding.",
+      "arc": "Learns to trust Usagi and accept help after years of carrying everything alone.",
+      "acts": [1, 2, 3, 4],
+      "companion": true,
+      "stats": {"hp": 28, "mp": 15, "atk": 3, "def": 4, "spd": 5, "spr": 10},
+      "abilities": ["heal_minor", "catacomb_navigation"],
+      "palette": {"body": "#d2b48c", "eye": "#4a3520", "clothes": "#5c4033"}
+    },
+    {
+      "id": "marcellus",
+      "name": "Marcellus",
+      "species": "bull",
+      "role": "faction_leader_militant",
+      "description": "A former Roman soldier converted to Christianity. Burns with righteous fury. Wants to fight back.",
+      "personality": "Passionate, impatient, genuinely loves the community but his anger blinds him.",
+      "arc": "Must learn that there is strength in witness, not only in warfare.",
+      "acts": [1, 2, 3],
+      "companion": false,
+      "trader": true,
+      "palette": {"body": "#8b4513", "eye": "#1a0a00", "clothes": "#5a3a2a"}
+    },
+    {
+      "id": "demas",
+      "name": "Demas",
+      "species": "fox",
+      "role": "heretic_teacher",
+      "description": "A charismatic Gnostic teacher. Quotes scripture fluently. His doctrine is poison wrapped in silk.",
+      "personality": "Eloquent, seductive, genuinely believes his own lies. Not malicious — deceived.",
+      "arc": "Either repents when confronted with truth, or falls deeper into self-deception.",
+      "acts": [1, 2],
+      "theological_error": "gnosticism",
+      "palette": {"body": "#c97a4a", "eye": "#3a5a3a", "clothes": "#6a4a7a"}
+    },
+    {
+      "id": "peter",
+      "name": "Peter",
+      "species": "bear",
+      "role": "apostle",
+      "description": "Simon Peter. The Rock. Old, scarred, weary — but unbreakable. He has denied Christ once and will never do so again.",
+      "personality": "Gruff tenderness. Speaks in simple words that cut to the heart.",
+      "acts": [2, 3, 4],
+      "unique": true,
+      "palette": {"body": "#8b7355", "eye": "#2a1a0a", "clothes": "#f5f0e8"}
+    },
+    {
+      "id": "paul",
+      "name": "Paul",
+      "species": "hawk",
+      "role": "apostle",
+      "description": "The Apostle to the Gentiles. Sharp mind, sharper tongue. Under house arrest but still writing letters.",
+      "personality": "Intellectual fire. Impatient with foolishness. Deeply compassionate beneath the edge.",
+      "acts": [2],
+      "unique": true,
+      "palette": {"body": "#6a5a4a", "eye": "#1a1a1a", "clothes": "#4a3a2a"}
+    },
+    {
+      "id": "senator_petronius",
+      "name": "Senator Petronius",
+      "species": "serpent",
+      "role": "accuser_disguise",
+      "description": "A cultured Roman senator who offers to help the Christians — for a price. He is the Accuser.",
+      "personality": "Reasonable. Sympathetic. Always has a compromise that costs only a little faith.",
+      "acts": [2, 3, 4],
+      "is_accuser": true,
+      "accuser_dialogue": [
+        "I only want what is best for your people. Why make this harder than it must be?",
+        "One pinch of incense on the altar. That is all Nero asks. Is your God truly so fragile?",
+        "Your Peter — he denied Christ three times. And he was forgiven. Surely one small compromise...",
+        "The arena will not be kind. I can stop this. All you must do is speak the words."
+      ],
+      "palette": {"body": "#3a4a3a", "eye": "#cc3333", "clothes": "#c9a959"}
+    },
+    {
+      "id": "felix",
+      "name": "Felix",
+      "species": "rat",
+      "role": "catacomb_guide",
+      "description": "A street orphan who knows every tunnel in the catacombs. Quick, clever, terrified of soldiers.",
+      "acts": [1, 2, 3],
+      "palette": {"body": "#8a8078", "eye": "#2a2a2a", "clothes": "#5c4d3c"}
+    },
+    {
+      "id": "julia",
+      "name": "Julia",
+      "species": "dove",
+      "role": "martyr",
+      "description": "A young Christian woman preparing for martyrdom with serene courage. She sings hymns in the dark.",
+      "acts": [2, 3],
+      "palette": {"body": "#f5f0e8", "eye": "#4a5a7a", "clothes": "#e8dcc8"}
+    }
+  ]
+}
