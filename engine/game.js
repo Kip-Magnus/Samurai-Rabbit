@@ -141,7 +141,21 @@ class DataLoader {
     // Index by ID for fast lookup
     const indexById = (arr) => {
       const map = {};
-      if (arr) for (const item of arr) map[item.id] = item;
+      if (!arr) return map;
+      if (Array.isArray(arr)) {
+        for (const item of arr) map[item.id] = item;
+      } else if (typeof arr === 'object') {
+        // Handle category-based objects like items.json
+        for (const key of Object.keys(arr)) {
+          if (key.startsWith('_')) continue;
+          const val = arr[key];
+          if (Array.isArray(val)) {
+            for (const item of val) {
+              if (item && item.id) map[item.id] = item;
+            }
+          }
+        }
+      }
       return map;
     };
 
