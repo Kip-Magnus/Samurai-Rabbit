@@ -1,0 +1,77 @@
+[
+  {
+    "id": "obaas_cross",
+    "name": "Obaa-chan's Cross",
+    "type": "key_item",
+    "rarity": "unique",
+    "description": "A small wooden cross carved from camphor wood — from a beam of the old Nagasaki church. It grows warm near hidden Christian artifacts.",
+    "canDrop": false,
+    "canSell": false,
+    "effect": { "passive": "faith_skill_boost_5pct", "detect": "hidden_christian_artifacts" },
+    "scaling": { "virtue": "faith", "formula": "boost increases with faith level" }
+  },
+  {
+    "id": "pilgrims_blade",
+    "name": "Blade of the Pilgrim",
+    "type": "weapon_katana",
+    "rarity": "unique",
+    "baseStats": { "atk": 5, "spd": 2, "crit": 3 },
+    "description": "A simple, unadorned blade given by The Messenger. Its story is not yet written.",
+    "canDrop": false,
+    "canSell": false,
+    "scaling": { "virtue": "faith", "formula": "atk + (faith * 1.5)" }
+  },
+  {
+    "id": "breviary_page",
+    "name": "Breviary Page",
+    "type": "lore_item",
+    "rarity": "rare",
+    "description": "A damp page from Father Tomas's breviary. Written in Portuguese: 'God of my fathers, I am leaving these people without a shepherd. Send them another. Send them a saint.'",
+    "canDrop": false,
+    "canSell": false,
+    "effect": null
+  },
+  {
+    "id": "mikos_flower",
+    "name": "Miko's Flower",
+    "type": "key_item",
+    "rarity": "common",
+    "description": "A small purple wildflower with a bent stem, given by a shy little girl. It seems like nothing. Keep it anyway.",
+    "canDrop": false,
+    "canSell": false,
+    "effect": null,
+    "futurePayoff": "book-05"
+  },
+  {
+    "id": "rice_cake",
+    "name": "Rice Cake",
+    "type": "consumable",
+    "rarity": "common",
+    "description": "Simple pressed rice. Restores a small amount of strength.",
+    "canDrop": true,
+    "canSell": true,
+    "sellPrice": 5,
+    "effect": { "heal": 15 }
+  },
+  {
+    "id": "herbal_poultice",
+    "name": "Herbal Poultice",
+    "type": "consumable",
+    "rarity": "common",
+    "description": "Medicinal herbs from Obaa-chan's garden, bound in a cloth. Eases pain.",
+    "canDrop": true,
+    "canSell": true,
+    "sellPrice": 12,
+    "effect": { "heal": 30 }
+  },
+  {
+    "id": "holy_water_vial",
+    "name": "Holy Water",
+    "type": "consumable",
+    "rarity": "uncommon",
+    "description": "A small vial of blessed water from Father Tomas. Purifies and restores spirit.",
+    "canDrop": true,
+    "canSell": false,
+    "effect": { "healMp": 15, "cureStatus": ["despair"] }
+  }
+]
