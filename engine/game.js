@@ -437,10 +437,10 @@ class BootScene extends Phaser.Scene {
           environmental: { furColor: '#8b2500', eyeColor: '#ff4400', outfit: { palette: ['#6b1800', '#ff6633', '#cc3300'] } },
           spiritual:     { furColor: '#8888aa', eyeColor: '#ffffff', outfit: { palette: ['#555577', '#6666aa', '#4444aa'] } },
         };
+        let enemySpriteCount = 0;
         for (const enemy of bookData.enemies) {
           if (!enemy.id) continue;
           const species = enemy.species || 'beast';
-          // Map to known template species
           const templateSpecies = (species === 'beast' || species === 'environmental' || species === 'spiritual')
             ? 'rabbit' : species;
           const defaultAppear = enemyAppearances[species] || enemyAppearances.beast;
@@ -452,10 +452,12 @@ class BootScene extends Phaser.Scene {
           };
           try {
             spriteFactory.generateCharacterSprites(enemySchema, eraPalette);
+            enemySpriteCount++;
           } catch (e) {
             console.warn(`Failed to generate sprite for enemy: ${enemy.id}`, e);
           }
         }
+        console.log(`Generated sprites for ${enemySpriteCount}/${bookData.enemies.length} enemies`);
       }
 
       // Generate era tileset
@@ -2046,11 +2048,40 @@ class BattleScene extends Phaser.Scene {
 
       const textureKey = spriteFactory.getBattleKey(enemy.id);
       let sprite;
-      if (this.textures.exists(textureKey)) {
+      const texExists = this.textures.exists(textureKey);
+      console.log(`Battle sprite lookup: ${enemy.id} -> ${textureKey} exists=${texExists}`);
+      if (texExists) {
         sprite = this.add.sprite(ex, ey, textureKey, 0).setScale(SPRITE_SCALE).setDepth(50);
         sprite.setFlipX(true); // Enemies face right toward player
       } else {
-        sprite = this.add.rectangle(ex, ey, 32 * SPRITE_SCALE, 48 * SPRITE_SCALE, 0x8b0000).setDepth(50);
+        // Generate fallback battle sprite on-the-fly
+        try {
+          const enemyAppearances = {
+            beast:         { furColor: '#8b6b4a', eyeColor: '#2a1a0a', outfit: { palette: ['#6b4b2a', '#4a3018', '#3a2010'] } },
+            fox:           { furColor: '#c47a3a', eyeColor: '#cc8833', outfit: { palette: ['#8b4513', '#6b3010', '#4a2008'] } },
+            wolf:          { furColor: '#5a5a62', eyeColor: '#aa3333', outfit: { palette: ['#3a3a42', '#2a2a32', '#1a1a22'] } },
+            environmental: { furColor: '#8b2500', eyeColor: '#ff4400', outfit: { palette: ['#6b1800', '#ff6633', '#cc3300'] } },
+            spiritual:     { furColor: '#8888aa', eyeColor: '#ffffff', outfit: { palette: ['#555577', '#6666aa', '#4444aa'] } },
+          };
+          const origEnemy = state.bookData.enemiesById[enemy.id];
+          const species = origEnemy?.species || 'beast';
+          const templateSpecies = (species === 'beast' || species === 'environmental' || species === 'spiritual')
+            ? 'rabbit' : (species === 'fox' || species === 'wolf' ? species : 'rabbit');
+          const mappedSpecies = species === 'spiritual' ? 'celestial' : templateSpecies;
+          const appear = enemyAppearances[species] || enemyAppearances.beast;
+          const schema = { id: enemy.id, name: enemy.name, species: mappedSpecies, appearance: appear };
+          spriteFactory.generateCharacterSprites(schema, palette);
+          console.log(`On-the-fly generation for ${enemy.id} succeeded, exists now: ${this.textures.exists(textureKey)}`);
+          if (this.textures.exists(textureKey)) {
+            sprite = this.add.sprite(ex, ey, textureKey, 0).setScale(SPRITE_SCALE).setDepth(50);
+            sprite.setFlipX(true);
+          } else {
+            sprite = this.add.rectangle(ex, ey, 32 * SPRITE_SCALE, 48 * SPRITE_SCALE, 0x8b0000).setDepth(50);
+          }
+        } catch (e) {
+          console.warn(`Fallback sprite gen failed for ${enemy.id}:`, e);
+          sprite = this.add.rectangle(ex, ey, 32 * SPRITE_SCALE, 48 * SPRITE_SCALE, 0x8b0000).setDepth(50);
+        }
       }
 
       // Enemy name
