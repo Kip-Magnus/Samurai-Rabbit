@@ -659,12 +659,10 @@ class WorldScene extends Phaser.Scene {
     const gfx = this.add.graphics();
     gfx.setDepth(-50);
 
-    // Generate ground tiles procedurally from palette
     const groundRamp = buildRamp(palette.dominant || '#4a7c59');
     const pathColor = palette.path || '#8b7355';
     const darkGround = palette.shadow || '#2a3a2e';
 
-    // Seeded random for consistent terrain
     const seededRand = (x, y, s) => {
       const n = Math.sin(x * 127.1 + y * 311.7 + s * 73.5) * 43758.5453;
       return n - Math.floor(n);
@@ -705,56 +703,76 @@ class WorldScene extends Phaser.Scene {
 
         gfx.fillRect(x, y, scaledTile, scaledTile);
 
-        // Grass blades on non-path tiles
-        if (!isPath && !isEdge && seed > 0.6) {
+        // Grass blades
+        if (!isPath && !isEdge && seed > 0.5) {
           const bladeRGB = hexToRGB(groundRamp[0]);
           gfx.fillStyle(Phaser.Display.Color.GetColor(bladeRGB.r, bladeRGB.g, bladeRGB.b), 0.5);
-          for (let b = 0; b < 2; b++) {
+          for (let b = 0; b < 3; b++) {
             const bx = x + seededRand(tx, ty, 3 + b) * (scaledTile - 4) + 2;
             const by = y + seededRand(tx, ty, 5 + b) * (scaledTile - 8) + 2;
             gfx.fillRect(bx, by, SPRITE_SCALE, 4 * SPRITE_SCALE);
           }
         }
+      }
+    }
 
-        // Trees (scattered on non-path, non-edge tiles)
-        if (!isPath && !isEdge && seed > 0.82 && tx > 1 && ty > 1 && tx < mapW - 2 && ty < mapH - 2) {
-          this._drawTree(gfx, x + scaledTile / 2, y + scaledTile / 2, palette, seed);
+    // Trees as separate sprites at higher depth so they render on top
+    const treeGfx = this.add.graphics();
+    treeGfx.setDepth(5);
+
+    for (let ty = 2; ty < mapH - 2; ty++) {
+      for (let tx = 2; tx < mapW - 2; tx++) {
+        const seed = seededRand(tx, ty, 1);
+        const isPathH = (ty >= Math.floor(mapH / 2) - 1 && ty <= Math.floor(mapH / 2));
+        const isPathV = (tx >= Math.floor(mapW / 2) - 1 && tx <= Math.floor(mapW / 2));
+        if (isPathH || isPathV) continue;
+
+        const cx = tx * scaledTile + scaledTile / 2;
+        const cy = ty * scaledTile + scaledTile / 2;
+        const s = SPRITE_SCALE;
+
+        // Trees (~20% of tiles)
+        if (seed > 0.80) {
+          // Trunk
+          treeGfx.fillStyle(Phaser.Display.Color.GetColor(90, 60, 30));
+          treeGfx.fillRect(cx - 2 * s, cy + 2 * s, 4 * s, 8 * s);
+          // Shadow
+          treeGfx.fillStyle(Phaser.Display.Color.GetColor(30, 40, 20), 0.4);
+          treeGfx.fillRect(cx - 6 * s, cy + 8 * s, 12 * s, 3 * s);
+          // Canopy (layered rectangles for pixel art look)
+          const leafRGB = hexToRGB(palette.dominant || '#4a7c59');
+          const br = Math.floor(seed * 25);
+          treeGfx.fillStyle(Phaser.Display.Color.GetColor(leafRGB.r + br, leafRGB.g + br + 10, leafRGB.b + br));
+          treeGfx.fillRect(cx - 7 * s, cy - 4 * s, 14 * s, 10 * s);
+          treeGfx.fillRect(cx - 5 * s, cy - 7 * s, 10 * s, 4 * s);
+          // Highlight
+          treeGfx.fillStyle(Phaser.Display.Color.GetColor(
+            Math.min(255, leafRGB.r + 50),
+            Math.min(255, leafRGB.g + 60),
+            Math.min(255, leafRGB.b + 40)
+          ), 0.5);
+          treeGfx.fillRect(cx - 5 * s, cy - 6 * s, 6 * s, 3 * s);
         }
-
-        // Rocks
-        if (!isPath && !isEdge && seed > 0.75 && seed <= 0.82 && tx > 1 && ty > 1) {
-          const rockRGB = hexToRGB('#6b6b6b');
-          gfx.fillStyle(Phaser.Display.Color.GetColor(rockRGB.r, rockRGB.g, rockRGB.b), 0.7);
-          const rw = scaledTile * (0.3 + seed * 0.3);
-          const rh = rw * 0.6;
-          gfx.fillEllipse(x + scaledTile / 2, y + scaledTile / 2, rw, rh);
+        // Rocks (~7% of tiles)
+        else if (seed > 0.73) {
+          const rSize = Math.floor(4 + seed * 6) * s;
+          treeGfx.fillStyle(Phaser.Display.Color.GetColor(90, 90, 95));
+          treeGfx.fillRect(cx - rSize / 2, cy - rSize / 4, rSize, rSize / 2);
+          // Highlight
+          treeGfx.fillStyle(Phaser.Display.Color.GetColor(130, 130, 135), 0.6);
+          treeGfx.fillRect(cx - rSize / 2, cy - rSize / 4, rSize / 2, rSize / 4);
+        }
+        // Flowers (~5%)
+        else if (seed > 0.68) {
+          const colors = [0xdd4444, 0xdddd44, 0xffffff, 0xdd88dd];
+          const flowerColor = colors[Math.floor(seed * 40) % colors.length];
+          treeGfx.fillStyle(flowerColor, 0.8);
+          treeGfx.fillRect(cx - s, cy - s, 2 * s, 2 * s);
+          treeGfx.fillStyle(0x44aa44, 0.7);
+          treeGfx.fillRect(cx - s, cy + s, s, 2 * s);
         }
       }
     }
-  }
-
-  _drawTree(gfx, cx, cy, palette, seed) {
-    const s = SPRITE_SCALE;
-    // Trunk
-    gfx.fillStyle(Phaser.Display.Color.GetColor(90, 60, 30), 0.9);
-    gfx.fillRect(cx - 2 * s, cy, 4 * s, 8 * s);
-    // Canopy
-    const leafColor = palette.dominant || '#4a7c59';
-    const rgb = hexToRGB(leafColor);
-    const bright = Math.floor(seed * 30);
-    gfx.fillStyle(Phaser.Display.Color.GetColor(
-      Math.min(255, rgb.r + bright),
-      Math.min(255, rgb.g + bright + 10),
-      Math.min(255, rgb.b + bright)
-    ), 0.85);
-    gfx.fillEllipse(cx, cy - 4 * s, 14 * s, 12 * s);
-    // Highlight
-    gfx.fillStyle(Phaser.Display.Color.GetColor(
-      Math.min(255, rgb.r + 40),
-      Math.min(255, rgb.g + 50),
-      Math.min(255, rgb.b + 30)
-    ), 0.4);
-    gfx.fillEllipse(cx - 2 * s, cy - 6 * s, 8 * s, 6 * s);
   }
 
   _drawExitMarkers(areaData) {
@@ -765,48 +783,60 @@ class WorldScene extends Phaser.Scene {
 
     for (const exit of areaData.exits) {
       let x, y, arrow, labelText;
-      const targetArea = exit.to;
-      // Find area name from data
       const state = this.registry.get('gameState');
-      const targetData = state.bookData.areasById[targetArea];
-      const targetName = targetData ? targetData.name : targetArea.replace(/_/g, ' ');
+      const targetData = state.bookData.areasById[exit.to];
+      const targetName = targetData ? targetData.name : exit.to.replace(/_/g, ' ');
+
+      // Draw a glowing zone at the exit edge
+      let zoneX, zoneY, zoneW, zoneH;
 
       switch (exit.direction) {
         case 'north':
-          x = mapW * scaledTile / 2; y = scaledTile * 0.5;
-          arrow = '▲'; labelText = targetName;
+          x = mapW * scaledTile / 2; y = scaledTile;
+          arrow = '▲'; labelText = '▲ ' + targetName;
+          zoneX = mapW * scaledTile * 0.3; zoneY = 0;
+          zoneW = mapW * scaledTile * 0.4; zoneH = scaledTile;
           break;
         case 'south':
-          x = mapW * scaledTile / 2; y = (mapH - 0.5) * scaledTile;
-          arrow = '▼'; labelText = targetName;
+          x = mapW * scaledTile / 2; y = (mapH - 1) * scaledTile;
+          arrow = '▼'; labelText = '▼ ' + targetName;
+          zoneX = mapW * scaledTile * 0.3; zoneY = (mapH - 1) * scaledTile;
+          zoneW = mapW * scaledTile * 0.4; zoneH = scaledTile;
           break;
         case 'east':
-          x = (mapW - 0.5) * scaledTile; y = mapH * scaledTile / 2;
-          arrow = '►'; labelText = targetName;
+          x = (mapW - 1) * scaledTile; y = mapH * scaledTile / 2;
+          arrow = '►'; labelText = targetName + ' ►';
+          zoneX = (mapW - 1) * scaledTile; zoneY = mapH * scaledTile * 0.3;
+          zoneW = scaledTile; zoneH = mapH * scaledTile * 0.4;
           break;
         case 'west':
-          x = scaledTile * 0.5; y = mapH * scaledTile / 2;
-          arrow = '◄'; labelText = targetName;
+          x = scaledTile; y = mapH * scaledTile / 2;
+          arrow = '◄'; labelText = '◄ ' + targetName;
+          zoneX = 0; zoneY = mapH * scaledTile * 0.3;
+          zoneW = scaledTile; zoneH = mapH * scaledTile * 0.4;
           break;
         default: continue;
       }
 
-      // Arrow indicator
-      const arrowText = this.add.text(x, y, arrow, {
-        fontSize: '20px', color: '#ffd700', fontFamily: 'monospace',
-        stroke: '#000', strokeThickness: 3,
-      }).setOrigin(0.5).setDepth(200).setAlpha(0.7);
-
-      // Label below arrow
-      this.add.text(x, y + 18, labelText, {
-        fontSize: '9px', color: '#c9a959', fontFamily: 'serif',
-        stroke: '#000', strokeThickness: 2,
-      }).setOrigin(0.5).setDepth(200).setAlpha(0.6);
-
-      // Pulse
+      // Glowing exit zone
+      const zone = this.add.rectangle(zoneX, zoneY, zoneW, zoneH, 0xffd700, 0.12)
+        .setOrigin(0).setDepth(3);
       this.tweens.add({
-        targets: arrowText, alpha: { from: 0.4, to: 0.9 },
-        duration: 1200, yoyo: true, repeat: -1,
+        targets: zone, alpha: { from: 0.06, to: 0.20 },
+        duration: 1500, yoyo: true, repeat: -1,
+      });
+
+      // Arrow label
+      const arrowText = this.add.text(x, y, labelText, {
+        fontSize: '12px', color: '#ffd700', fontFamily: '"Times New Roman", serif',
+        stroke: '#000000', strokeThickness: 3,
+        backgroundColor: '#00000066',
+        padding: { x: 6, y: 3 },
+      }).setOrigin(0.5).setDepth(200).setAlpha(0.85);
+
+      this.tweens.add({
+        targets: arrowText, alpha: { from: 0.5, to: 1 },
+        duration: 1000, yoyo: true, repeat: -1,
       });
     }
   }
@@ -844,38 +874,41 @@ class WorldScene extends Phaser.Scene {
   _createMinimap(state, areaData, palette) {
     const mmW = 80;
     const mmH = 60;
-    const mmX = this.scale.width - mmW - 8;
-    const mmY = 8;
+    const mmX = this.scale.width - mmW - 6;
+    const mmY = 6;
     const tileW = mmW / this.mapW;
     const tileH = mmH / this.mapH;
 
-    // Container (fixed to camera)
-    this.minimapContainer = this.add.container(mmX, mmY).setScrollFactor(0).setDepth(9998);
+    const groundRGB = hexToRGB(palette.dominant || '#4a7c59');
+    const pathRGB = hexToRGB(palette.path || '#8b7355');
+    const groundColor = Phaser.Display.Color.GetColor(groundRGB.r, groundRGB.g, groundRGB.b);
+    const pathColorVal = Phaser.Display.Color.GetColor(pathRGB.r, pathRGB.g, pathRGB.b);
 
-    // Background with border
-    const mmBg = this.add.rectangle(0, 0, mmW + 4, mmH + 4, 0x000000, 0.7).setOrigin(0);
-    const mmBorder = this.add.rectangle(0, 0, mmW + 4, mmH + 4).setOrigin(0).setStrokeStyle(1, 0xc9a959, 0.5);
-    this.minimapContainer.add([mmBg, mmBorder]);
+    // Background
+    const mmBg = this.add.rectangle(mmX - 2, mmY - 2, mmW + 4, mmH + 4, 0x000000, 0.75)
+      .setOrigin(0).setScrollFactor(0).setDepth(9990);
+    // Border
+    this.add.rectangle(mmX - 2, mmY - 2, mmW + 4, mmH + 4)
+      .setOrigin(0).setScrollFactor(0).setDepth(9991).setStrokeStyle(1, 0xc9a959, 0.6);
 
-    // Draw terrain
-    const mmGfx = this.add.graphics().setScrollFactor(0).setDepth(9998);
-    const groundColor = palette.dominant || '#4a7c59';
-    const pathColor = palette.path || '#8b7355';
-    const groundRGB = hexToRGB(groundColor);
-    const pathRGB = hexToRGB(pathColor);
-
+    // Draw terrain as tiny rectangles
     for (let ty = 0; ty < this.mapH; ty++) {
       for (let tx = 0; tx < this.mapW; tx++) {
         const isPathH = (ty >= Math.floor(this.mapH / 2) - 1 && ty <= Math.floor(this.mapH / 2));
         const isPathV = (tx >= Math.floor(this.mapW / 2) - 1 && tx <= Math.floor(this.mapW / 2));
         const isPath = isPathH || isPathV;
+        const isEdge = (tx === 0 || ty === 0 || tx === this.mapW - 1 || ty === this.mapH - 1);
 
-        if (isPath) {
-          mmGfx.fillStyle(Phaser.Display.Color.GetColor(pathRGB.r, pathRGB.g, pathRGB.b), 0.8);
-        } else {
-          mmGfx.fillStyle(Phaser.Display.Color.GetColor(groundRGB.r, groundRGB.g, groundRGB.b), 0.6);
-        }
-        mmGfx.fillRect(mmX + 2 + tx * tileW, mmY + 2 + ty * tileH, Math.ceil(tileW), Math.ceil(tileH));
+        let color = groundColor;
+        let alpha = 0.6;
+        if (isPath) { color = pathColorVal; alpha = 0.8; }
+        else if (isEdge) { color = 0x1a1a2e; alpha = 0.9; }
+
+        this.add.rectangle(
+          mmX + tx * tileW, mmY + ty * tileH,
+          Math.ceil(tileW) + 0.5, Math.ceil(tileH) + 0.5,
+          color, alpha
+        ).setOrigin(0).setScrollFactor(0).setDepth(9992);
       }
     }
 
@@ -884,56 +917,49 @@ class WorldScene extends Phaser.Scene {
       for (const npc of this.npcs) {
         const nx = npc.sprite.x / this.scaledTile;
         const ny = npc.sprite.y / this.scaledTile;
-        mmGfx.fillStyle(0x00ccff, 0.9);
-        mmGfx.fillCircle(mmX + 2 + nx * tileW, mmY + 2 + ny * tileH, 2);
+        this.add.rectangle(mmX + nx * tileW - 1, mmY + ny * tileH - 1, 3, 3, 0x00ccff, 0.9)
+          .setOrigin(0).setScrollFactor(0).setDepth(9993);
       }
     }
 
-    // Exit arrows on minimap
+    // Exit indicators on minimap edges
     if (areaData.exits) {
       for (const exit of areaData.exits) {
         let ex, ey;
         switch (exit.direction) {
-          case 'north': ex = mmW / 2; ey = 2; break;
-          case 'south': ex = mmW / 2; ey = mmH; break;
-          case 'east': ex = mmW; ey = mmH / 2; break;
-          case 'west': ex = 2; ey = mmH / 2; break;
+          case 'north': ex = mmX + mmW / 2 - 3; ey = mmY - 1; break;
+          case 'south': ex = mmX + mmW / 2 - 3; ey = mmY + mmH - 2; break;
+          case 'east': ex = mmX + mmW - 2; ey = mmY + mmH / 2 - 3; break;
+          case 'west': ex = mmX - 1; ey = mmY + mmH / 2 - 3; break;
           default: continue;
         }
-        mmGfx.fillStyle(0xffd700, 0.9);
-        mmGfx.fillTriangle(
-          mmX + ex, mmY + ey,
-          mmX + ex - 3, mmY + ey + 3,
-          mmX + ex + 3, mmY + ey + 3
-        );
+        this.add.rectangle(ex, ey, 6, 6, 0xffd700, 0.9)
+          .setOrigin(0).setScrollFactor(0).setDepth(9994);
       }
     }
 
-    this.minimapGfx = mmGfx;
+    // Player dot (updates each frame)
+    this.mmPlayerDot = this.add.rectangle(mmX, mmY, 4, 4, 0xff3333, 1)
+      .setOrigin(0).setScrollFactor(0).setDepth(9995);
 
-    // Player dot (will update position in update loop)
-    this.mmPlayerDot = this.add.circle(mmX + 2, mmY + 2, 2.5, 0xff3333, 1)
-      .setScrollFactor(0).setDepth(9999);
-
-    // Store minimap coords for update
-    this.mmOriginX = mmX + 2;
-    this.mmOriginY = mmY + 2;
+    // Store minimap layout for update
+    this.mmOriginX = mmX;
+    this.mmOriginY = mmY;
     this.mmTileW = tileW;
     this.mmTileH = tileH;
 
-    // Area label under minimap
-    const areaLabel = this.add.text(mmX + mmW / 2 + 2, mmY + mmH + 8, areaData.name, {
+    // Area label
+    this.add.text(mmX + mmW / 2, mmY + mmH + 4, areaData.name, {
       fontSize: '7px', color: '#c9a959', fontFamily: 'monospace',
-    }).setOrigin(0.5, 0).setScrollFactor(0).setDepth(9998);
-    this.minimapContainer.add(areaLabel);
+    }).setOrigin(0.5, 0).setScrollFactor(0).setDepth(9996);
   }
 
   _updateMinimap() {
     if (!this.mmPlayerDot || !this.playerSprite) return;
     const gridX = this.playerSprite.x / this.scaledTile;
     const gridY = this.playerSprite.y / this.scaledTile;
-    this.mmPlayerDot.x = this.mmOriginX + gridX * this.mmTileW;
-    this.mmPlayerDot.y = this.mmOriginY + gridY * this.mmTileH;
+    this.mmPlayerDot.x = this.mmOriginX + gridX * this.mmTileW - 2;
+    this.mmPlayerDot.y = this.mmOriginY + gridY * this.mmTileH - 2;
   }
 
   _createPlayer(state, spriteFactory) {
@@ -1032,7 +1058,7 @@ class WorldScene extends Phaser.Scene {
     this.touchDir = null;
     this._createTouchDPad();
 
-    const menuBtn = this.add.text(this.scale.width - 10, 10, '☰', {
+    const menuBtn = this.add.text(this.scale.width - 10, 80, '☰', {
       fontSize: '24px', color: UI_COLORS.gold, fontFamily: 'serif',
     }).setOrigin(1, 0).setScrollFactor(0).setDepth(10000).setInteractive({ useHandCursor: true });
     menuBtn.on('pointerdown', () => this._openMenu());
