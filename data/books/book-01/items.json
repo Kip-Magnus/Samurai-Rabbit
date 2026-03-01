@@ -1,0 +1,48 @@
+{
+  "_meta": {"book": "book-01", "era": "neronian_rome", "item_count": 28},
+  "consumables": [
+    {"id": "roman_bread", "name": "Roman Bread", "effect": {"healHp": 25}, "desc": "Coarse panis. The staple of legions and Christians alike."},
+    {"id": "soldiers_ration", "name": "Soldier's Ration", "effect": {"healHp": 40}, "desc": "Military hardtack with dried meat."},
+    {"id": "roman_wine", "name": "Roman Wine", "effect": {"healHp": 20, "healMp": 10}, "desc": "Watered wine. Restores body and spirit."},
+    {"id": "roman_lamp_oil", "name": "Lamp Oil", "effect": {"buffSpd": 3, "dur": 5}, "desc": "Light in the catacombs. Helps you see traps."},
+    {"id": "antidote_herb", "name": "Theriac", "effect": {"cureStatus": ["poison"]}, "desc": "Roman antidote compound."},
+    {"id": "smelling_salts", "name": "Vinegar Sponge", "effect": {"cureStatus": ["confusion", "fear"]}, "desc": "Sharp enough to wake the dead."}
+  ],
+  "sacramentals": [
+    {"id": "catacomb_holy_water", "name": "Catacomb Holy Water", "effect": {"healMp": 25, "cureStatus": ["despair", "fear"], "holyDmg": 35}, "desc": "Blessed in the tunnels beneath Rome."},
+    {"id": "apostolic_oil", "name": "Apostolic Oil", "effect": {"healHp": 60, "cureStatus": ["all"]}, "desc": "Oil blessed by Peter himself. Extraordinarily rare.", "rare": true},
+    {"id": "martyr_sand", "name": "Martyr's Sand", "effect": {"buffSpr": 6, "dur": 5}, "desc": "Sand from the arena floor, stained with the blood of witnesses."}
+  ],
+  "weapons": [
+    {"id": "roman_gladius", "name": "Roman Gladius", "base": {"atk": 10, "spd": 3}, "desc": "The short sword of Rome. Efficient, deadly, practical."},
+    {"id": "catacomb_torch", "name": "Catacomb Torch", "base": {"atk": 6, "spr": 2}, "desc": "A burning brand. Lights the way and wards off beasts.", "element": "fire"},
+    {"id": "fishermans_spear", "name": "Fisherman's Spear", "base": {"atk": 8, "def": 2, "spr": 4}, "desc": "Peter was a fisherman. This is his kind of weapon.", "scaling": {"virtue": "faith", "mult": 1.5}}
+  ],
+  "garments": [
+    {"id": "roman_tunic", "name": "Roman Tunic", "base": {"def": 3}, "desc": "Common wool tunic. Blends in with the populace."},
+    {"id": "catacomb_robe", "name": "Catacomb Robe", "base": {"def": 2, "spr": 5}, "desc": "Worn by the faithful during underground Mass."},
+    {"id": "praetorian_cloak", "name": "Praetorian Cloak", "base": {"def": 8, "spd": -1}, "desc": "Taken from a guard. Heavy but protective."}
+  ],
+  "headgear": [
+    {"id": "catacomb_veil", "name": "Catacomb Veil", "base": {"spr": 5, "mpRegen": 1}, "desc": "Used during the sacred mysteries below ground."},
+    {"id": "centurion_helm", "name": "Centurion's Helm", "base": {"def": 6, "atk": 2}, "desc": "Bronze and horsehair. Commands respect."}
+  ],
+  "accessories": [
+    {"id": "roman_sandals", "name": "Roman Sandals", "base": {"spd": 3}, "desc": "Leather caligae. Built for marching."},
+    {"id": "fish_pendant", "name": "Ichthys Pendant", "base": {"spr": 4, "faith": 1}, "desc": "The secret sign of Christians. ΙΧΘΥΣ."}
+  ],
+  "relics": [
+    {"id": "peters_key_fragment", "name": "Peter's Key Fragment", "base": {"spr": 8, "faith": 2}, "desc": "A fragment of iron blessed by Peter. Grows warm near the faithful.", "passive": "detect_faithful", "unique": true},
+    {"id": "catacombs_lamp", "name": "Eternal Lamp", "base": {"spr": 4, "hope": 1}, "desc": "An oil lamp that never quite goes out.", "passive": "light_in_darkness", "unique": true}
+  ],
+  "materials": [
+    {"id": "rat_tail", "name": "Rat Tail", "desc": "Ingredient for theriac."},
+    {"id": "roman_denarius", "name": "Roman Denarius", "desc": "Silver coin of the Empire. Render unto Caesar..."},
+    {"id": "catacomb_map_fragment", "name": "Tunnel Map Fragment", "desc": "Reveals shortcuts through the catacombs."}
+  ],
+  "key_items": [
+    {"id": "priscillas_letter", "name": "Priscilla's Letter", "desc": "A coded message warning the outer communities."},
+    {"id": "arena_pass", "name": "Arena Pass", "desc": "Forged document granting access to the Colosseum undercroft."},
+    {"id": "neros_decree", "name": "Nero's Decree", "desc": "The imperial order condemning all Christians in Rome."}
+  ]
+}
