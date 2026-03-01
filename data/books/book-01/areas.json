@@ -1,0 +1,167 @@
+[
+  {
+    "id": "catacombs_entrance",
+    "name": "Catacomb Entrance",
+    "type": "catacomb",
+    "era": "book-01",
+    "acts": [1, 2, 3, 4],
+    "palette": {"primary": "#5c4d3c", "secondary": "#3a3020", "accent": "#c9a95944", "sky": null, "time": "underground"},
+    "music": "catacomb_sacred",
+    "ambience": ["dripping", "distant_chanting"],
+    "encounters": {"enabled": false, "rate": 0, "table": []},
+    "hasSavePoint": true,
+    "safeZone": true,
+    "connections": {"south": "catacomb_tunnels", "east": "catacomb_chapel"},
+    "npcs": [
+      {"id": "felix", "species": "rat", "x": 6, "y": 8, "acts": [1, 2, 3]},
+      {"id": "priscilla", "species": "mouse", "x": 10, "y": 5, "acts": [1, 2]}
+    ],
+    "interactables": ["torch_bracket", "carved_fish_symbol", "hidden_entrance"]
+  },
+  {
+    "id": "catacomb_chapel",
+    "name": "Catacomb Chapel",
+    "type": "catacomb_chapel",
+    "era": "book-01",
+    "acts": [1, 2, 3, 4],
+    "palette": {"primary": "#5c4d3c", "secondary": "#7a6a50", "accent": "#ffd700", "sky": null, "time": "interior_lit"},
+    "music": "catacomb_sacred",
+    "ambience": ["sacred"],
+    "encounters": {"enabled": false, "rate": 0, "table": []},
+    "hasSavePoint": true,
+    "safeZone": true,
+    "connections": {"west": "catacombs_entrance"},
+    "npcs": [
+      {"id": "peter", "species": "bear", "x": 10, "y": 3, "acts": [2, 3, 4]},
+      {"id": "demas", "species": "fox", "x": 14, "y": 8, "acts": [1, 2]},
+      {"id": "julia", "species": "dove", "x": 7, "y": 6, "acts": [2, 3]}
+    ],
+    "restBonus": "sacred_site",
+    "hiddenItems": [
+      {"x": 10, "y": 2, "item": "apostolic_oil", "requiresPassive": "detect_hidden"}
+    ]
+  },
+  {
+    "id": "catacomb_tunnels",
+    "name": "Catacomb Tunnels",
+    "type": "catacomb_dark",
+    "era": "book-01",
+    "acts": [1, 2, 3],
+    "palette": {"primary": "#3a3020", "secondary": "#2a2018", "accent": "#5c4d3c", "sky": null, "time": "underground_dark"},
+    "music": "tension",
+    "ambience": ["dripping", "rats"],
+    "encounters": {"enabled": true, "rate": 0.12, "table": "catacomb_tunnels", "levelRange": [4, 8]},
+    "connections": {"north": "catacombs_entrance", "east": "roman_streets_night"},
+    "hiddenItems": [
+      {"x": 3, "y": 11, "item": "roman_lamp_oil"},
+      {"x": 16, "y": 4, "item": "catacomb_map_fragment"}
+    ]
+  },
+  {
+    "id": "roman_streets_night",
+    "name": "Roman Streets (Night)",
+    "type": "roman_streets",
+    "era": "book-01",
+    "acts": [2, 3],
+    "palette": {"primary": "#8b4513", "secondary": "#5c4033", "accent": "#c9a959", "sky": "#1a1a2e", "time": "night"},
+    "music": "tension",
+    "ambience": ["night_city", "distant_fire"],
+    "encounters": {"enabled": true, "rate": 0.18, "table": "roman_streets", "levelRange": [6, 10]},
+    "connections": {"west": "catacomb_tunnels", "north": "trastevere_quarter", "east": "colosseum_undercroft"},
+    "npcs": [
+      {"id": "senator_petronius", "species": "serpent", "x": 12, "y": 7, "acts": [2, 3]}
+    ]
+  },
+  {
+    "id": "trastevere_quarter",
+    "name": "Trastevere Quarter",
+    "type": "roman_quarter",
+    "era": "book-01",
+    "acts": [2, 3],
+    "palette": {"primary": "#a08060", "secondary": "#8b4513", "accent": "#c9a959", "sky": "#1a1a2e", "time": "night"},
+    "music": "exploration",
+    "ambience": ["night_city"],
+    "encounters": {"enabled": true, "rate": 0.10, "table": "trastevere", "levelRange": [5, 8]},
+    "connections": {"south": "roman_streets_night"},
+    "npcs": [
+      {"id": "marcellus", "species": "bull", "x": 8, "y": 6, "acts": [1, 2, 3], "trader": true},
+      {"id": "paul", "species": "hawk", "x": 14, "y": 4, "acts": [2]}
+    ],
+    "hiddenItems": [
+      {"x": 5, "y": 10, "item": "roman_denarius", "quantity": 5}
+    ]
+  },
+  {
+    "id": "roman_prison",
+    "name": "Mamertine Prison",
+    "type": "prison",
+    "era": "book-01",
+    "acts": [3],
+    "palette": {"primary": "#3a3020", "secondary": "#2a2018", "accent": "#5c4d3c", "sky": null, "time": "underground_dark"},
+    "music": "tension",
+    "ambience": ["chains", "dripping"],
+    "encounters": {"enabled": false, "rate": 0, "table": []},
+    "connections": {"east": "colosseum_undercroft"},
+    "npcs": [
+      {"id": "julia", "species": "dove", "x": 5, "y": 5, "acts": [3]}
+    ]
+  },
+  {
+    "id": "colosseum_undercroft",
+    "name": "Colosseum Undercroft",
+    "type": "arena_under",
+    "era": "book-01",
+    "acts": [3],
+    "palette": {"primary": "#5c4033", "secondary": "#3a3020", "accent": "#8b0000", "sky": null, "time": "underground"},
+    "music": "tension",
+    "ambience": ["crowd_roar_muffled", "animal_growls"],
+    "encounters": {"enabled": true, "rate": 0.15, "table": "undercroft", "levelRange": [7, 11]},
+    "hasSavePoint": true,
+    "connections": {"west": "roman_prison", "north": "colosseum_arena"}
+  },
+  {
+    "id": "colosseum_arena",
+    "name": "The Arena",
+    "type": "arena",
+    "era": "book-01",
+    "acts": [3],
+    "palette": {"primary": "#c9a959", "secondary": "#8b4513", "accent": "#8b0000", "sky": "#87ceeb", "time": "midday_harsh"},
+    "music": "arena_battle",
+    "ambience": ["crowd_roar", "horns"],
+    "encounters": {"enabled": false, "rate": 0, "table": []},
+    "connections": {"south": "colosseum_undercroft"},
+    "boss": {"id": "arena_lion_pack", "act": 3, "triggerFlag": "arena_beast_fight"},
+    "hiddenItems": [
+      {"x": 10, "y": 3, "item": "martyr_sand", "requiresInteraction": "collect_arena_sand"}
+    ]
+  },
+  {
+    "id": "vatican_hill",
+    "name": "Vatican Hill",
+    "type": "hilltop",
+    "era": "book-01",
+    "acts": [4],
+    "palette": {"primary": "#4a7c59", "secondary": "#5c4033", "accent": "#ffd700", "sky": "#4a5568", "time": "dusk"},
+    "music": "sacred",
+    "ambience": ["wind_gentle", "distant_city"],
+    "encounters": {"enabled": false, "rate": 0, "table": []},
+    "connections": {"south": "appian_way"},
+    "npcs": [
+      {"id": "peter", "species": "bear", "x": 10, "y": 4, "acts": [4]}
+    ],
+    "boss": {"id": "the_accuser_b01", "act": 4, "triggerFlag": "vatican_accuser_confrontation"}
+  },
+  {
+    "id": "appian_way",
+    "name": "The Appian Way",
+    "type": "roman_road",
+    "era": "book-01",
+    "acts": [4],
+    "palette": {"primary": "#8b4513", "secondary": "#a08060", "accent": "#4a7c59", "sky": "#cc7744", "time": "sunset"},
+    "music": "exploration",
+    "ambience": ["wind_grass", "distant_city"],
+    "encounters": {"enabled": true, "rate": 0.15, "table": "appian_way", "levelRange": [9, 13]},
+    "hasSavePoint": true,
+    "connections": {"north": "vatican_hill"}
+  }
+]
