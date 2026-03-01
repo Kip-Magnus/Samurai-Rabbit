@@ -1,0 +1,18 @@
+{
+  "name": "Samurai Usagi — The Pilgrim's Blade",
+  "short_name": "Samurai Usagi",
+  "description": "A data-driven pixel-art JRPG across 2000 years of Christian history",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "landscape",
+  "background_color": "#0f0e17",
+  "theme_color": "#0f0e17",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%230f0e17' width='100' height='100'/><text y='65' x='50' text-anchor='middle' font-size='60' fill='%23c9a959'>✝</text></svg>",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ],
+  "categories": ["games", "entertainment"]
+}
