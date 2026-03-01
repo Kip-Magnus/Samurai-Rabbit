@@ -1,0 +1,108 @@
+{
+  "id": "book-00",
+  "title": "The Calling",
+  "subtitle": "Shimabara Peninsula, 1587",
+  "era": "feudal_japan",
+  "year": 1587,
+
+  "palette": {
+    "dominant": "#4a7c59",
+    "accent": "#c9a959",
+    "dark": "#1a1a2e",
+    "blood": "#8b0000",
+    "holy": "#ffd700",
+    "sky": "#87ceeb",
+    "night": "#0f0e17"
+  },
+
+  "music": {
+    "exploration": "track_pastoral_japan",
+    "tension": "track_taiko_dread",
+    "battle": null,
+    "boss": null,
+    "cutscene_grief": "track_orasho_solo_voice",
+    "cutscene_calling": "track_choir_resolute"
+  },
+
+  "acts": [
+    {
+      "id": 1,
+      "title": "A Farmer's Morning",
+      "tone": "warm",
+      "areas": ["kurosaki_village", "coastal_path", "rice_paddies"],
+      "combatEnabled": false,
+      "keyEvents": ["morning_chores", "obaa_garden_story", "hidden_chapel_mass"]
+    },
+    {
+      "id": 2,
+      "title": "The Shadow Falls",
+      "tone": "dread",
+      "areas": ["kurosaki_village"],
+      "combatEnabled": false,
+      "keyEvents": ["soldiers_arrive", "chapel_debate", "last_mass"]
+    },
+    {
+      "id": 3,
+      "title": "The Fumi-e",
+      "tone": "grief",
+      "areas": ["kurosaki_village", "burning_chapel"],
+      "combatEnabled": true,
+      "combatType": "environmental",
+      "keyEvents": ["fumi_e_ceremony", "obaa_refusal", "obaa_martyrdom", "escape_fire"]
+    },
+    {
+      "id": 4,
+      "title": "The Mountain",
+      "tone": "desolation_to_awe",
+      "areas": ["mountain_trail", "mountain_summit"],
+      "combatEnabled": false,
+      "keyEvents": ["the_climb", "accusers_voice", "the_calling", "portal_to_rome"]
+    }
+  ],
+
+  "characters": ["usagi", "obaa_chan", "father_tomas", "ichiro", "captain_mori", "gennosuke", "setsuko", "miko", "the_messenger"],
+
+  "enemies": ["falling_beam", "smoke_cloud", "burning_debris"],
+
+  "items": ["obaas_cross", "pilgrims_blade", "breviary_page", "mikos_flower", "rice_cake", "herbal_poultice", "holy_water_vial"],
+
+  "moralChoices": [
+    {
+      "id": "chapel_stance",
+      "act": 2,
+      "description": "Who does Usagi stand beside during the debate?",
+      "options": [
+        { "label": "Stand with Obaa-chan", "virtueEffect": { "faith": 1 }, "flagEffect": { "ichiro_trust": -1 } },
+        { "label": "Stand with Ichiro", "virtueEffect": {}, "flagEffect": { "ichiro_trust": 1 } },
+        { "label": "Stand with Setsuko", "virtueEffect": { "charity": 1 }, "flagEffect": { "setsuko_trust": 1 } },
+        { "label": "Stand with Father Tomas", "virtueEffect": { "prudence": 1 }, "flagEffect": {} }
+      ]
+    },
+    {
+      "id": "fumi_e",
+      "act": 3,
+      "description": "The fumi-e is at Usagi's feet.",
+      "options": [
+        { "label": "Refuse the fumi-e", "virtueEffect": { "fortitude": 2, "faith": 2 }, "flagEffect": { "stepped_on_fumie": false, "imprisoned": true } },
+        { "label": "Step on it", "virtueEffect": { "faith": -1, "hope": 1 }, "flagEffect": { "stepped_on_fumie": true, "imprisoned": false } }
+      ]
+    },
+    {
+      "id": "mountain_voice",
+      "act": 4,
+      "description": "The Accuser speaks in the darkness of Usagi's grief.",
+      "options": [
+        { "label": "Defiance through faith", "virtueEffect": { "faith": 2 }, "flagEffect": { "mountain_response": "defiance" } },
+        { "label": "Honest vulnerability", "virtueEffect": { "hope": 1 }, "flagEffect": { "mountain_response": "vulnerability" } },
+        { "label": "Silence", "virtueEffect": { "prudence": 1 }, "flagEffect": { "mountain_response": "silence" } }
+      ]
+    }
+  ],
+
+  "seedsForFuture": [
+    { "item": "mikos_flower", "payoff": "book-05", "description": "Descendant recognizes the pressed flower" },
+    { "flag": "heard_bell_story", "payoff": "book-05", "description": "Usagi finds the actual buried bell of Nagasaki" },
+    { "flag": "stepped_on_fumie", "payoff": "book-05", "description": "Faces the fumi-e again 250 years later" },
+    { "flag": "father_tomas_prayer", "payoff": "book-01", "description": "Usagi realizes he is the answer to this prayer" }
+  ]
+}
