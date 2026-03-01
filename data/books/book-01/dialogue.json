@@ -1,0 +1,113 @@
+{
+  "book": "book-01",
+  "conversations": [
+    {
+      "id": "priscilla_act1_greeting", "npc": "priscilla", "conditions": {"act": 1, "flags": {"met_priscilla": false}}, "priority": 10,
+      "speaker": "Priscilla", "portrait": "P",
+      "lines": [
+        {"speaker": "Priscilla", "text": "Who — how did you get in here? The tunnels are sealed!", "emotion": "startled"},
+        {"speaker": "Usagi", "text": "I... I don't know where I am. There was a light, and then—"},
+        {"speaker": "Priscilla", "text": "You are beneath Rome. In the catacombs of the faithful. And you are either a Christian or a spy.", "emotion": "suspicious"},
+        {"speaker": "Usagi", "text": "I am a Christian. My name is Usagi. I come from... far away."},
+        {"speaker": "Priscilla", "text": "Far away. Yes, I can see that. Those clothes are not Roman.", "emotion": "studying"},
+        {"speaker": "Priscilla", "text": "My name is Priscilla. I lead what remains of the community here. Nero's soldiers have been hunting us since the fire.", "emotion": "weary"},
+        {"speaker": "Priscilla", "text": "If you are truly a brother in Christ, then you are welcome. We need every hand we can get.", "emotion": "determined"},
+        {"setFlag": {"id": "met_priscilla", "value": true}}
+      ]
+    },
+    {
+      "id": "marcellus_act1", "npc": "marcellus", "conditions": {"act": 1, "flags": {"met_marcellus": false}}, "priority": 10,
+      "speaker": "Marcellus", "portrait": "M",
+      "lines": [
+        {"speaker": "Marcellus", "text": "You are the newcomer? Good. We need fighters, not more prayers.", "emotion": "intense"},
+        {"speaker": "Usagi", "text": "Fighters?"},
+        {"speaker": "Marcellus", "text": "Nero burns us alive. He feeds our children to dogs. And what does the community do? Hide. Pray. Wait to die.", "emotion": "angry"},
+        {"speaker": "Marcellus", "text": "I was a legionary before I found Christ. I know how Rome fights. We can fight back.", "emotion": "passionate"},
+        {"text": "What do you say?", "choices": [
+          {"label": "\"Maybe there is another way.\"", "virtue": {"prudence": 0.5}},
+          {"label": "\"You cannot fight Rome with swords alone.\"", "virtue": {"faith": 0.5}},
+          {"label": "\"I will help you fight.\"", "virtue": {"fortitude": 0.5}}
+        ]},
+        {"speaker": "Marcellus", "text": "We will see. When the soldiers come — and they will come — you will have to choose.", "emotion": "grim"},
+        {"setFlag": {"id": "met_marcellus", "value": true}}
+      ]
+    },
+    {
+      "id": "demas_gnostic_teaching", "npc": "demas", "conditions": {"act": 1, "flags": {"confronted_demas": false}}, "priority": 8,
+      "speaker": "Demas", "portrait": "D",
+      "lines": [
+        {"speaker": "Demas", "text": "Ah, the traveler. Come, sit. I was just teaching.", "emotion": "charming"},
+        {"speaker": "Demas", "text": "The body is a prison, friend. A cage of flesh. What you do with it — eat, drink, even offer incense to the emperor — none of it touches your soul.", "emotion": "persuasive"},
+        {"speaker": "Demas", "text": "Only the spirit matters. And the spirit is already free.", "emotion": "serene"},
+        {"speaker": "Usagi", "text": "But Christ took on a body. He suffered. He died. That means the body matters."},
+        {"speaker": "Demas", "text": "A metaphor, surely. The divine spark descending into matter to teach us to escape it.", "emotion": "dismissive"},
+        {"text": "What do you say?", "choices": [
+          {"label": "\"If the body does not matter, then the Incarnation was a lie.\"", "virtue": {"faith": 1.5}, "flag": {"id": "confronted_demas", "value": true}},
+          {"label": "\"Your teaching gives people permission to betray.\"", "virtue": {"justice": 1}, "flag": {"id": "confronted_demas", "value": true}},
+          {"label": "\"I need to think about this more.\"", "flag": {"id": "demas_unresolved", "value": true}}
+        ]}
+      ]
+    },
+    {
+      "id": "peter_act2", "npc": "peter", "conditions": {"act": 2, "flags": {"spoke_with_peter": false}}, "priority": 15,
+      "speaker": "Peter", "portrait": "P",
+      "lines": [
+        {"speaker": "Peter", "text": "You are the one Priscilla told me about. The rabbit from the East.", "emotion": "studying"},
+        {"speaker": "Usagi", "text": "You are... Peter? The apostle?"},
+        {"speaker": "Peter", "text": "I am Simon. A fisherman. Everything else is what He made of me.", "emotion": "humble"},
+        {"speaker": "Peter", "text": "Listen, little brother. I know what is coming. I have seen it in prayer.", "emotion": "grave"},
+        {"speaker": "Peter", "text": "Nero will find us. Some will die. I will die. That is certain.", "emotion": "accepting"},
+        {"speaker": "Peter", "text": "But that is not failure. When the grain of wheat falls into the earth and dies, it bears much fruit.", "emotion": "transcendent"},
+        {"speaker": "Peter", "text": "I denied Him once. Three times, in fact. I will not deny Him again.", "emotion": "iron"},
+        {"speaker": "Peter", "text": "The question is not whether we will suffer. The question is whether our suffering will bear witness.", "emotion": "gentle"},
+        {"setFlag": {"id": "spoke_with_peter", "value": true}},
+        {"virtueChange": {"faith": 1, "hope": 0.5, "fortitude": 0.5}}
+      ]
+    },
+    {
+      "id": "petronius_offer", "npc": "senator_petronius", "conditions": {"act": 2, "flags": {"petronius_offer_made": false}}, "priority": 12,
+      "speaker": "Senator Petronius", "portrait": "G", "speakerColor": "#cc8833",
+      "lines": [
+        {"speaker": "Senator Petronius", "text": "You must be the one they call Usagi. I have heard... interesting things about you.", "emotion": "pleasant"},
+        {"speaker": "Senator Petronius", "text": "I am Gaius Petronius. A senator. And I am, shall we say, sympathetic to your people's situation.", "emotion": "friendly"},
+        {"speaker": "Senator Petronius", "text": "I can help. I have influence. Nero listens to me. I could arrange... protections.", "emotion": "generous"},
+        {"speaker": "Senator Petronius", "text": "All I ask is a small gesture of good faith. A public acknowledgment of Rome's gods. Not belief — just courtesy.", "emotion": "reasonable"},
+        {"text": "What do you say?", "choices": [
+          {"label": "\"I know what you are, Accuser.\"", "virtue": {"faith": 2, "prudence": 1}, "flag": {"id": "saw_through_accuser_early", "value": true}},
+          {"label": "\"I will never burn incense to false gods.\"", "virtue": {"fortitude": 1}},
+          {"label": "\"Let me think about it.\"", "virtue": {"temperance": -0.5}}
+        ]},
+        {"speaker": "Senator Petronius", "text": "How unfortunate. But the offer remains.", "emotion": "cold_smile"},
+        {"setFlag": {"id": "petronius_offer_made", "value": true}}
+      ]
+    },
+    {
+      "id": "julia_before_arena", "npc": "julia", "conditions": {"act": 3}, "priority": 10,
+      "speaker": "Julia", "portrait": "J",
+      "lines": [
+        {"speaker": "Julia", "text": "They will take us to the arena tomorrow. You know that.", "emotion": "calm"},
+        {"speaker": "Usagi", "text": "I will find a way to get us out."},
+        {"speaker": "Julia", "text": "No. Listen to me.", "emotion": "serene"},
+        {"speaker": "Julia", "text": "I have been praying for this moment my entire life. Not the dying — the witness.", "emotion": "luminous"},
+        {"speaker": "Julia", "text": "Every person in that crowd will see a girl walk to the lions singing. And they will wonder: what does she have that makes her unafraid?", "emotion": "fierce"},
+        {"speaker": "Julia", "text": "That question will outlast the Empire, Usagi. That question will convert Rome.", "emotion": "prophetic"},
+        {"virtueChange": {"faith": 1, "charity": 1, "fortitude": 0.5}}
+      ]
+    },
+    {
+      "id": "peter_blessing_final", "npc": "peter", "conditions": {"act": 4, "flags": {"beat_the_accuser_b01": true}}, "priority": 20,
+      "speaker": "Peter", "portrait": "P",
+      "lines": [
+        {"speaker": "Peter", "text": "You endured him. The Accuser. I can see his marks on you.", "emotion": "knowing"},
+        {"speaker": "Peter", "text": "He offered me the same bargain, once. In Gethsemane. I failed.", "emotion": "pained"},
+        {"speaker": "Peter", "text": "But failure is not the end. The Lord restores. Three denials. Three affirmations. Do you love me? Feed my sheep.", "emotion": "tender"},
+        {"speaker": "Peter", "text": "I am going now to where He needs me. They will crucify me upside-down, because I am not worthy to die as He did.", "emotion": "accepting"},
+        {"speaker": "Peter", "text": "But before I go — let me bless you, little brother.", "emotion": "solemn"},
+        {"speaker": "Peter", "text": "May the Lord who called you sustain you. May His light go before you across every century.", "emotion": "blessing"},
+        {"speaker": "Peter", "text": "Go now. Egypt needs you. The desert is calling.", "emotion": "peaceful"},
+        {"setFlag": {"id": "received_peters_blessing", "value": true}},
+        {"virtueChange": {"faith": 2, "hope": 2, "charity": 1}}
+      ]
+    }
+  ]
+}
