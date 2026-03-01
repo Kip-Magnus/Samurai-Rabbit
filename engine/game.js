@@ -593,8 +593,8 @@ class WorldScene extends Phaser.Scene {
     }
 
     this.areaData = areaData;
-    this.mapW = areaData.dimensions?.width || 20;
-    this.mapH = areaData.dimensions?.height || 15;
+    this.mapW = areaData.dimensions?.width || 40;
+    this.mapH = areaData.dimensions?.height || 30;
     this.scaledTile = TILE * SPRITE_SCALE;
 
     // Setup atmosphere from area data
@@ -627,7 +627,7 @@ class WorldScene extends Phaser.Scene {
       this.mapW * this.scaledTile,
       this.mapH * this.scaledTile
     );
-    this.cameras.main.startFollow(this.playerSprite, true, 0.1, 0.1);
+    this.cameras.main.startFollow(this.playerSprite, true, 0.15, 0.15);
     this.cameras.main.fadeIn(333);
 
     // Interaction zone
@@ -643,6 +643,9 @@ class WorldScene extends Phaser.Scene {
 
     // HUD
     this._createHUD(state, areaData);
+
+    // Minimap (top-right)
+    this._createMinimap(state, areaData, palette);
 
     // Area name toast
     this._showAreaName(areaData.name);
@@ -838,6 +841,101 @@ class WorldScene extends Phaser.Scene {
     }
   }
 
+  _createMinimap(state, areaData, palette) {
+    const mmW = 80;
+    const mmH = 60;
+    const mmX = this.scale.width - mmW - 8;
+    const mmY = 8;
+    const tileW = mmW / this.mapW;
+    const tileH = mmH / this.mapH;
+
+    // Container (fixed to camera)
+    this.minimapContainer = this.add.container(mmX, mmY).setScrollFactor(0).setDepth(9998);
+
+    // Background with border
+    const mmBg = this.add.rectangle(0, 0, mmW + 4, mmH + 4, 0x000000, 0.7).setOrigin(0);
+    const mmBorder = this.add.rectangle(0, 0, mmW + 4, mmH + 4).setOrigin(0).setStrokeStyle(1, 0xc9a959, 0.5);
+    this.minimapContainer.add([mmBg, mmBorder]);
+
+    // Draw terrain
+    const mmGfx = this.add.graphics().setScrollFactor(0).setDepth(9998);
+    const groundColor = palette.dominant || '#4a7c59';
+    const pathColor = palette.path || '#8b7355';
+    const groundRGB = hexToRGB(groundColor);
+    const pathRGB = hexToRGB(pathColor);
+
+    for (let ty = 0; ty < this.mapH; ty++) {
+      for (let tx = 0; tx < this.mapW; tx++) {
+        const isPathH = (ty >= Math.floor(this.mapH / 2) - 1 && ty <= Math.floor(this.mapH / 2));
+        const isPathV = (tx >= Math.floor(this.mapW / 2) - 1 && tx <= Math.floor(this.mapW / 2));
+        const isPath = isPathH || isPathV;
+
+        if (isPath) {
+          mmGfx.fillStyle(Phaser.Display.Color.GetColor(pathRGB.r, pathRGB.g, pathRGB.b), 0.8);
+        } else {
+          mmGfx.fillStyle(Phaser.Display.Color.GetColor(groundRGB.r, groundRGB.g, groundRGB.b), 0.6);
+        }
+        mmGfx.fillRect(mmX + 2 + tx * tileW, mmY + 2 + ty * tileH, Math.ceil(tileW), Math.ceil(tileH));
+      }
+    }
+
+    // NPC dots
+    if (this.npcs) {
+      for (const npc of this.npcs) {
+        const nx = npc.sprite.x / this.scaledTile;
+        const ny = npc.sprite.y / this.scaledTile;
+        mmGfx.fillStyle(0x00ccff, 0.9);
+        mmGfx.fillCircle(mmX + 2 + nx * tileW, mmY + 2 + ny * tileH, 2);
+      }
+    }
+
+    // Exit arrows on minimap
+    if (areaData.exits) {
+      for (const exit of areaData.exits) {
+        let ex, ey;
+        switch (exit.direction) {
+          case 'north': ex = mmW / 2; ey = 2; break;
+          case 'south': ex = mmW / 2; ey = mmH; break;
+          case 'east': ex = mmW; ey = mmH / 2; break;
+          case 'west': ex = 2; ey = mmH / 2; break;
+          default: continue;
+        }
+        mmGfx.fillStyle(0xffd700, 0.9);
+        mmGfx.fillTriangle(
+          mmX + ex, mmY + ey,
+          mmX + ex - 3, mmY + ey + 3,
+          mmX + ex + 3, mmY + ey + 3
+        );
+      }
+    }
+
+    this.minimapGfx = mmGfx;
+
+    // Player dot (will update position in update loop)
+    this.mmPlayerDot = this.add.circle(mmX + 2, mmY + 2, 2.5, 0xff3333, 1)
+      .setScrollFactor(0).setDepth(9999);
+
+    // Store minimap coords for update
+    this.mmOriginX = mmX + 2;
+    this.mmOriginY = mmY + 2;
+    this.mmTileW = tileW;
+    this.mmTileH = tileH;
+
+    // Area label under minimap
+    const areaLabel = this.add.text(mmX + mmW / 2 + 2, mmY + mmH + 8, areaData.name, {
+      fontSize: '7px', color: '#c9a959', fontFamily: 'monospace',
+    }).setOrigin(0.5, 0).setScrollFactor(0).setDepth(9998);
+    this.minimapContainer.add(areaLabel);
+  }
+
+  _updateMinimap() {
+    if (!this.mmPlayerDot || !this.playerSprite) return;
+    const gridX = this.playerSprite.x / this.scaledTile;
+    const gridY = this.playerSprite.y / this.scaledTile;
+    this.mmPlayerDot.x = this.mmOriginX + gridX * this.mmTileW;
+    this.mmPlayerDot.y = this.mmOriginY + gridY * this.mmTileH;
+  }
+
   _createPlayer(state, spriteFactory) {
     const scaledTile = this.scaledTile;
     const startX = (state.player.x || Math.floor(this.mapW / 2));
@@ -856,7 +954,7 @@ class WorldScene extends Phaser.Scene {
         this.playerSprite.play(idleKey);
       }
     } else {
-      this.playerSprite = this.add.rectangle(x, y, 16 * SPRITE_SCALE, 24 * SPRITE_SCALE, 0xa0784c);
+      this.playerSprite = this.add.rectangle(x, y, 16 * SPRITE_SCALE, 24 * SPRITE_SCALE, 0xf0ece4);
       this.playerSprite.setDepth(100);
     }
 
@@ -1189,8 +1287,8 @@ class WorldScene extends Phaser.Scene {
 
     // Set new area and player entry position
     state.currentAreaId = exit.to;
-    const newMapW = targetArea.dimensions?.width || 20;
-    const newMapH = targetArea.dimensions?.height || 15;
+    const newMapW = targetArea.dimensions?.width || 40;
+    const newMapH = targetArea.dimensions?.height || 30;
 
     // Place player at opposite edge
     switch (exit.direction) {
@@ -1313,6 +1411,9 @@ class WorldScene extends Phaser.Scene {
 
     // Update effects
     this.effects.update(time, delta);
+
+    // Update minimap player dot
+    this._updateMinimap();
   }
 }
 
@@ -1786,7 +1887,7 @@ class BattleScene extends Phaser.Scene {
       const idleKey = 'usagi_idle_battle';
       if (this.anims.exists(idleKey)) this.playerBattleSprite.play(idleKey);
     } else {
-      this.playerBattleSprite = this.add.rectangle(playerX, playerY, 32 * SPRITE_SCALE, 48 * SPRITE_SCALE, 0xa0784c).setDepth(50);
+      this.playerBattleSprite = this.add.rectangle(playerX, playerY, 32 * SPRITE_SCALE, 48 * SPRITE_SCALE, 0xf0ece4).setDepth(50);
     }
 
     // UI Panel (bottom 30%)
