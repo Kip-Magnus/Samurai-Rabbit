@@ -1,0 +1,1393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Samurai Usagi — Book Zero: The Calling</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&family=IM+Fell+English:ital@0;1&display=swap');
+:root{--bg:#0f0e17;--gold:#c9a959;--holy:#ffd700;--blood:#8b0000;--text:#e8dcc8;--dim:#8a8078;--green:#4a7c59;--fire:#ff4500;--night:#1a1a2e;--blue:#6495ed}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:'IM Fell English',serif;touch-action:none;user-select:none;-webkit-user-select:none}
+canvas{display:block;image-rendering:pixelated;image-rendering:crisp-edges}
+#game{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#000}
+#game canvas{max-width:100%;max-height:100%}
+
+/* Title */
+#title{position:fixed;inset:0;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--bg);cursor:pointer;transition:opacity 1s}
+#title.hidden{opacity:0;pointer-events:none}
+#title .cross{font-size:60px;color:var(--gold);margin-bottom:16px;animation:glow 3s ease-in-out infinite alternate}
+#title h1{font-family:'Noto Serif JP',serif;font-size:28px;color:var(--gold);margin-bottom:4px}
+#title h2{font-size:14px;color:var(--dim);font-style:italic;margin-bottom:32px}
+#title .subtitle{font-size:12px;color:var(--dim);margin-bottom:24px}
+@keyframes glow{from{text-shadow:0 0 8px #c9a95944}to{text-shadow:0 0 20px #c9a95988}}
+
+/* Difficulty Select */
+#diff-select{display:none;flex-direction:column;gap:12px;max-width:300px;width:90%}
+#diff-select.show{display:flex}
+.diff-btn{padding:12px 16px;border:1px solid var(--gold);background:transparent;color:var(--text);font-family:'IM Fell English',serif;font-size:14px;cursor:pointer;text-align:left;transition:all .2s}
+.diff-btn:hover{background:rgba(201,169,89,.15);border-color:var(--holy)}
+.diff-btn .name{color:var(--gold);font-size:16px;display:block;margin-bottom:4px}
+.diff-btn .desc{color:var(--dim);font-size:11px;font-style:italic}
+
+/* HUD overlay */
+#hud{position:fixed;top:0;left:0;right:0;padding:6px 10px;display:none;justify-content:space-between;z-index:50;background:linear-gradient(to bottom,rgba(15,14,23,.9),transparent);font-size:11px;pointer-events:none}
+#hud.show{display:flex}
+#hud *{pointer-events:auto}
+.hud-left,.hud-right{display:flex;gap:12px;align-items:center}
+.bar-wrap{width:80px;height:6px;background:#1a1a1a;border-radius:2px;overflow:hidden}
+.bar-fill{height:100%;transition:width .3s}
+.hp-fill{background:var(--green)}
+.mp-fill{background:var(--blue)}
+.stat-text{color:var(--dim);font-size:10px}
+.hud-btn{color:var(--gold);cursor:pointer;font-size:12px;opacity:.6;transition:opacity .2s}
+.hud-btn:hover{opacity:1}
+
+/* Dialogue */
+#dialogue{position:fixed;bottom:0;left:0;right:0;padding:16px 20px 20px;display:none;background:rgba(12,11,20,.94);border-top:1px solid rgba(201,169,89,.2);z-index:60;min-height:100px}
+#dialogue.show{display:block}
+#dialogue .speaker{color:var(--gold);font-size:13px;margin-bottom:6px}
+#dialogue .text{color:var(--text);font-size:14px;line-height:1.6}
+#dialogue .continue{color:var(--dim);font-size:10px;text-align:right;margin-top:8px;animation:blink 1.5s infinite}
+@keyframes blink{0%,100%{opacity:.3}50%{opacity:1}}
+
+/* Menu overlay */
+#menu{position:fixed;inset:0;z-index:70;display:none;background:rgba(15,14,23,.96)}
+#menu.show{display:flex;flex-direction:column;padding:20px}
+.menu-header{color:var(--gold);font-size:16px;border-bottom:1px solid rgba(201,169,89,.2);padding-bottom:8px;margin-bottom:12px}
+.menu-tabs{display:flex;gap:12px;margin-bottom:16px}
+.menu-tab{color:var(--dim);cursor:pointer;font-size:13px;padding:4px 8px}
+.menu-tab.active{color:var(--gold);border-bottom:1px solid var(--gold)}
+.menu-content{flex:1;overflow-y:auto}
+.equip-slot{display:flex;justify-content:space-between;padding:8px;border-bottom:1px solid rgba(255,255,255,.05);cursor:pointer}
+.equip-slot:hover{background:rgba(201,169,89,.1)}
+.equip-slot .slot-name{color:var(--dim);font-size:11px;text-transform:uppercase}
+.equip-slot .item-name{color:var(--text);font-size:13px}
+.equip-slot .item-stats{color:var(--green);font-size:10px}
+.quality-broken{color:#5c4d3c}.quality-chipped{color:#7a6852}.quality-rusted{color:#8b5e3c}
+.quality-worn{color:#a0784c}.quality-standard{color:var(--text)}.quality-wellmade{color:#c9a959}
+.quality-master{color:#d4af37}.quality-artificer{color:#ffd700}
+.blessed{text-shadow:0 0 4px rgba(201,169,89,.5)}
+.item-row{display:flex;justify-content:space-between;padding:6px 8px;cursor:pointer}
+.item-row:hover{background:rgba(201,169,89,.1)}
+.virtue-row{display:flex;justify-content:space-between;padding:4px 0}
+.virtue-name{color:var(--text);font-size:12px}.virtue-val{color:var(--gold);font-size:12px}
+
+/* Status icons */
+.status-icon{display:inline-block;width:16px;height:16px;font-size:10px;text-align:center;line-height:16px;border-radius:2px;margin:0 1px;position:relative}
+.status-icon .dur{position:absolute;bottom:-2px;right:-2px;font-size:7px;color:#fff;background:#000;padding:0 2px;border-radius:1px}
+
+/* Battle */
+#battle{position:fixed;inset:0;z-index:80;display:none;flex-direction:column;background:var(--bg)}
+#battle.show{display:flex}
+.battle-field{flex:1;display:flex;align-items:center;justify-content:center;gap:40px;padding:20px}
+.enemy-card{text-align:center}
+.enemy-sprite{width:48px;height:48px;margin:0 auto 6px;border-radius:4px;position:relative}
+.enemy-name{color:var(--dim);font-size:10px}
+.enemy-hp-bar{width:48px;height:4px;background:#1a1a1a;margin:3px auto;border-radius:1px;overflow:hidden}
+.enemy-hp-fill{height:100%;background:var(--green);transition:width .3s}
+.enemy-status{display:flex;justify-content:center;gap:2px;margin-top:2px;min-height:16px}
+.target-arrow{color:var(--holy);font-size:14px;animation:bounce .5s infinite alternate}
+@keyframes bounce{from{transform:translateY(0)}to{transform:translateY(-4px)}}
+
+.battle-player{padding:8px 12px;border-top:1px solid rgba(201,169,89,.15);background:rgba(15,14,23,.8)}
+.player-status-row{display:flex;gap:4px;margin-top:4px;min-height:18px}
+.battle-actions{display:flex;gap:8px;padding:10px 12px;background:rgba(15,14,23,.9);border-top:1px solid rgba(201,169,89,.1);flex-wrap:wrap}
+.action-btn{padding:6px 12px;border:1px solid rgba(201,169,89,.3);background:transparent;color:var(--text);font-family:'IM Fell English',serif;font-size:13px;cursor:pointer;flex:1;min-width:60px;text-align:center;transition:all .15s}
+.action-btn:hover{background:rgba(201,169,89,.15);border-color:var(--gold)}
+.action-btn.selected{background:rgba(201,169,89,.2);border-color:var(--gold);color:var(--gold)}
+.action-btn:disabled{opacity:.3;pointer-events:none}
+
+.battle-log{max-height:50px;overflow-y:auto;padding:4px 12px;font-size:10px;color:var(--dim);background:rgba(0,0,0,.3)}
+.log-holy{color:var(--holy)}.log-damage{color:#cc5555}.log-heal{color:var(--green)}.log-status{color:#aa66cc}
+.log-accuser{color:#cc3333;font-style:italic}
+
+/* Accuser counter */
+.accuser-bar{text-align:center;padding:6px;background:rgba(26,26,46,.8)}
+.accuser-pips{display:flex;justify-content:center;gap:3px;margin-top:4px}
+.accuser-pip{width:12px;height:4px;background:#3a3a3a;border-radius:1px}
+.accuser-pip.filled{background:var(--gold)}
+
+/* Floating damage */
+.dmg-float{position:absolute;pointer-events:none;font-size:14px;font-weight:bold;animation:floatUp 1.2s ease-out forwards;z-index:90}
+@keyframes floatUp{0%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-40px)}}
+
+/* Trade */
+#trade{position:fixed;inset:0;z-index:75;display:none;background:rgba(15,14,23,.96);flex-direction:column;padding:20px}
+#trade.show{display:flex}
+.trade-item{padding:10px;border-bottom:1px solid rgba(255,255,255,.05);cursor:pointer}
+.trade-item:hover{background:rgba(201,169,89,.1)}
+.trade-name{color:var(--text);font-size:14px}.trade-cost{color:var(--dim);font-size:11px}.trade-desc{color:var(--dim);font-size:11px;font-style:italic;margin-top:2px}
+
+/* Notifications */
+.notif{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(15,14,23,.95);border:1px solid var(--gold);padding:16px 24px;z-index:100;text-align:center;animation:fadeInOut 2.5s forwards}
+@keyframes fadeInOut{0%{opacity:0;transform:translate(-50%,-50%) scale(.9)}10%{opacity:1;transform:translate(-50%,-50%) scale(1)}80%{opacity:1}100%{opacity:0}}
+</style>
+</head>
+<body>
+
+<!-- Title Screen -->
+<div id="title">
+  <div class="cross">✝</div>
+  <h1>侍うさぎ</h1>
+  <h1 style="font-family:'IM Fell English';font-size:20px;margin-bottom:8px">SAMURAI USAGI</h1>
+  <h2>Book Zero — The Calling</h2>
+  <p class="subtitle">Shimabara, Japan — 1587 A.D.</p>
+  <div id="diff-select">
+    <button class="diff-btn" onclick="startGame('pilgrim')"><span class="name">🕊 Pilgrim</span><span class="desc">"Walk in peace." — Story mode. For the narrative.</span></button>
+    <button class="diff-btn" onclick="startGame('disciple')"><span class="name">✝ Disciple</span><span class="desc">"Take up your cross." — The intended experience.</span></button>
+    <button class="diff-btn" onclick="startGame('martyr')"><span class="name">🔥 Martyr</span><span class="desc">"Be faithful unto death." — For those who embrace suffering.</span></button>
+  </div>
+  <p style="color:var(--dim);font-size:11px;margin-top:16px;cursor:pointer" onclick="document.getElementById('diff-select').classList.add('show')">— Begin —</p>
+</div>
+
+<!-- Game Container -->
+<div id="game"><canvas id="map-canvas" width="640" height="480"></canvas></div>
+
+<!-- HUD -->
+<div id="hud">
+  <div class="hud-left">
+    <span style="color:var(--gold)">Usagi</span>
+    <span class="stat-text">Lv<span id="hud-level">1</span></span>
+    <span class="stat-text">HP</span><div class="bar-wrap"><div class="bar-fill hp-fill" id="hud-hp" style="width:100%"></div></div>
+    <span class="stat-text">MP</span><div class="bar-wrap"><div class="bar-fill mp-fill" id="hud-mp" style="width:100%"></div></div>
+    <span id="hud-status-icons" style="display:flex;gap:2px"></span>
+  </div>
+  <div class="hud-right">
+    <span class="stat-text" id="hud-area">Kurosaki Village</span>
+    <span class="hud-btn" onclick="openMenu()">☰</span>
+    <span class="hud-btn" onclick="toggleSound()">♪</span>
+  </div>
+</div>
+
+<!-- Dialogue -->
+<div id="dialogue"><div class="speaker" id="dlg-speaker"></div><div class="text" id="dlg-text"></div><div class="continue">▾ tap to continue</div></div>
+
+<!-- Menu -->
+<div id="menu">
+  <div class="menu-header">MENU <span style="float:right;cursor:pointer" onclick="closeMenu()">✕</span></div>
+  <div class="menu-tabs">
+    <div class="menu-tab active" onclick="showMenuTab('equip')">Equipment</div>
+    <div class="menu-tab" onclick="showMenuTab('items')">Items</div>
+    <div class="menu-tab" onclick="showMenuTab('virtues')">Virtues</div>
+    <div class="menu-tab" onclick="showMenuTab('save')">Save</div>
+  </div>
+  <div class="menu-content" id="menu-content"></div>
+</div>
+
+<!-- Battle -->
+<div id="battle">
+  <div class="accuser-bar" id="accuser-bar" style="display:none">
+    <span style="color:#cc3333;font-size:11px">ENDURE — <span id="accuser-turns">8</span> turns remain</span>
+    <div class="accuser-pips" id="accuser-pips"></div>
+  </div>
+  <div class="battle-field" id="battle-field"></div>
+  <div class="battle-player" id="battle-player"></div>
+  <div class="battle-log" id="battle-log"></div>
+  <div class="battle-actions" id="battle-actions"></div>
+</div>
+
+<!-- Trade -->
+<div id="trade">
+  <div class="menu-header"><span id="trade-name">Trader</span> <span style="float:right;cursor:pointer" onclick="closeTrade()">✕</span></div>
+  <div id="trade-dialogue" style="color:var(--dim);font-style:italic;padding:8px 0;font-size:12px"></div>
+  <div id="trade-items" style="flex:1;overflow-y:auto"></div>
+  <div style="padding:8px;color:var(--dim);font-size:11px">Gold: <span id="trade-gold" style="color:var(--gold)">0</span></div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// GAME DATA (inline for standalone prototype)
+// ═══════════════════════════════════════════════════════════════
+
+const QUALITY = ['Broken','Chipped','Rusted','Worn','Standard','Well-Made','Master-Forged','Artificer'];
+const Q_MULT = [0.3, 0.5, 0.65, 0.8, 1.0, 1.2, 1.45, 1.75];
+const Q_CLASS = ['broken','chipped','rusted','worn','standard','wellmade','master','artificer'];
+
+const DIFF_MODES = {
+  pilgrim:  { enemyHp:.7,enemyAtk:.7,xp:1.5,gold:1.5,encounterRate:.7,healMult:1.3,autoRevive:true,label:'Pilgrim' },
+  disciple: { enemyHp:1,enemyAtk:1,xp:1,gold:1,encounterRate:1,healMult:1,autoRevive:false,label:'Disciple' },
+  martyr:   { enemyHp:1.4,enemyAtk:1.3,xp:.8,gold:.7,encounterRate:1.3,healMult:.8,autoRevive:false,extraBossPhase:true,label:'Martyr' },
+};
+
+// Complete Book Zero items (subset for prototype)
+const ITEMS_DB = {
+  rice_ball:{name:'Rice Ball',type:'consumable',effect:{healHp:20},desc:'Simple onigiri. Cold, dense, sustaining.'},
+  medicinal_herb:{name:'Medicinal Herb',type:'consumable',effect:{healHp:30},desc:'Wild herbs from the mountain.'},
+  herbal_poultice:{name:'Herbal Poultice',type:'consumable',effect:{healHp:50},desc:"Obaa-chan's recipe."},
+  antidote_herb:{name:'Antidote Herb',type:'consumable',effect:{cureStatus:['poison']},desc:'Neutralizes venom.'},
+  smelling_salts:{name:'Smelling Salts',type:'consumable',effect:{cureStatus:['confusion','fear']},desc:'Sharp mineral salts.'},
+  holy_water_vial:{name:'Holy Water',type:'sacramental',effect:{healMp:20,cureStatus:['despair','fear'],holyDmg:30},desc:'Blessed by Father Tomas.'},
+  incense_stick:{name:'Incense Stick',type:'consumable',effect:{buffSpr:4,dur:5,healMp:10},desc:'Sandalwood. Deepens prayer.'},
+  smoke_bomb:{name:'Smoke Pot',type:'consumable',effect:{flee:true},desc:'Crack it and run.'},
+  // Equipment
+  farmers_sickle:{name:"Farmer's Sickle",type:'weapon',base:{atk:3,spd:1},desc:'Not a weapon. But it has an edge.'},
+  pilgrims_blade:{name:"Pilgrim's Blade",type:'weapon',base:{atk:7,spd:2,spr:3},desc:'Given by the Messenger. It hums during prayer.',scaling:{virtue:'faith',mult:1.5},unique:true},
+  bamboo_staff:{name:'Bamboo Staff',type:'weapon',base:{atk:4,def:2,spr:2},desc:'Walking stick and prayer focus.'},
+  hidden_cross_dagger:{name:'Cross Dagger',type:'weapon',base:{atk:5,spr:6,holyPct:10},desc:'Hidden in the altar stone. Deals holy damage.',scaling:{virtue:'faith',mult:2}},
+  farmers_kosode:{name:"Farmer's Kosode",type:'garment',base:{def:2},desc:'Patched and re-patched. Smells like home.'},
+  travelers_kimono:{name:"Traveler's Kimono",type:'garment',base:{def:4,spd:1},desc:'Dark indigo. Blends with shadows.'},
+  pilgrims_cloak:{name:"Pilgrim's Cloak",type:'garment',base:{def:4,spr:4,spd:1},desc:'Hides your face, blocks rain.'},
+  priests_cassock:{name:"Priest's Cassock",type:'garment',base:{def:3,spr:8},desc:"Father Tomas's. Marks you as clergy.",scaling:{virtue:'faith',mult:1}},
+  sedge_hat:{name:'Sedge Hat',type:'head',base:{def:1,spd:1},desc:'Keeps the sun off and the face hidden.'},
+  prayer_veil:{name:'Prayer Veil',type:'head',base:{spr:5,mpRegen:1},desc:'Used during hidden Mass. +1 MP/turn.'},
+  straw_sandals:{name:'Straw Sandals',type:'accessory',base:{spd:2},desc:'Woven waraji. Light on the feet.'},
+  mothers_ring:{name:"Mother's Ring",type:'accessory',base:{spr:3,charity:1},desc:'Found in the ashes. Still warm.'},
+  obaas_cross:{name:"Obaa-chan's Cross",type:'relic',base:{spr:5,faith:1},desc:'Grows warm near hidden artifacts.',passive:'detect_hidden',unique:true},
+  scapular_carmel:{name:'Brown Scapular',type:'relic',base:{spr:3,hope:1},desc:"Our Lady's promise of protection.",passive:'death_save'},
+};
+
+// Enemies
+const ENEMIES_DB = {
+  wild_boar:{name:'Wild Boar',hp:[14,18],atk:[4,6],def:[2,3],spd:[3,4],spr:[1,2],xp:8,gold:5,drops:['medicinal_herb'],ai:'aggressive',abilities:[{id:'tusk_charge',name:'Tusk Charge',mult:1.4,acc:.75}]},
+  pit_viper:{name:'Pit Viper',hp:[10,14],atk:[3,5],def:[1,2],spd:[5,7],spr:[1,2],xp:10,gold:4,drops:['antidote_herb'],ai:'aggressive',abilities:[{id:'venom',name:'Venom Strike',status:'poison',chance:.4}]},
+  ashigaru_scout:{name:'Ashigaru Scout',hp:[16,22],atk:[5,7],def:[3,4],spd:[4,5],spr:[2,3],xp:12,gold:8,drops:['rice_ball'],ai:'pack'},
+  ashigaru_spear:{name:'Ashigaru Spearman',hp:[28,40],atk:[8,11],def:[5,7],spd:[3,5],spr:[2,4],xp:20,gold:12,drops:['soldiers_ration'],ai:'defensive'},
+  shadow_doubt:{name:'Whisper of Doubt',hp:[20,30],atk:[3,5],def:[2,3],spd:[4,6],spr:[8,12],xp:25,gold:10,drops:['prayer_beads'],ai:'spiritual',weak:['holy'],resist:['physical'],abilities:[{id:'doubt',name:'Creeping Doubt',status:'fear',chance:.35},{id:'lie',name:'Whispered Lie',status:'confusion',chance:.3}]},
+  mountain_wolf:{name:'Mountain Wolf',hp:[25,35],atk:[7,10],def:[3,5],spd:[6,8],spr:[2,3],xp:18,gold:8,drops:['wolf_pelt'],ai:'pack',abilities:[{id:'howl',name:'Howl',buff:'atkUp'}]},
+  captain_hideki:{name:'Captain Hideki',hp:[100,130],atk:[14,18],def:[12,15],spd:[5,7],spr:[4,6],xp:100,gold:50,boss:true,abilities:[{id:'rally',name:'Rally Troops',summon:'ashigaru_scout'},{id:'armor_pierce',name:'Armor-Piercing Thrust',mult:1.6,ignDef:.5}],dialogue:"Hand over the priest. No one else needs to die."},
+  the_accuser:{name:'The Accuser',hp:999,atk:0,def:99,spd:10,spr:30,xp:100,accuser:true,survivalTurns:8,abilities:[
+    {id:'despair',name:'Whisper of Despair',status:'despair',chance:.5,dialogue:"She prayed. Every day. And the fire still came."},
+    {id:'fear',name:'Veil of Fear',status:'fear',chance:.45,dialogue:"The soldiers are coming. Run."},
+    {id:'lie',name:'Honeyed Lie',status:'confusion',chance:.4,dialogue:"Step on the image. It is only wood. God will understand."},
+    {id:'drain',name:'Consume Faith',drainMp:8,dialogue:"Your prayers grow quieter. Have you noticed?"},
+  ]},
+};
+
+// Encounter tables by area
+const ENCOUNTERS = {
+  village_outskirts:[[['wild_boar'],['pit_viper'],['ashigaru_scout','ashigaru_scout']],[1,5]],
+  bamboo_forest:[[['ashigaru_spear'],['mountain_wolf','mountain_wolf'],['shadow_doubt'],['ashigaru_scout','ashigaru_spear']],[3,7]],
+  mountain_path:[[['mountain_wolf','mountain_wolf'],['shadow_doubt'],['ashigaru_spear','ashigaru_scout']],[5,9]],
+  coast_road:[[['ashigaru_spear','ashigaru_spear'],['shadow_doubt','shadow_doubt']],[7,10]],
+};
+
+// Miracles (subset)
+const MIRACLES = [
+  {id:'divine_light',name:'Lux Aeterna',mp:6,type:'holy_dmg',power:1.2,desc:'Eternal Light. Holy damage to one enemy.',virtue:'faith',req:1},
+  {id:'shield_faith',name:'Scutum Fidei',mp:5,type:'buff_def',power:6,dur:3,desc:'Shield of Faith. DEF up for 3 turns.',virtue:'faith',req:1},
+  {id:'ave_maria',name:'Ave Maria',mp:8,type:'heal',power:2.5,desc:'Hail Mary. Restore HP.',virtue:'hope',req:1},
+  {id:'vade_retro',name:'Vade Retro',mp:4,type:'holy_dmg',power:1.0,cleanse:true,desc:'Get behind me, Satan. Holy damage + cleanse.',virtue:'fortitude',req:1},
+  {id:'forgiveness',name:'Forgiveness',mp:12,type:'pacify',desc:'End battle peacefully. Requires charity ≥ 5.',virtue:'charity',req:5},
+];
+
+// NPC Traders
+const TRADERS = {
+  ichiro:{name:'Ichiro',greeting:'"What do you need?"',trades:[
+    {name:'Wolf-skin Jacket',cost:{items:{wolf_pelt:2}},gives:{id:'padded_jacket',quality:3},desc:'"Two pelts. I\'ll make something warm."',once:true},
+    {name:'Bamboo Staff',cost:{gold:15},gives:{id:'bamboo_staff',quality:3},desc:'"Good bamboo. Mountain-grown."'},
+    {name:'Herbs for Rice',cost:{items:{rice_ball:3}},gives:{id:'medicinal_herb',qty:3},desc:'"Fair trade."'},
+  ]},
+  kakure_elder:{name:'Kakure Elder',greeting:'"You carry her cross. What do you need?"',trades:[
+    {name:'Holy Water',cost:{gold:0},gives:{id:'holy_water_vial',qty:1},desc:'"Use it wisely."'},
+    {name:'Blessed Salt',cost:{gold:0},gives:{id:'blessed_salt',qty:2},desc:'"Spread it where you sleep."'},
+  ]},
+};
+
+// Areas with map data
+const AREAS = {
+  kurosaki_village:{name:'Kurosaki Village',type:'village',music:'exploration',ambient:'forest',encounters:null,safe:true,connections:{east:'village_outskirts'},npcs:['ichiro'],save:true},
+  village_outskirts:{name:'Village Outskirts',type:'forest',music:'exploration',ambient:'forest',encounters:'village_outskirts',connections:{west:'kurosaki_village',north:'bamboo_forest',east:'coastal_path'}},
+  bamboo_forest:{name:'Bamboo Forest',type:'bamboo_forest',music:'exploration',ambient:'forest',encounters:'bamboo_forest',connections:{south:'village_outskirts',north:'mountain_path',east:'hidden_chapel'},boss:'captain_hideki'},
+  hidden_chapel:{name:'Hidden Chapel',type:'hidden_chapel',music:'sacred',ambient:'sacred',encounters:null,safe:true,connections:{west:'bamboo_forest'},npcs:['kakure_elder'],save:true,restBonus:true},
+  mountain_path:{name:'Mountain Path',type:'mountain',music:'tension',ambient:'mountain',encounters:'mountain_path',connections:{south:'bamboo_forest',north:'mountain_summit'}},
+  mountain_summit:{name:'The Summit',type:'mountain_summit',music:'accuser',encounters:null,connections:{south:'mountain_path'},boss:'the_accuser'},
+  coastal_path:{name:'Sotome Coast',type:'coast',music:'exploration',ambient:'coast',encounters:'coast_road',connections:{west:'village_outskirts'}},
+};
+
+
+// ═══════════════════════════════════════════════════════════════
+// GAME STATE
+// ═══════════════════════════════════════════════════════════════
+
+let G = {
+  phase:'title', difficulty:'disciple', diff:{},
+  player:{name:'Usagi',level:1,xp:0,hp:35,maxHp:35,mp:10,maxMp:10,atk:4,def:5,spd:6,spr:8,gold:20,statusEffects:[]},
+  baseStats:{atk:4,def:5,spd:6,spr:8},
+  virtues:{faith:1,hope:1,charity:1,prudence:0,justice:0,fortitude:0,temperance:0},
+  equipment:{weapon:null,garment:null,head:null,accessory:null,relic:null},
+  inventory:[],  // {id,name,type,quantity?,quality?,blessed?,blessingName?}
+  area:'kurosaki_village',
+  flags:{},
+  battleCount:0,killCount:0,
+  battle:null, // current battle state
+  soundEnabled:true,
+  stepsSinceEncounter:0,
+};
+
+// XP table (level → xp needed)
+const XP_TABLE = [0,15,35,65,110,170,250,350,480,640,830,1060,1330,1650,2020,2450,2950,3520,4170,4910,5750,6700,7770,8970,10310,11800,13450,15280,17300,19520];
+const STAT_GROWTH = {hp:3,mp:2,atk:1,def:1,spd:0.5,spr:1.5};
+
+
+// ═══════════════════════════════════════════════════════════════
+// SOUND ENGINE (Procedural Web Audio)
+// ═══════════════════════════════════════════════════════════════
+
+let audioCtx, masterGain;
+const SCALE = [261.63,293.66,311.13,392.00,440.00,523.25];
+let bgmInterval;
+
+function initAudio(){
+  if(audioCtx)return;
+  try{
+    audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+    masterGain=audioCtx.createGain();
+    masterGain.gain.value=0.25;
+    masterGain.connect(audioCtx.destination);
+  }catch(e){}
+}
+
+function playNote(freq,type,dur,startTime){
+  if(!audioCtx||!G.soundEnabled)return;
+  const t=startTime||audioCtx.currentTime;
+  const o=audioCtx.createOscillator();
+  const g=audioCtx.createGain();
+  o.type=type||'sine';o.frequency.value=freq;
+  g.gain.setValueAtTime(.001,t);
+  g.gain.linearRampToValueAtTime(.15,t+.05);
+  g.gain.linearRampToValueAtTime(.1,t+dur*.3);
+  g.gain.linearRampToValueAtTime(.001,t+dur);
+  o.connect(g);g.connect(masterGain);
+  o.start(t);o.stop(t+dur+.1);
+}
+
+function startBGM(mood){
+  stopBGM();
+  if(!audioCtx||!G.soundEnabled)return;
+  const tempos={exploration:500,battle:280,sacred:800,tension:400,accuser:600,boss:250};
+  const tempo=tempos[mood]||500;
+  let beat=0;
+  bgmInterval=setInterval(()=>{
+    const t=audioCtx.currentTime;
+    if(mood==='exploration'){
+      const notes=[0,-1,2,-1,1,-1,3,2];
+      const n=notes[beat%8];
+      if(n>=0)playNote(SCALE[n],'sine',.4,t);
+      if(beat%4===0)playNote(SCALE[0]*.5,'triangle',.8,t);
+    }else if(mood==='battle'){
+      playNote(80+(beat%2)*40,'sine',.1,t);
+      const notes=[0,2,1,3,4,2,3,1];
+      playNote(SCALE[notes[beat%8]],'square',.15,t);
+    }else if(mood==='sacred'){
+      if(beat%4===0){playNote(SCALE[0]*.5,'sine',2,t);playNote(SCALE[2]*.5,'sine',2,t);}
+      if(beat%8===4)playNote(SCALE[0],'sine',1,t);
+    }else if(mood==='tension'){
+      if(beat%4===0)playNote(SCALE[0]*.5,'square',1.5,t);
+      if(Math.random()<.3)playNote(SCALE[Math.floor(Math.random()*5)],'triangle',.1,t);
+    }else if(mood==='accuser'){
+      if(beat%4===0){playNote(130.81,'sine',2,t);playNote(138.59,'sine',2,t);}
+      if(beat%8===4)playNote(523.25,'sine',.8,t);
+    }else if(mood==='boss'){
+      playNote(80+(beat%2)*40,'sine',.08,t);
+      if(beat%2===0)playNote(120,'sine',.06,t+.07);
+      const n=[0,2,4,2,1,3,4,0];
+      playNote(SCALE[n[beat%8]]*2,'square',.12,t);
+    }
+    beat++;
+  },tempo);
+}
+
+function stopBGM(){if(bgmInterval){clearInterval(bgmInterval);bgmInterval=null;}}
+
+function playSFX(id){
+  if(!audioCtx||!G.soundEnabled)return;
+  const t=audioCtx.currentTime;
+  switch(id){
+    case'hit':playNote(100,'sine',.12,t);break;
+    case'critical':playNote(250,'sine',.06,t);playNote(150,'sine',.1,t+.06);break;
+    case'heal':playNote(523,'sine',.3,t);playNote(659,'sine',.25,t+.12);break;
+    case'holy':playNote(880,'sine',.2,t);playNote(1047,'sine',.3,t+.08);break;
+    case'levelup':for(let i=0;i<6;i++)playNote(262*Math.pow(2,i/6),'sine',.2,t+i*.1);break;
+    case'menu':playNote(880,'triangle',.06,t);break;
+    case'save':playNote(523,'sine',.4,t);playNote(659,'sine',.3,t+.2);break;
+    case'status':playNote(180,'square',.2,t);playNote(160,'square',.2,t+.12);break;
+    case'accuser':playNote(131,'sine',.8,t);playNote(123,'sine',.7,t+.2);break;
+    case'blessing':playNote(440,'sine',.6,t);playNote(523,'sine',.5,t+.3);playNote(659,'sine',.4,t+.6);break;
+    case'item':playNote(523,'triangle',.12,t);playNote(659,'triangle',.12,t+.08);playNote(784,'triangle',.15,t+.16);break;
+  }
+}
+
+function toggleSound(){G.soundEnabled=!G.soundEnabled;if(!G.soundEnabled)stopBGM();else{const a=AREAS[G.area];if(a)startBGM(a.music);}}
+
+
+// ═══════════════════════════════════════════════════════════════
+// MAP RENDERER (16x16 tiles, procedural)
+// ═══════════════════════════════════════════════════════════════
+
+const T=16,MW=20,MH=15;
+const TILE={GROUND:0,GRASS:1,PATH:2,WATER:3,TREE:4,ROCK:5,WALL:6,FLOOR:8,BAMBOO:12,FIRE:14,SAVE:20,TRANS_N:21,TRANS_S:22,TRANS_E:23,TRANS_W:24};
+const SOLID=new Set([TILE.TREE,TILE.ROCK,TILE.WALL,TILE.WATER,TILE.BAMBOO,TILE.FIRE]);
+const TILE_COLORS={
+  [TILE.GROUND]:'#6b5a3e',[TILE.GRASS]:'#4a7c59',[TILE.PATH]:'#a09070',[TILE.WATER]:'#3a6b8a',
+  [TILE.TREE]:'#2d5a2d',[TILE.ROCK]:'#7a7a7a',[TILE.WALL]:'#5c4d3c',[TILE.FLOOR]:'#8b7355',
+  [TILE.BAMBOO]:'#6b8e23',[TILE.FIRE]:'#ff4500',[TILE.SAVE]:'#ffd700',
+  [TILE.TRANS_N]:'#a09070',[TILE.TRANS_S]:'#a09070',[TILE.TRANS_E]:'#a09070',[TILE.TRANS_W]:'#a09070',
+};
+
+let mapData=[], playerX=10, playerY=12;
+const mapCanvas=document.getElementById('map-canvas');
+const mapCtx=mapCanvas.getContext('2d');
+
+function hash(s){let h=0;for(let i=0;i<s.length;i++)h=((h<<5)-h)+s.charCodeAt(i)|0;return Math.abs(h);}
+function seededRng(seed){let s=seed;return()=>{s=(s*16807)%2147483647;return(s-1)/2147483646;};}
+
+function generateMap(areaId){
+  const area=AREAS[areaId];
+  const rng=seededRng(hash(areaId));
+  const map=Array.from({length:MH},()=>Array(MW).fill(TILE.GRASS));
+  const type=area?.type||'forest';
+
+  if(type==='village'){
+    // Path + buildings
+    for(let x=0;x<MW;x++){map[7][x]=TILE.PATH;map[8][x]=TILE.PATH;}
+    [[2,2,5,4],[9,1,4,5],[3,10,6,4]].forEach(([bx,by,bw,bh])=>{
+      for(let y=by;y<by+bh&&y<MH;y++)for(let x=bx;x<bx+bw&&x<MW;x++)
+        map[y][x]=(y===by||y===by+bh-1||x===bx||x===bx+bw-1)?TILE.WALL:TILE.FLOOR;
+    });
+    for(let y=0;y<MH;y++)for(let x=0;x<MW;x++)if(map[y][x]===TILE.GRASS&&rng()<.12)map[y][x]=TILE.TREE;
+  }else if(type==='bamboo_forest'||type==='forest'){
+    for(let y=1;y<MH-1;y++)for(let x=1;x<MW-1;x++)if(rng()<.4)map[y][x]=type==='bamboo_forest'?TILE.BAMBOO:TILE.TREE;
+    for(let i=0;i<3;i++){const n=map.map(r=>[...r]);for(let y=1;y<MH-1;y++)for(let x=1;x<MW-1;x++){let c=0;for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++)if(dy||dx)if([TILE.TREE,TILE.BAMBOO].includes(map[y+dy]?.[x+dx]))c++;n[y][x]=c>=5?(type==='bamboo_forest'?TILE.BAMBOO:TILE.TREE):c<=2?TILE.GRASS:map[y][x];}map.splice(0,MH,...n);}
+    let px=Math.floor(MW/2);for(let y=MH-1;y>=0;y--){map[y][px]=TILE.PATH;if(rng()<.4)px+=rng()<.5?-1:1;px=Math.max(2,Math.min(MW-3,px));}
+  }else if(type==='mountain'||type==='mountain_summit'){
+    for(let y=0;y<MH;y++)for(let x=0;x<MW;x++){map[y][x]=TILE.GROUND;const r=rng();if(r<.2)map[y][x]=TILE.ROCK;else if(r<.28)map[y][x]=TILE.TREE;}
+    let px=Math.floor(MW/2);for(let y=MH-1;y>=0;y--){map[y][px]=TILE.PATH;if(rng()<.35)px+=rng()<.5?-1:1;px=Math.max(2,Math.min(MW-3,px));}
+  }else if(type==='coast'){
+    for(let y=0;y<MH;y++){for(let x=0;x<MW;x++)map[y][x]=TILE.GROUND;const coast=14+Math.floor(Math.sin(y*.5)*2);for(let x=coast;x<MW;x++)map[y][x]=TILE.WATER;map[y][coast-2]=TILE.PATH;map[y][coast-3]=TILE.PATH;}
+  }else if(type==='hidden_chapel'){
+    for(let y=0;y<MH;y++)for(let x=0;x<MW;x++)map[y][x]=(y<2||y>=MH-2||x<2||x>=MW-2)?TILE.WALL:TILE.FLOOR;
+    map[3][10]=TILE.SAVE;
+  }
+
+  // Transitions
+  const conn=area?.connections||{};
+  if(conn.north)map[0][Math.floor(MW/2)]=TILE.TRANS_N;
+  if(conn.south)map[MH-1][Math.floor(MW/2)]=TILE.TRANS_S;
+  if(conn.east)map[Math.floor(MH/2)][MW-1]=TILE.TRANS_E;
+  if(conn.west)map[Math.floor(MH/2)][0]=TILE.TRANS_W;
+
+  // Save point
+  if(area?.save&&type!=='hidden_chapel'){
+    for(let r=0;r<3;r++)for(let dy=-r;dy<=r;dy++)for(let dx=-r;dx<=r;dx++){
+      const y=7+dy,x=10+dx;if(y>=0&&y<MH&&x>=0&&x<MW&&map[y][x]===TILE.PATH){map[y][x]=TILE.SAVE;r=99;break;}
+    }
+  }
+
+  return map;
+}
+
+function renderMap(){
+  const scale=2;
+  mapCanvas.width=MW*T*scale;
+  mapCanvas.height=MH*T*scale;
+  mapCtx.imageSmoothingEnabled=false;
+
+  for(let y=0;y<MH;y++)for(let x=0;x<MW;x++){
+    const tile=mapData[y]?.[x]??0;
+    const base=TILE_COLORS[tile]||'#6b5a3e';
+    mapCtx.fillStyle=base;
+    mapCtx.fillRect(x*T*scale,y*T*scale,T*scale,T*scale);
+
+    // Tree canopy detail
+    if(tile===TILE.TREE){mapCtx.fillStyle='#1a3a1a';mapCtx.fillRect(x*T*scale+4,y*T*scale+2,T*scale-8,T*scale-6);}
+    if(tile===TILE.BAMBOO){for(let i=0;i<3;i++){mapCtx.fillStyle='#5a8a2a';mapCtx.fillRect(x*T*scale+4+i*10,y*T*scale,4,T*scale);}}
+    if(tile===TILE.SAVE){mapCtx.fillStyle='#ffd700';mapCtx.fillRect(x*T*scale+12,y*T*scale+4,8,24);mapCtx.fillRect(x*T*scale+6,y*T*scale+10,20,8);}
+    if(tile===TILE.WATER&&y>0){mapCtx.fillStyle='#4a8ab033';for(let i=0;i<3;i++)mapCtx.fillRect(x*T*scale+i*10,y*T*scale+6+i*8,8,2);}
+  }
+
+  // Player sprite
+  mapCtx.fillStyle='#f5f0e8';
+  mapCtx.fillRect(playerX*T*scale+6,playerY*T*scale+2,T*scale-12,T*scale-4);
+  mapCtx.fillStyle='#c9a959';
+  mapCtx.fillRect(playerX*T*scale+10,playerY*T*scale+4,T*scale-20,4);// eyes
+
+  // NPC sprites
+  const area=AREAS[G.area];
+  if(area?.npcs){
+    area.npcs.forEach((nid,i)=>{
+      const nx=5+i*4,ny=6+i*2;
+      mapCtx.fillStyle='#e8dcc8';
+      mapCtx.fillRect(nx*T*scale+6,ny*T*scale+2,T*scale-12,T*scale-4);
+      mapCtx.fillStyle='var(--dim)';
+      mapCtx.font='9px monospace';
+      mapCtx.fillText(nid,nx*T*scale,ny*T*scale-2);
+    });
+  }
+}
+
+function loadArea(areaId){
+  const area=AREAS[areaId];
+  if(!area)return;
+  G.area=areaId;
+  mapData=generateMap(areaId);
+
+  // Set player position
+  if(G._entryDir==='north')playerY=MH-2;
+  else if(G._entryDir==='south')playerY=1;
+  else if(G._entryDir==='east')playerX=1;
+  else if(G._entryDir==='west')playerX=MW-2;
+  else{playerX=10;playerY=12;}
+  G._entryDir=null;
+
+  // Ensure player isn't in solid
+  if(SOLID.has(mapData[playerY]?.[playerX]))mapData[playerY][playerX]=TILE.PATH;
+
+  renderMap();
+  updateHUD();
+
+  // Music
+  startBGM(area.music||'exploration');
+
+  document.getElementById('hud-area').textContent=area.name;
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+// MOVEMENT & ENCOUNTERS
+// ═══════════════════════════════════════════════════════════════
+
+function movePlayer(dx,dy){
+  if(G.phase!=='exploration')return;
+  const nx=playerX+dx,ny=playerY+dy;
+  if(nx<0||nx>=MW||ny<0||ny>=MH)return;
+
+  const tile=mapData[ny]?.[nx];
+  if(SOLID.has(tile))return;
+
+  playerX=nx;playerY=ny;
+  G.stepsSinceEncounter++;
+  renderMap();
+
+  // Tile actions
+  if(tile>=TILE.TRANS_N&&tile<=TILE.TRANS_W){
+    const area=AREAS[G.area];
+    const dirMap={[TILE.TRANS_N]:'north',[TILE.TRANS_S]:'south',[TILE.TRANS_E]:'east',[TILE.TRANS_W]:'west'};
+    const dir=dirMap[tile];
+    const target=area?.connections?.[dir];
+    if(target){
+      G._entryDir=dir;
+      loadArea(target);
+    }
+  }else if(tile===TILE.SAVE){
+    notify('💾 Save Point');
+    saveGame(0);
+  }
+
+  // NPC proximity
+  const area=AREAS[G.area];
+  if(area?.npcs){
+    area.npcs.forEach((nid,i)=>{
+      const nx2=5+i*4,ny2=6+i*2;
+      if(Math.abs(playerX-nx2)<=1&&Math.abs(playerY-ny2)<=1){
+        if(TRADERS[nid])openTrade(nid);
+        else showDialogue(nid,'...','(No dialogue yet)');
+      }
+    });
+  }
+
+  // Boss trigger
+  if(area?.boss&&!G.flags[`beat_${area.boss}`]){
+    if(G.stepsSinceEncounter>5&&playerY<4){
+      startBattle([area.boss],{boss:true});
+      return;
+    }
+  }
+
+  // Encounter check
+  if(G.stepsSinceEncounter%4===0&&area?.encounters){
+    checkEncounter(area.encounters);
+  }
+}
+
+function checkEncounter(tableId){
+  const table=ENCOUNTERS[tableId];
+  if(!table)return;
+  const [formations,lvlRange]=table;
+  const rate=.15*G.diff.encounterRate;
+  const guaranteed=G.stepsSinceEncounter>=32;
+  if(!guaranteed&&Math.random()>rate)return;
+
+  const formation=formations[Math.floor(Math.random()*formations.length)];
+  G.stepsSinceEncounter=0;
+  startBattle(formation,{});
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+// COMBAT ENGINE
+// ═══════════════════════════════════════════════════════════════
+
+function startBattle(enemyIds,options={}){
+  G.phase='battle';
+  initAudio();
+
+  const enemies=enemyIds.map(eid=>{
+    const t=ENEMIES_DB[eid];
+    if(!t)return{id:eid,name:eid,hp:10,maxHp:10,atk:5,def:2,spd:3,spr:1,statusEffects:[]};
+    const roll=(r)=>Array.isArray(r)?r[0]+Math.floor(Math.random()*(r[1]-r[0]+1)):r||0;
+    const hp=Math.round(roll(t.hp)*G.diff.enemyHp);
+    return{id:eid,name:t.name,hp,maxHp:hp,atk:Math.round(roll(t.atk)*G.diff.enemyAtk),def:roll(t.def),spd:roll(t.spd),spr:roll(t.spr),
+      xp:t.xp||10,gold:t.gold||5,drops:t.drops||[],abilities:t.abilities||[],ai:t.ai||'aggressive',
+      weak:t.weak||[],resist:t.resist||[],boss:t.boss||false,accuser:t.accuser||false,
+      survivalTurns:t.survivalTurns||0,dialogue:t.dialogue||null,statusEffects:[]};
+  });
+
+  G.battle={enemies,turn:0,log:[],accuserTurns:0,isAccuser:enemies.some(e=>e.accuser),phase:0,options};
+  G.player.statusEffects=[];
+
+  const music=G.battle.isAccuser?'accuser':options.boss?'boss':'battle';
+  startBGM(music);
+
+  renderBattle();
+  document.getElementById('battle').classList.add('show');
+  battleLog(G.battle.isAccuser?'The Accuser appears. You cannot kill it. You must endure.':
+    options.boss?`${enemies[0].name} blocks your path!`:`${enemies.map(e=>e.name).join(', ')} appeared!`);
+}
+
+function renderBattle(){
+  const b=G.battle;if(!b)return;
+  const p=G.player;
+
+  // Accuser bar
+  const aBar=document.getElementById('accuser-bar');
+  if(b.isAccuser){
+    aBar.style.display='block';
+    const max=b.enemies[0].survivalTurns||8;
+    document.getElementById('accuser-turns').textContent=max-b.accuserTurns;
+    const pips=document.getElementById('accuser-pips');
+    pips.innerHTML='';
+    for(let i=0;i<max;i++){const d=document.createElement('div');d.className='accuser-pip'+(i<b.accuserTurns?' filled':'');pips.appendChild(d);}
+  }else aBar.style.display='none';
+
+  // Enemies
+  const field=document.getElementById('battle-field');
+  field.innerHTML=b.enemies.map((e,i)=>`
+    <div class="enemy-card" data-idx="${i}">
+      <div class="enemy-sprite" style="background:${e.accuser?'#1a1a2e':e.weak?.includes('holy')?'#4a3a6a':'#5c4d3c'};
+        border:2px solid ${e.hp<=e.maxHp*.25?'#cc3333':'#3a3a3a'}"></div>
+      <div class="enemy-name">${e.name}</div>
+      <div class="enemy-hp-bar"><div class="enemy-hp-fill" style="width:${(e.hp/e.maxHp*100)}%"></div></div>
+      <div class="enemy-status">${renderStatusIcons(e.statusEffects)}</div>
+      ${e.hp<=0?'<div style="color:#cc3333;font-size:10px">Defeated</div>':''}
+    </div>`).join('');
+
+  // Player bar
+  const pb=document.getElementById('battle-player');
+  pb.innerHTML=`
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <span style="color:var(--gold)">${p.name} Lv${p.level}</span>
+      <span style="color:var(--dim);font-size:10px">${G.diff.label||'Disciple'} mode</span>
+    </div>
+    <div style="display:flex;gap:16px;margin-top:4px">
+      <div>HP <div class="bar-wrap" style="width:100px"><div class="bar-fill hp-fill" style="width:${p.hp/p.maxHp*100}%"></div></div>
+        <span class="stat-text">${p.hp}/${p.maxHp}</span></div>
+      <div>MP <div class="bar-wrap" style="width:60px"><div class="bar-fill mp-fill" style="width:${p.mp/p.maxMp*100}%"></div></div>
+        <span class="stat-text">${p.mp}/${p.maxMp}</span></div>
+    </div>
+    <div class="player-status-row">${renderStatusIcons(p.statusEffects)}</div>`;
+
+  // Actions
+  const actions=document.getElementById('battle-actions');
+  const alive=b.enemies.filter(e=>e.hp>0);
+  actions.innerHTML=`
+    <button class="action-btn" onclick="battleAttack()">⚔ Attack</button>
+    <button class="action-btn" onclick="battlePray()">✝ Pray</button>
+    <button class="action-btn" onclick="battleGuard()">⛊ Guard</button>
+    <button class="action-btn" onclick="battleItem()">⚗ Item</button>
+    <button class="action-btn" onclick="battleFlee()" ${b.isAccuser||b.options.boss?'disabled':''}>→ Flee</button>`;
+}
+
+function renderStatusIcons(effects){
+  if(!effects||effects.length===0)return'';
+  const icons={poison:'☠',burn:'🔥',despair:'💧',fear:'😨',confusion:'❓',slow:'🐌',stun:'⚡',regen:'💚',spr_up:'⬆',def_up:'🛡',invulnerable:'✦'};
+  const colors={poison:'#4a5a3a',burn:'#ff4500',despair:'#4466aa',fear:'#9955cc',confusion:'#aa66cc',slow:'#8a7a5a',stun:'#ffd700',regen:'#55cc55',spr_up:'#6495ed',def_up:'#c9a959',invulnerable:'#ffd700'};
+  return effects.map(s=>`<span class="status-icon" style="background:${colors[s.id]||'#333'}" title="${s.id} (${s.duration}t)">${icons[s.id]||'?'}<span class="dur">${s.duration}</span></span>`).join('');
+}
+
+function battleLog(text,cls=''){
+  if(!G.battle)return;
+  G.battle.log.push({text,cls});
+  const el=document.getElementById('battle-log');
+  el.innerHTML+=`<div class="${cls}">${text}</div>`;
+  el.scrollTop=el.scrollHeight;
+}
+
+// Damage formula (FF6-inspired)
+function calcDamage(atk,level,targetDef,options={}){
+  const base=(atk*(level||1)/4+atk*atk/64);
+  const variance=.88+Math.random()*.24;
+  let dmg=Math.max(1,Math.round(base*variance-(targetDef*targetDef/256)));
+  if(options.mult)dmg=Math.round(dmg*options.mult);
+  if(options.critical)dmg=Math.round(dmg*1.8);
+  return dmg;
+}
+
+function calcHolyDamage(spr,level,faithVirtue,targetSpr){
+  const base=(spr*(level||1)/4+spr*spr/64)*(1+faithVirtue*.08);
+  const variance=.9+Math.random()*.2;
+  return Math.max(1,Math.round(base*variance));
+}
+
+function battleAttack(){
+  const b=G.battle;if(!b)return;
+  const alive=b.enemies.filter(e=>e.hp>0);
+  if(alive.length===0)return;
+  const target=alive[0];
+
+  // Confusion check
+  if(hasStatus(G.player,'confusion')&&Math.random()<.3){
+    const selfDmg=calcDamage(G.player.atk,G.player.level,G.player.def);
+    G.player.hp=Math.max(1,G.player.hp-selfDmg);
+    battleLog(`Usagi is confused and hits himself for ${selfDmg}!`,'log-damage');
+  }else{
+    const crit=Math.random()<(.06+.03*(G.virtues.prudence||0));
+    let dmg=calcDamage(G.player.atk,G.player.level,target.def,{critical:crit});
+    if(target.resist?.includes('physical'))dmg=Math.round(dmg*.15);
+    if(target.accuser)dmg=Math.round(dmg*.05);
+    if(hasStatus(G.player,'fear'))dmg=Math.round(dmg*.7);
+    target.hp=Math.max(0,target.hp-dmg);
+    battleLog(`Usagi attacks ${target.name} for ${dmg}${crit?' CRITICAL':''}!`,crit?'log-damage':'');
+    playSFX(crit?'critical':'hit');
+  }
+
+  processTurn();
+}
+
+function battlePray(){
+  const available=MIRACLES.filter(m=>{
+    const vLvl=G.virtues[m.virtue]||0;
+    return vLvl>=m.req&&G.player.mp>=m.mp;
+  });
+  if(available.length===0){battleLog('No miracles available (check virtue levels and MP).','log-status');return;}
+
+  // Simple: use first available miracle
+  const actions=document.getElementById('battle-actions');
+  actions.innerHTML=available.map(m=>`<button class="action-btn" onclick="useMiracle('${m.id}')">${m.name} (${m.mp}MP)</button>`).join('')+
+    `<button class="action-btn" onclick="renderBattle()">◂ Back</button>`;
+}
+
+function useMiracle(id){
+  const m=MIRACLES.find(x=>x.id===id);if(!m)return;
+  if(G.player.mp<m.mp){battleLog('Not enough MP!','log-status');return;}
+  G.player.mp-=m.mp;
+  const b=G.battle;
+  const alive=b.enemies.filter(e=>e.hp>0);
+  const target=alive[0];
+
+  if(m.type==='holy_dmg'&&target){
+    let dmg=calcHolyDamage(G.player.spr,G.player.level,G.virtues.faith||0,target.spr);
+    if(target.weak?.includes('holy'))dmg=Math.round(dmg*2);
+    if(target.accuser)dmg=Math.round(dmg*.15);
+    target.hp=Math.max(0,target.hp-dmg);
+    battleLog(`${m.name}! ${dmg} holy damage to ${target.name}!`,'log-holy');
+    playSFX('holy');
+    if(m.cleanse){
+      G.player.statusEffects=G.player.statusEffects.filter(s=>['regen','def_up','spr_up','invulnerable'].includes(s.id));
+      battleLog('Status effects cleansed!','log-heal');
+    }
+  }else if(m.type==='heal'){
+    const heal=Math.round((G.player.spr*m.power+(G.virtues.charity||0)*3)*G.diff.healMult);
+    G.player.hp=Math.min(G.player.maxHp,G.player.hp+heal);
+    battleLog(`${m.name}! Restored ${heal} HP!`,'log-heal');
+    playSFX('heal');
+  }else if(m.type==='buff_def'){
+    applyStatus(G.player,'def_up',m.dur||3);
+    battleLog(`${m.name}! DEF up for ${m.dur} turns!`,'log-holy');
+  }else if(m.type==='pacify'&&target&&!target.accuser){
+    if((G.virtues.charity||0)>=5){
+      target.hp=0;target.pacified=true;
+      battleLog(`${m.name}! ${target.name} lays down their weapon.`,'log-holy');
+    }else{battleLog('Charity must be 5 to use Forgiveness.','log-status');}
+  }
+
+  processTurn();
+}
+
+function battleGuard(){
+  G.player._guarding=true;
+  battleLog('Usagi guards! DEF doubled this turn.');
+  processTurn();
+}
+
+function battleItem(){
+  const usable=G.inventory.filter(i=>i.type==='consumable'||i.type==='sacramental');
+  if(usable.length===0){battleLog('No items!','log-status');return;}
+  const actions=document.getElementById('battle-actions');
+  actions.innerHTML=usable.map(i=>`<button class="action-btn" onclick="useBattleItem('${i.id}')">${i.name}${i.quantity>1?` ×${i.quantity}`:''}</button>`).join('')+
+    `<button class="action-btn" onclick="renderBattle()">◂ Back</button>`;
+}
+
+function useBattleItem(id){
+  const item=G.inventory.find(i=>i.id===id);if(!item)return;
+  const t=ITEMS_DB[id];if(!t)return;
+  const e=t.effect;
+
+  if(e.healHp){
+    const heal=Math.round(e.healHp*G.diff.healMult);
+    G.player.hp=Math.min(G.player.maxHp,G.player.hp+heal);
+    battleLog(`Used ${t.name}! Restored ${heal} HP.`,'log-heal');
+    playSFX('heal');
+  }
+  if(e.healMp){G.player.mp=Math.min(G.player.maxMp,G.player.mp+e.healMp);battleLog(`Restored ${e.healMp} MP.`,'log-heal');}
+  if(e.cureStatus){e.cureStatus.forEach(s=>removeStatus(G.player,s));battleLog(`Cured ${e.cureStatus.join(', ')}!`,'log-heal');}
+  if(e.holyDmg&&G.battle){
+    const target=G.battle.enemies.find(en=>en.hp>0&&en.weak?.includes('holy'));
+    if(target){target.hp=Math.max(0,target.hp-e.holyDmg);battleLog(`Holy water deals ${e.holyDmg} to ${target.name}!`,'log-holy');}
+  }
+  if(e.flee){endBattle('flee');return;}
+
+  item.quantity=(item.quantity||1)-1;
+  if(item.quantity<=0)G.inventory=G.inventory.filter(i=>i.id!==id);
+  playSFX('item');
+  processTurn();
+}
+
+function battleFlee(){
+  const b=G.battle;
+  const avgSpd=b.enemies.reduce((s,e)=>s+e.spd,0)/b.enemies.length;
+  const chance=.5+(G.player.spd-avgSpd)*.05;
+  if(Math.random()<chance){
+    battleLog('Escaped!');endBattle('flee');
+  }else{
+    battleLog('Failed to escape!','log-damage');
+    processTurn();
+  }
+}
+
+// ── Enemy turn ─────────────────────────────────────────────
+
+function processTurn(){
+  const b=G.battle;if(!b)return;
+  b.turn++;
+
+  // Enemy turns
+  for(const enemy of b.enemies){
+    if(enemy.hp<=0)continue;
+
+    if(enemy.accuser){
+      // Accuser: pick a random spiritual attack
+      b.accuserTurns++;
+      const abilities=enemy.abilities||[];
+      const ability=abilities[Math.floor(Math.random()*abilities.length)];
+      if(ability){
+        if(ability.dialogue){battleLog(`"${ability.dialogue}"`,'log-accuser');playSFX('accuser');}
+        if(ability.status){
+          const virtueResist=getVirtueResist(ability.status);
+          if(Math.random()<(ability.chance||.5)-virtueResist){
+            applyStatus(G.player,ability.status,3);
+            battleLog(`${ability.name}! ${ability.status} inflicted!`,'log-status');
+            playSFX('status');
+          }else{
+            battleLog(`You resist the ${ability.name}!`,'log-holy');
+          }
+        }
+        if(ability.drainMp){
+          G.player.mp=Math.max(0,G.player.mp-ability.drainMp);
+          battleLog(`${ability.name}! Lost ${ability.drainMp} MP!`,'log-damage');
+        }
+      }
+    }else{
+      // Normal enemy
+      let dmg=calcDamage(enemy.atk,1,G.player.def*(G.player._guarding?2:1));
+      if(hasStatus(G.player,'def_up'))dmg=Math.max(1,dmg-4);
+      if(hasStatus(G.player,'invulnerable'))dmg=0;
+      G.player.hp=Math.max(0,G.player.hp-dmg);
+      if(dmg>0)battleLog(`${enemy.name} attacks for ${dmg}!`,'log-damage');
+      playSFX('hit');
+
+      // Special abilities
+      if(enemy.abilities?.length>0&&Math.random()<.3){
+        const ab=enemy.abilities[Math.floor(Math.random()*enemy.abilities.length)];
+        if(ab.status&&Math.random()<(ab.chance||.3)){
+          applyStatus(G.player,ab.status,3);
+          battleLog(`${ab.name}! ${ab.status} inflicted!`,'log-status');
+        }
+      }
+    }
+  }
+
+  // Status tick
+  processStatusTick(G.player);
+
+  // Clear guard
+  G.player._guarding=false;
+
+  // Check battle end
+  checkBattleEnd();
+  renderBattle();
+}
+
+function checkBattleEnd(){
+  const b=G.battle;if(!b)return;
+
+  // Player dead
+  if(G.player.hp<=0){
+    // Scapular death save
+    const scap=G.equipment.relic;
+    if(scap&&ITEMS_DB[scap.id]?.passive==='death_save'&&!G.flags.scapular_used){
+      G.player.hp=1;G.flags.scapular_used=true;
+      battleLog("The Brown Scapular glows blue. Our Lady's promise holds. 1 HP!",'log-holy');
+      playSFX('blessing');
+      return;
+    }
+    // Fortitude last stand
+    if((G.virtues.fortitude||0)>=3&&!G.flags._lastStandUsed){
+      G.player.hp=1;G.flags._lastStandUsed=true;
+      battleLog('Fortitude! You refuse to fall. 1 HP!','log-holy');
+      return;
+    }
+    // Pilgrim auto-revive
+    if(G.diff.autoRevive){
+      G.player.hp=Math.round(G.player.maxHp*.5);
+      battleLog('Grace carries you. Restored to 50% HP.','log-heal');
+      return;
+    }
+    endBattle('defeat');return;
+  }
+
+  // Accuser survival check
+  if(b.isAccuser){
+    const max=b.enemies[0].survivalTurns||8;
+    if(b.accuserTurns>=max){
+      battleLog('"...You will hear me again. Every era. I have time."','log-accuser');
+      endBattle('survived');return;
+    }
+  }
+
+  // All enemies dead
+  if(b.enemies.every(e=>e.hp<=0||e.pacified)){
+    endBattle(b.enemies.some(e=>e.pacified)?'pacifist':'victory');
+  }
+}
+
+function endBattle(outcome){
+  const b=G.battle;
+  document.getElementById('battle').classList.remove('show');
+  G.phase='exploration';
+  G.player.statusEffects=[];
+  G.flags._lastStandUsed=false;
+
+  if(outcome==='victory'||outcome==='pacifist'||outcome==='survived'){
+    let xp=0,gold=0;
+    if(outcome==='survived'){
+      xp=100;gold=0;
+      notify('🕊 You endured the Accuser.');
+    }else{
+      for(const e of b.enemies){
+        xp+=Math.round((e.xp||10)*G.diff.xp);
+        gold+=Math.round((e.gold||5)*G.diff.gold);
+        if(!e.accuser)G.killCount++;
+        // Drops
+        (e.drops||[]).forEach(d=>{if(Math.random()<.25)addItem(d);});
+      }
+      if(outcome==='pacifist'){xp*=2;notify('🕊 Pacifist victory! Double XP.');}
+    }
+    G.player.gold=(G.player.gold||0)+gold;
+    G.player.xp+=xp;
+    if(xp)battleLog(`+${xp} XP, +${gold} gold`);
+
+    // Boss flags
+    b.enemies.forEach(e=>{if(e.boss||e.accuser)G.flags[`beat_${e.id}`]=true;});
+
+    // Level up check
+    checkLevelUp();
+
+    // Equipment battle tracking
+    G.battleCount++;
+  }else if(outcome==='defeat'){
+    notify('Defeated... Returning to last save.');
+    G.player.gold=Math.round(G.player.gold*.9);
+  }
+
+  // Resume area music
+  const area=AREAS[G.area];
+  if(area)startBGM(area.music||'exploration');
+  updateHUD();
+  G.battle=null;
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+// STATUS EFFECTS
+// ═══════════════════════════════════════════════════════════════
+
+function applyStatus(target,statusId,duration){
+  if(!target.statusEffects)target.statusEffects=[];
+  // Check immunity
+  const scap=G.equipment.relic;
+  if(scap&&ITEMS_DB[scap.id]?.passive==='immune_despair'&&statusId==='despair')return;
+  const existing=target.statusEffects.find(s=>s.id===statusId);
+  if(existing){existing.duration=Math.max(existing.duration,duration);}
+  else{target.statusEffects.push({id:statusId,duration});}
+}
+
+function removeStatus(target,statusId){
+  if(!target.statusEffects)return;
+  target.statusEffects=target.statusEffects.filter(s=>s.id!==statusId);
+}
+
+function hasStatus(target,statusId){return(target.statusEffects||[]).some(s=>s.id===statusId);}
+
+function processStatusTick(target){
+  if(!target.statusEffects)return;
+  for(const s of target.statusEffects){
+    if(s.id==='poison'){const dmg=Math.max(1,Math.floor(target.maxHp*.05));target.hp=Math.max(1,target.hp-dmg);battleLog(`Poison: -${dmg} HP`,'log-damage');}
+    if(s.id==='regen'){const heal=Math.max(1,Math.floor(target.maxHp*.05));target.hp=Math.min(target.maxHp,target.hp+heal);}
+    s.duration--;
+  }
+  target.statusEffects=target.statusEffects.filter(s=>s.duration>0);
+}
+
+function getVirtueResist(statusId){
+  const map={despair:'hope',fear:'fortitude',confusion:'prudence'};
+  const virtue=map[statusId];
+  return virtue?(G.virtues[virtue]||0)*.06:0;
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+// EQUIPMENT & ITEMS
+// ═══════════════════════════════════════════════════════════════
+
+function addItem(id,qty=1,quality){
+  const t=ITEMS_DB[id];if(!t)return;
+  if(t.type==='consumable'||t.type==='sacramental'){
+    const existing=G.inventory.find(i=>i.id===id);
+    if(existing){existing.quantity=(existing.quantity||1)+qty;}
+    else{G.inventory.push({id,name:t.name,type:t.type,quantity:qty});}
+  }else{
+    const q=quality!==undefined?quality:4;
+    G.inventory.push({id,name:t.name,type:t.type,quality:q,blessed:false,blessingName:null});
+  }
+  playSFX('item');
+}
+
+function equipItem(invIndex){
+  const item=G.inventory[invIndex];if(!item)return;
+  const t=ITEMS_DB[item.id];if(!t)return;
+  const slot=t.type;// weapon, garment, head, accessory, relic
+  if(!['weapon','garment','head','accessory','relic'].includes(slot))return;
+
+  // Unequip current
+  if(G.equipment[slot]){G.inventory.push(G.equipment[slot]);}
+  G.equipment[slot]=item;
+  G.inventory.splice(invIndex,1);
+  recalcStats();
+  playSFX('menu');
+}
+
+function recalcStats(){
+  const b=G.baseStats;
+  const p=G.player;
+  let bonus={atk:0,def:0,spd:0,spr:0};
+  for(const slot of ['weapon','garment','head','accessory','relic']){
+    const item=G.equipment[slot];if(!item)continue;
+    const t=ITEMS_DB[item.id];if(!t||!t.base)continue;
+    const q=Q_MULT[item.quality||4];
+    for(const [stat,val] of Object.entries(t.base)){
+      if(['atk','def','spd','spr'].includes(stat))bonus[stat]+=Math.round(val*q);
+    }
+    // Blessing bonus
+    if(item.blessed)bonus.spr+=2;
+    // Virtue scaling
+    if(t.scaling){bonus[t.scaling.virtue==='faith'?'spr':'atk']+=Math.floor((G.virtues[t.scaling.virtue]||0)*t.scaling.mult);}
+  }
+  p.atk=b.atk+bonus.atk;p.def=b.def+bonus.def;p.spd=b.spd+bonus.spd;p.spr=b.spr+bonus.spr;
+}
+
+function getItemDisplayName(item){
+  if(!item)return'(empty)';
+  const q=QUALITY[item.quality||4];
+  const prefix=item.quality!==4&&item.quality!==undefined?q+' ':'';
+  const bless=item.blessingName?item.blessingName+' ':item.blessed?'Blessed ':'';
+  return`${bless}${prefix}${item.name}`;
+}
+
+function getQualityClass(q){return'quality-'+Q_CLASS[q||4];}
+
+
+// ═══════════════════════════════════════════════════════════════
+// LEVEL SYSTEM
+// ═══════════════════════════════════════════════════════════════
+
+function checkLevelUp(){
+  while(G.player.level<30&&G.player.xp>=XP_TABLE[G.player.level]){
+    G.player.xp-=XP_TABLE[G.player.level];
+    G.player.level++;
+    const sweet=(G.player.level>=5&&G.player.level<=8)||(G.player.level>=15&&G.player.level<=20)?1.3:1;
+    G.baseStats.atk+=Math.round(STAT_GROWTH.atk*sweet);
+    G.baseStats.def+=Math.round(STAT_GROWTH.def*sweet);
+    G.baseStats.spd+=Math.round(STAT_GROWTH.spd*sweet);
+    G.baseStats.spr+=Math.round(STAT_GROWTH.spr*sweet);
+    G.player.maxHp+=Math.round(STAT_GROWTH.hp*sweet);
+    G.player.maxMp+=Math.round(STAT_GROWTH.mp*sweet);
+    G.player.hp=G.player.maxHp;G.player.mp=G.player.maxMp;
+    recalcStats();
+    notify(`⬆ Level ${G.player.level}!`);
+    playSFX('levelup');
+  }
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+// UI: HUD, MENU, DIALOGUE, TRADE
+// ═══════════════════════════════════════════════════════════════
+
+function updateHUD(){
+  const p=G.player;
+  document.getElementById('hud-level').textContent=p.level;
+  document.getElementById('hud-hp').style.width=`${p.hp/p.maxHp*100}%`;
+  document.getElementById('hud-mp').style.width=`${p.mp/(p.maxMp||10)*100}%`;
+  document.getElementById('hud-status-icons').innerHTML=renderStatusIcons(p.statusEffects);
+}
+
+function openMenu(){
+  if(G.phase!=='exploration')return;
+  G.phase='menu';
+  document.getElementById('menu').classList.add('show');
+  showMenuTab('equip');
+  playSFX('menu');
+}
+
+function closeMenu(){
+  document.getElementById('menu').classList.remove('show');
+  G.phase='exploration';
+}
+
+function showMenuTab(tab){
+  document.querySelectorAll('.menu-tab').forEach(t=>t.classList.remove('active'));
+  event?.target?.classList?.add('active');
+  const content=document.getElementById('menu-content');
+
+  if(tab==='equip'){
+    content.innerHTML=['weapon','garment','head','accessory','relic'].map(slot=>{
+      const item=G.equipment[slot];
+      const displayName=item?getItemDisplayName(item):'(empty)';
+      const qClass=item?getQualityClass(item.quality):'';
+      const blessed=item?.blessed?'blessed':'';
+      const t=item?ITEMS_DB[item.id]:null;
+      const stats=t?.base?Object.entries(t.base).map(([k,v])=>`${k}:${v>0?'+':''}${v}`).join(' '):'';
+      return`<div class="equip-slot">
+        <div><div class="slot-name">${slot}</div><div class="item-name ${qClass} ${blessed}">${displayName}</div></div>
+        <div class="item-stats">${stats}</div>
+      </div>`;
+    }).join('')+
+    '<div style="margin-top:12px;color:var(--dim);font-size:11px">Inventory:</div>'+
+    G.inventory.filter(i=>['weapon','garment','head','accessory','relic'].includes(ITEMS_DB[i.id]?.type)).map((item,idx)=>{
+      const realIdx=G.inventory.indexOf(item);
+      return`<div class="item-row" onclick="equipItem(${realIdx});showMenuTab('equip')">
+        <span class="${getQualityClass(item.quality)} ${item.blessed?'blessed':''}">${getItemDisplayName(item)}</span>
+        <span style="color:var(--gold);font-size:10px">Equip</span>
+      </div>`;
+    }).join('')||'<div style="color:var(--dim);padding:8px;font-size:11px">No equipment in inventory</div>';
+
+    // Stats summary
+    content.innerHTML+=`<div style="margin-top:16px;padding:8px;border-top:1px solid rgba(255,255,255,.05)">
+      <div style="color:var(--gold);font-size:12px;margin-bottom:4px">Stats</div>
+      <div style="font-size:11px;color:var(--dim)">ATK ${G.player.atk} · DEF ${G.player.def} · SPD ${G.player.spd} · SPR ${G.player.spr}</div>
+      <div style="font-size:11px;color:var(--dim)">HP ${G.player.hp}/${G.player.maxHp} · MP ${G.player.mp}/${G.player.maxMp} · Gold ${G.player.gold}</div>
+      <div style="font-size:11px;color:var(--dim)">XP ${G.player.xp}/${XP_TABLE[G.player.level]||'MAX'}</div>
+    </div>`;
+  }else if(tab==='items'){
+    const consumables=G.inventory.filter(i=>i.type==='consumable'||i.type==='sacramental');
+    content.innerHTML=consumables.length?consumables.map(i=>`<div class="item-row">
+      <span>${i.name} ${i.quantity>1?'×'+i.quantity:''}</span>
+      <span style="color:var(--dim);font-size:10px">${ITEMS_DB[i.id]?.desc||''}</span>
+    </div>`).join(''):'<div style="color:var(--dim);padding:8px">No items</div>';
+  }else if(tab==='virtues'){
+    content.innerHTML=Object.entries(G.virtues).map(([k,v])=>`<div class="virtue-row">
+      <span class="virtue-name">${k.charAt(0).toUpperCase()+k.slice(1)}</span>
+      <span class="virtue-val">${typeof v==='number'?v.toFixed(1):v}</span>
+    </div>`).join('')+
+    `<div style="margin-top:16px;padding:8px;border-top:1px solid rgba(255,255,255,.05);color:var(--dim);font-size:11px">
+      Difficulty: ${G.diff.label||G.difficulty}<br>
+      Battles: ${G.battleCount} · Kills: ${G.killCount}<br>
+      Area: ${AREAS[G.area]?.name||G.area}
+    </div>`;
+  }else if(tab==='save'){
+    content.innerHTML=`
+      <div class="item-row" onclick="saveGame(0);notify('💾 Saved!');playSFX('save')"><span style="color:var(--gold)">💾 Save to Slot 1</span></div>
+      <div class="item-row" onclick="saveGame(1);notify('💾 Saved!');playSFX('save')"><span style="color:var(--gold)">💾 Save to Slot 2</span></div>
+      <div class="item-row" onclick="loadGame(0);closeMenu()"><span>📂 Load Slot 1</span></div>
+      <div class="item-row" onclick="loadGame(1);closeMenu()"><span>📂 Load Slot 2</span></div>
+      <div class="item-row" onclick="closeMenu()"><span style="color:var(--dim)">◂ Back</span></div>`;
+  }
+}
+
+function showDialogue(speaker,line1,line2){
+  G.phase='dialogue';
+  document.getElementById('dlg-speaker').textContent=speaker;
+  document.getElementById('dlg-text').textContent=line1+(line2?'\n'+line2:'');
+  document.getElementById('dialogue').classList.add('show');
+}
+
+function dismissDialogue(){
+  document.getElementById('dialogue').classList.remove('show');
+  G.phase='exploration';
+}
+
+function openTrade(traderId){
+  const trader=TRADERS[traderId];if(!trader)return;
+  G.phase='trade';
+  document.getElementById('trade').classList.add('show');
+  document.getElementById('trade-name').textContent=trader.name;
+  document.getElementById('trade-dialogue').textContent=trader.greeting;
+  document.getElementById('trade-gold').textContent=G.player.gold;
+  document.getElementById('trade-items').innerHTML=trader.trades.map((tr,i)=>{
+    const costText=tr.cost.gold!==undefined?`${tr.cost.gold} gold`:
+      tr.cost.items?Object.entries(tr.cost.items).map(([k,v])=>`${v}× ${ITEMS_DB[k]?.name||k}`).join(', '):'Free';
+    return`<div class="trade-item" onclick="executeTrade('${traderId}',${i})">
+      <div class="trade-name">${tr.name}</div>
+      <div class="trade-cost">Cost: ${costText}</div>
+      <div class="trade-desc">${tr.desc}</div>
+    </div>`;
+  }).join('');
+}
+
+function closeTrade(){document.getElementById('trade').classList.remove('show');G.phase='exploration';}
+
+function executeTrade(traderId,idx){
+  const trader=TRADERS[traderId];if(!trader)return;
+  const trade=trader.trades[idx];if(!trade)return;
+  if(trade._done&&trade.once){notify('Already traded.');return;}
+
+  // Check cost
+  if(trade.cost.gold!==undefined&&G.player.gold<trade.cost.gold){notify('Not enough gold.');return;}
+  if(trade.cost.items){
+    for(const[id,qty]of Object.entries(trade.cost.items)){
+      const have=G.inventory.filter(i=>i.id===id).reduce((s,i)=>s+(i.quantity||1),0);
+      if(have<qty){notify(`Need ${qty}× ${ITEMS_DB[id]?.name||id}`);return;}
+    }
+  }
+
+  // Pay
+  if(trade.cost.gold)G.player.gold-=trade.cost.gold;
+  if(trade.cost.items){for(const[id,qty]of Object.entries(trade.cost.items)){
+    let remaining=qty;
+    G.inventory=G.inventory.filter(i=>{if(i.id===id&&remaining>0){const take=Math.min(remaining,i.quantity||1);remaining-=take;i.quantity=(i.quantity||1)-take;return i.quantity>0;}return true;});
+  }}
+
+  // Give
+  if(trade.gives.qty){addItem(trade.gives.id,trade.gives.qty);}
+  else{addItem(trade.gives.id,1,trade.gives.quality);}
+  if(trade.once)trade._done=true;
+
+  notify(`Received ${ITEMS_DB[trade.gives.id]?.name||trade.gives.id}!`);
+  document.getElementById('trade-gold').textContent=G.player.gold;
+}
+
+function notify(text){
+  const el=document.createElement('div');
+  el.className='notif';el.textContent=text;
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(),2600);
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+// SAVE / LOAD
+// ═══════════════════════════════════════════════════════════════
+
+function saveGame(slot){
+  try{
+    const saves=JSON.parse(localStorage.getItem('samurai_usagi')||'{}');
+    saves[slot]={player:{...G.player},baseStats:{...G.baseStats},virtues:{...G.virtues},
+      equipment:JSON.parse(JSON.stringify(G.equipment)),inventory:JSON.parse(JSON.stringify(G.inventory)),
+      area:G.area,flags:{...G.flags},battleCount:G.battleCount,killCount:G.killCount,
+      difficulty:G.difficulty,timestamp:Date.now()};
+    localStorage.setItem('samurai_usagi',JSON.stringify(saves));
+  }catch(e){console.warn('Save failed',e);}
+}
+
+function loadGame(slot){
+  try{
+    const saves=JSON.parse(localStorage.getItem('samurai_usagi')||'{}');
+    const s=saves[slot];if(!s){notify('No save data.');return;}
+    G.player={...s.player,statusEffects:[]};G.baseStats={...s.baseStats};G.virtues={...s.virtues};
+    G.equipment=s.equipment||{weapon:null,garment:null,head:null,accessory:null,relic:null};
+    G.inventory=s.inventory||[];G.flags=s.flags||{};
+    G.battleCount=s.battleCount||0;G.killCount=s.killCount||0;
+    G.difficulty=s.difficulty||'disciple';G.diff=DIFF_MODES[G.difficulty];
+    loadArea(s.area||'kurosaki_village');
+    notify('Loaded!');
+  }catch(e){console.warn('Load failed',e);}
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+// INPUT
+// ═══════════════════════════════════════════════════════════════
+
+document.addEventListener('keydown',e=>{
+  if(G.phase==='title')return;
+  if(G.phase==='dialogue'){dismissDialogue();return;}
+  if(G.phase==='menu'||G.phase==='trade')return;
+
+  const key=e.key;
+  if(G.phase==='exploration'){
+    if(key==='ArrowUp'||key==='w')movePlayer(0,-1);
+    else if(key==='ArrowDown'||key==='s')movePlayer(0,1);
+    else if(key==='ArrowLeft'||key==='a')movePlayer(-1,0);
+    else if(key==='ArrowRight'||key==='d')movePlayer(1,0);
+    else if(key==='Escape'||key==='m')openMenu();
+  }
+});
+
+// Touch controls
+let touchStartX,touchStartY;
+document.addEventListener('touchstart',e=>{
+  if(G.phase==='dialogue'){dismissDialogue();return;}
+  touchStartX=e.touches[0].clientX;touchStartY=e.touches[0].clientY;
+},{passive:true});
+document.addEventListener('touchend',e=>{
+  if(G.phase!=='exploration'||!touchStartX)return;
+  const dx=e.changedTouches[0].clientX-touchStartX;
+  const dy=e.changedTouches[0].clientY-touchStartY;
+  if(Math.abs(dx)<20&&Math.abs(dy)<20)return;
+  if(Math.abs(dx)>Math.abs(dy))movePlayer(dx>0?1:-1,0);
+  else movePlayer(0,dy>0?1:-1);
+  touchStartX=null;
+},{passive:true});
+
+
+// ═══════════════════════════════════════════════════════════════
+// BOOT
+// ═══════════════════════════════════════════════════════════════
+
+function startGame(difficulty){
+  G.difficulty=difficulty;
+  G.diff=DIFF_MODES[difficulty];
+
+  // Starting equipment
+  G.equipment.weapon={id:'farmers_sickle',name:"Farmer's Sickle",quality:3};
+  G.equipment.garment={id:'farmers_kosode',name:"Farmer's Kosode",quality:2};
+  G.equipment.head={id:'sedge_hat',name:'Sedge Hat',quality:2};
+  G.equipment.accessory={id:'straw_sandals',name:'Straw Sandals',quality:2};
+  G.equipment.relic={id:'obaas_cross',name:"Obaa-chan's Cross",quality:4};
+
+  // Starting items
+  addItem('rice_ball',3);
+  addItem('medicinal_herb',2);
+  addItem('holy_water_vial',1);
+
+  recalcStats();
+
+  // Hide title, show game
+  document.getElementById('title').classList.add('hidden');
+  document.getElementById('hud').classList.add('show');
+  G.phase='exploration';
+
+  initAudio();
+  loadArea('kurosaki_village');
+
+  // Opening dialogue
+  setTimeout(()=>{
+    showDialogue('Usagi','The morning is quiet. Too quiet. Obaa-chan said to meet her at the chapel today...');
+  },1000);
+}
+
+</script>
+</body>
+</html>
