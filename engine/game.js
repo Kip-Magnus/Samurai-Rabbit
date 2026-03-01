@@ -570,6 +570,10 @@ class WorldScene extends Phaser.Scene {
   constructor() { super({ key: 'WorldScene' }); }
 
   create() {
+    // Reset state flags
+    this._transitioning = false;
+    this._inEncounter = false;
+
     const state = this.registry.get('gameState');
     const palette = this.registry.get('eraPalette');
     const spriteFactory = this.registry.get('spriteFactory');
@@ -1044,12 +1048,16 @@ class WorldScene extends Phaser.Scene {
     }
 
     // Create Phaser texture from canvas
-    const texKey = 'minimap_' + state.currentAreaId;
-    if (this.textures.exists(texKey)) this.textures.remove(texKey);
-    this.textures.addCanvas(texKey, canvas);
-
-    // Display as a simple image, pinned to camera
-    this.add.image(mmX, mmY, texKey).setOrigin(0).setScrollFactor(0).setDepth(9990);
+    const texKey = 'minimap_' + Date.now();
+    try {
+      this.textures.addCanvas(texKey, canvas);
+      this.add.image(mmX, mmY, texKey).setOrigin(0).setScrollFactor(0).setDepth(9990);
+    } catch (e) {
+      console.warn('Minimap texture failed, using fallback', e);
+      // Fallback: just draw a dark rectangle
+      this.add.rectangle(mmX + mmW / 2, mmY + mmH / 2, mmW + 4, mmH + 4, 0x000000, 0.7)
+        .setScrollFactor(0).setDepth(9990);
+    }
 
     // Player dot
     this.mmPlayerDot = this.add.rectangle(mmX, mmY, 4, 4, 0xff3333, 1)
@@ -1310,6 +1318,7 @@ class WorldScene extends Phaser.Scene {
   // ── Encounter System ──
 
   _checkEncounter(state) {
+    if (this._transitioning || this._inEncounter) return;
     const areaData = this.areaData;
     if (!areaData.encounters || !areaData.encounters.enabled) return;
     if (this.encounterCooldown > 0) return;
@@ -1325,7 +1334,9 @@ class WorldScene extends Phaser.Scene {
   }
 
   _triggerEncounter(state, areaData) {
-    this.encounterCooldown = 3; // min 3 steps before next encounter
+    if (this._transitioning || this._inEncounter) return;
+    this._inEncounter = true;
+    this.encounterCooldown = 3;
     this.stepsSinceEncounter = 0;
 
     // Find enemies that can appear in this area
@@ -1361,17 +1372,21 @@ class WorldScene extends Phaser.Scene {
     this.canInteract = false;
 
     this.time.delayedCall(400, () => {
+      if (this._transitioning) { this._inEncounter = false; return; }
       this.scene.pause();
       this.scene.launch('BattleScene', {
         enemyIds: picked,
         onBattleEnd: (result, rewards) => {
-          this.scene.stop('BattleScene');
-          this.scene.resume('WorldScene');
+          this._inEncounter = false;
           this.canInteract = true;
-          if (result === 'defeat') {
-            // Restart from last save or title
-            this.scene.start('TitleScene');
-          }
+          // BattleScene stops itself — just resume WorldScene
+          this.time.delayedCall(100, () => {
+            if (result === 'defeat') {
+              this.scene.start('TitleScene');
+            } else {
+              this.scene.resume('WorldScene');
+            }
+          });
         },
       });
     });
@@ -1380,6 +1395,7 @@ class WorldScene extends Phaser.Scene {
   // ── Area Transition System ──
 
   _checkAreaTransition(state) {
+    if (this._transitioning || this._inEncounter) return;
     const areaData = this.areaData;
     if (!areaData.exits || areaData.exits.length === 0) return;
 
@@ -1454,12 +1470,17 @@ class WorldScene extends Phaser.Scene {
 
     this.cameras.main.fadeOut(300, 0, 0, 0);
     this.time.delayedCall(350, () => {
-      this.scene.restart();
+      try {
+        this.scene.restart();
+      } catch (e) {
+        console.error('Scene restart failed:', e);
+        this._transitioning = false;
+      }
     });
   }
 
   update(time, delta) {
-    if (!this.playerSprite || this._transitioning) return;
+    if (!this.playerSprite || this._transitioning || this._inEncounter) return;
 
     const state = this.registry.get('gameState');
 
