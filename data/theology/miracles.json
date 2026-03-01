@@ -1,0 +1,601 @@
+{
+  "_meta": {
+    "system": "Samurai Usagi Miracle Taxonomy",
+    "version": "1.0",
+    "theology": "Catholic — Catechism of the Catholic Church",
+    "structure": "Three theological virtues (CCC 1812-1829) + Four cardinal virtues (CCC 1805-1811) = Seven pillars. Each virtue unlocks miracle abilities as it grows. Miracles are not magic — they are graces, gifts of the Holy Spirit, or sacramental effects.",
+    "design_principle": "Prayer is never just a heal spell. Every miracle has a theological reason for its mechanical effect. The player learns Catholic doctrine by using the combat system."
+  },
+
+  "virtues": {
+    "_source": "CCC 1803-1845",
+    "_note": "Three theological virtues relate directly to God. Four cardinal virtues govern human conduct. Both are infused by grace and strengthened by practice.",
+
+    "faith": {
+      "latin": "Fides",
+      "type": "theological",
+      "ccc": [1814, 1815, 1816],
+      "definition": "The theological virtue by which we believe in God and believe all that he has said and revealed to us, and that Holy Church proposes for our belief, because he is truth itself.",
+      "gameplay": "Governs holy damage, prayer effectiveness, resistance to despair and deception. Faith makes the unseen real — mechanically, it reveals hidden things and strengthens miracles.",
+      "stat_bonus_per_level": { "spr": 2, "holy_damage_pct": 8 },
+      "unlocks_at": {
+        "1": "Grants access to basic prayers",
+        "3": "Cross glows near hidden objects (Obaa's Cross passive)",
+        "5": "Resist Accuser's despair attacks. Unlocks De Profundis (revive)."
+      }
+    },
+
+    "hope": {
+      "latin": "Spes",
+      "type": "theological",
+      "ccc": [1817, 1818, 1821],
+      "definition": "The theological virtue by which we desire the kingdom of heaven and eternal life as our happiness, placing our trust in Christ's promises and relying not on our own strength, but on the help of the grace of the Holy Spirit.",
+      "gameplay": "Governs HP regeneration, resistance to fear/despair status effects, and the ability to continue after defeat. Hope is the virtue that keeps you in the fight.",
+      "stat_bonus_per_level": { "maxHp": 5, "fear_resist_pct": 10 },
+      "unlocks_at": {
+        "1": "Passive HP regen while standing in sacred areas",
+        "3": "Immune to fear status. Party morale bonus.",
+        "5": "Second chance on death (once per battle)"
+      }
+    },
+
+    "charity": {
+      "latin": "Caritas",
+      "type": "theological",
+      "ccc": [1822, 1823, 1825, 1827],
+      "definition": "The theological virtue by which we love God above all things for his own sake, and our neighbor as ourselves for the love of God. Charity is the form of all the virtues.",
+      "gameplay": "Governs healing power, party buffs, and the ability to affect enemies through mercy rather than violence. Charity is the queen of virtues — CCC 1827: it 'animates and inspires the practice of all the virtues.' Highest charity unlocks pacifist victory conditions.",
+      "stat_bonus_per_level": { "heal_power_pct": 10, "party_buff_pct": 5 },
+      "unlocks_at": {
+        "1": "Basic healing miracles",
+        "3": "Can heal NPCs outside battle. Corporal works unlock.",
+        "5": "Forgiveness miracle — can end some battles without killing. Converts enemy intent."
+      }
+    },
+
+    "prudence": {
+      "latin": "Prudentia",
+      "type": "cardinal",
+      "ccc": [1806],
+      "definition": "The virtue that disposes practical reason to discern our true good in every circumstance and to choose the right means of achieving it. Prudence guides the judgment of conscience.",
+      "gameplay": "Governs critical hit chance, information revelation (enemy weaknesses, hidden paths), and dialogue options. Prudence is seeing clearly — the wise see what others miss.",
+      "stat_bonus_per_level": { "crit_pct": 3, "spd": 1 },
+      "unlocks_at": {
+        "1": "Enemy weakness hints in battle",
+        "3": "Additional dialogue options appear. See through deceptions.",
+        "5": "Perfect dodge chance. Prophecy visions of future events."
+      }
+    },
+
+    "justice": {
+      "latin": "Iustitia",
+      "type": "cardinal",
+      "ccc": [1807],
+      "definition": "The moral virtue that consists in the constant and firm will to give their due to God and neighbor. Justice toward God is called the 'virtue of religion.' Justice toward men disposes one to respect the rights of each.",
+      "gameplay": "Governs defense, counterattack damage, and righteous judgment effects. Justice is standing firm — those who fight for what is right take less damage and strike harder against evil.",
+      "stat_bonus_per_level": { "def": 2, "counter_damage_pct": 5 },
+      "unlocks_at": {
+        "1": "Counterattack chance when defending",
+        "3": "Shield of the Just — reduce damage to nearby allies",
+        "5": "Righteous Judgment — bonus damage against oppressors/tyrants"
+      }
+    },
+
+    "fortitude": {
+      "latin": "Fortitudo",
+      "type": "cardinal",
+      "ccc": [1808],
+      "definition": "The moral virtue that ensures firmness in difficulties and constancy in the pursuit of the good. It strengthens the resolve to resist temptations and to overcome obstacles in the moral life.",
+      "gameplay": "Governs raw defense, resistance to all status effects, and the ability to endure prolonged fights. Fortitude is endurance — the martyr's virtue.",
+      "stat_bonus_per_level": { "def": 1, "maxHp": 3, "status_resist_pct": 8 },
+      "unlocks_at": {
+        "1": "Reduced flinch from attacks",
+        "3": "Last Stand — at 1 HP, survive one more hit",
+        "5": "Martyr's Resolve — when HP drops below 10%, all stats doubled for 3 turns"
+      }
+    },
+
+    "temperance": {
+      "latin": "Temperantia",
+      "type": "cardinal",
+      "ccc": [1809],
+      "definition": "The moral virtue that moderates the attraction of pleasures and provides balance in the use of created goods. It ensures the will's mastery over instincts and keeps desires within the limits of what is honorable.",
+      "gameplay": "Governs MP efficiency, resistance to temptation mechanics, and balanced stat growth. Temperance is discipline — prayers cost less, temptations fail more often.",
+      "stat_bonus_per_level": { "mp_cost_reduction_pct": 5, "maxMp": 3 },
+      "unlocks_at": {
+        "1": "Reduced MP cost on all miracles",
+        "3": "Immune to temptation status (Accuser's charm/bribe attacks)",
+        "5": "Perfect Stillness — skip turn to fully restore MP"
+      }
+    }
+  },
+
+  "miracles": [
+    {
+      "id": "heal_minor",
+      "name": "Laying on of Hands",
+      "category": "charity",
+      "tier": 1,
+      "unlock": { "charity": 1 },
+      "ccc": [1504, 1508],
+      "scripture": "mk6_13",
+      "scripture_ref": "Mark 6:13 — They anointed with oil many that were sick and healed them.",
+      "theology": "Christ gave the apostles power to heal. This is not magic but grace flowing through charity. The Sacrament of the Anointing of the Sick (CCC 1499-1532) is its fullest form.",
+      "effect": { "type": "heal", "target": "self_or_ally", "formula": "spr * 1.5 + charity * 3" },
+      "mp_cost": 5,
+      "animation": "attack_prayer",
+      "visual": { "particles": "holy_motes", "flash": "holy", "color": "#ffd700" }
+    },
+
+    {
+      "id": "heal_major",
+      "name": "Anointing of the Sick",
+      "category": "charity",
+      "tier": 2,
+      "unlock": { "charity": 3, "faith": 2 },
+      "ccc": [1520, 1521],
+      "scripture": "jas5_14",
+      "scripture_ref": "James 5:14 — Is any among you sick? Let him call for the elders of the Church, and let them pray over him, anointing him with oil.",
+      "theology": "A sacramental healing. The Anointing of the Sick gives the grace of strengthening, peace, and courage, and the forgiveness of sins (CCC 1520). Heals significantly more.",
+      "effect": { "type": "heal", "target": "single_ally", "formula": "spr * 3 + charity * 5", "cleanse": ["poison", "weakness"] },
+      "mp_cost": 12,
+      "animation": "attack_prayer",
+      "visual": { "particles": "holy_motes", "flash": "holy", "color": "#ffd700", "oil_anoint": true }
+    },
+
+    {
+      "id": "cure_status",
+      "name": "Absolution",
+      "category": "charity",
+      "tier": 2,
+      "unlock": { "charity": 2, "faith": 1 },
+      "ccc": [1449, 1468],
+      "scripture_ref": "John 20:23 — If you forgive the sins of any, they are forgiven.",
+      "theology": "Echoes the Sacrament of Reconciliation. Removes spiritual ailments — despair, fear, confusion — because absolution restores the soul to grace (CCC 1468).",
+      "effect": { "type": "cleanse", "target": "single_ally", "removes": ["despair", "fear", "confusion", "curse"] },
+      "mp_cost": 8,
+      "animation": "gesture_pray",
+      "visual": { "particles": "holy_motes", "color": "#ffffff" }
+    },
+
+    {
+      "id": "shield_faith",
+      "name": "Shield of Faith",
+      "category": "faith",
+      "tier": 1,
+      "unlock": { "faith": 1 },
+      "ccc": [1814],
+      "scripture": "eph6_16",
+      "scripture_ref": "Ephesians 6:16 — Taking the shield of faith, with which you can quench all the flaming darts of the evil one.",
+      "theology": "The armor of God is not metaphor in a world where the Accuser is real. Faith literally shields against spiritual attack.",
+      "effect": { "type": "buff", "target": "self", "buff": "damage_reduction", "formula": "15 + faith * 5", "duration": 3 },
+      "mp_cost": 6,
+      "animation": "gesture_pray",
+      "visual": { "particles": "light_shaft", "shield_glow": true, "color": "#ffd700" }
+    },
+
+    {
+      "id": "divine_light",
+      "name": "Lux Aeterna",
+      "category": "faith",
+      "tier": 2,
+      "unlock": { "faith": 3 },
+      "ccc": [748],
+      "scripture": "jn8_12",
+      "scripture_ref": "John 8:12 — I am the light of the world.",
+      "theology": "Christ is the light. This prayer channels that light against darkness. Effective against undead, demons, and the Accuser's shadow forms. In catacombs and dark places, also illuminates hidden passages.",
+      "effect": { "type": "damage", "target": "all_enemies", "formula": "spr * 2 + faith * 4", "element": "holy", "bonus_vs": ["undead", "shadow", "accuser"] },
+      "mp_cost": 10,
+      "animation": "attack_prayer",
+      "visual": { "flash": "holy", "screen_brighten": true, "particles": "light_shaft", "color": "#ffd700" }
+    },
+
+    {
+      "id": "reveal_truth",
+      "name": "Discernment of Spirits",
+      "category": "prudence",
+      "tier": 1,
+      "unlock": { "prudence": 1 },
+      "ccc": [2847],
+      "scripture_ref": "1 John 4:1 — Test the spirits to see whether they are of God.",
+      "theology": "The gift of discernment (CCC 2847) allows the faithful to distinguish divine inspiration from demonic deception. In-game: reveals enemy stats, hidden objects, and lies in dialogue.",
+      "effect": { "type": "reveal", "target": "all_enemies", "reveals": ["hp", "weakness", "next_action"] },
+      "mp_cost": 4,
+      "field_effect": "Reveals hidden objects and secret passages in the current area.",
+      "animation": "gesture_pray",
+      "visual": { "color": "#87ceeb", "pulse": true }
+    },
+
+    {
+      "id": "guardian_angel",
+      "name": "Guardian Angel",
+      "category": "faith",
+      "tier": 2,
+      "unlock": { "faith": 2, "hope": 1 },
+      "ccc": [336],
+      "scripture_ref": "Matthew 18:10 — Their angels in heaven always see the face of my Father.",
+      "theology": "CCC 336: 'From infancy to death human life is surrounded by their watchful care and intercession.' Not a summon — an invocation of real angelic protection.",
+      "effect": { "type": "buff", "target": "self", "buff": "evasion", "formula": "10 + faith * 3", "duration": 4 },
+      "mp_cost": 8,
+      "animation": "attack_prayer",
+      "visual": { "particles": "holy_motes", "angel_wing_flash": true, "color": "#f0ece4" }
+    },
+
+    {
+      "id": "pater_noster",
+      "name": "Our Father",
+      "category": "faith",
+      "tier": 1,
+      "unlock": { "faith": 0 },
+      "ccc": [2759],
+      "scripture": "mt6_9_13",
+      "theology": "The prayer Christ himself taught. Available from the start because every baptized Christian knows it. A general-purpose prayer that provides modest healing and buff. Its power grows with ALL virtues, because the Our Father encompasses all of the Christian life (CCC 2761).",
+      "effect": { "type": "heal_buff", "target": "party", "heal_formula": "spr + total_virtue * 1", "buff": "all_stats", "buff_amount": 1, "duration": 3 },
+      "mp_cost": 3,
+      "animation": "gesture_pray",
+      "visual": { "particles": "holy_motes", "color": "#ffd700" },
+      "_note": "Intentionally weak but always available and scales with everything. The universal prayer."
+    },
+
+    {
+      "id": "ave_maria",
+      "name": "Hail Mary",
+      "category": "hope",
+      "tier": 1,
+      "unlock": { "hope": 1 },
+      "ccc": [2676],
+      "scripture": "lk1_28",
+      "theology": "Invoking the intercession of the Blessed Virgin Mary. CCC 2677: 'By asking Mary to pray for us, we acknowledge ourselves to be poor sinners and we address ourselves to the Mother of Mercy.' Provides protection — Mary shields her children.",
+      "effect": { "type": "buff", "target": "self", "buff": "damage_reduction", "formula": "10 + hope * 4", "duration": 2 },
+      "mp_cost": 4,
+      "animation": "gesture_pray",
+      "visual": { "particles": "holy_motes", "color": "#87ceeb", "marian_blue": true }
+    },
+
+    {
+      "id": "salve_regina",
+      "name": "Hail Holy Queen",
+      "category": "hope",
+      "tier": 2,
+      "unlock": { "hope": 3 },
+      "ccc": [2677],
+      "theology": "The prayer of exiles. 'To thee do we cry, poor banished children of Eve. To thee do we send up our sighs, mourning and weeping in this valley of tears.' Cures despair and restores hope. Mechanically: removes despair status and grants hope regen.",
+      "effect": { "type": "cleanse_buff", "target": "party", "removes": ["despair", "hopelessness"], "buff": "hp_regen", "formula": "hope * 2", "duration": 5 },
+      "mp_cost": 10,
+      "animation": "attack_prayer",
+      "visual": { "particles": "light_shaft", "color": "#87ceeb" }
+    },
+
+    {
+      "id": "memorare",
+      "name": "The Memorare",
+      "category": "hope",
+      "tier": 3,
+      "unlock": { "hope": 5, "faith": 3 },
+      "ccc": [2679],
+      "theology": "'Remember, O most gracious Virgin Mary, that never was it known that anyone who fled to thy protection, implored thy help, or sought thy intercession was left unaided.' The prayer of absolute last resort. Usable once per book.",
+      "effect": { "type": "emergency", "target": "party", "full_heal": true, "cleanse_all": true, "invulnerable_turns": 2 },
+      "mp_cost": 0,
+      "uses_per_book": 1,
+      "animation": "attack_prayer",
+      "visual": { "flash": "holy", "screen_brighten": true, "marian_blue": true, "particles": "light_shaft" },
+      "_note": "The nuclear option. Once per book. When all is lost, Mary answers."
+    },
+
+    {
+      "id": "righteous_strike",
+      "name": "Sword of the Spirit",
+      "category": "justice",
+      "tier": 1,
+      "unlock": { "justice": 1 },
+      "ccc": [2015],
+      "scripture": "eph6_11_12",
+      "scripture_ref": "Ephesians 6:17 — The sword of the Spirit, which is the word of God.",
+      "theology": "The Word of God is the weapon against evil. This is not physical violence sanctified — it is spiritual combat made manifest. Extra effective against spiritually corrupt enemies.",
+      "effect": { "type": "damage", "target": "single", "formula": "atk * 1.5 + justice * 3", "element": "holy" },
+      "mp_cost": 6,
+      "animation": "attack_katana",
+      "visual": { "slash_color": "#ffd700", "holy_edge": true }
+    },
+
+    {
+      "id": "shield_of_just",
+      "name": "Breastplate of Righteousness",
+      "category": "justice",
+      "tier": 2,
+      "unlock": { "justice": 3 },
+      "ccc": [1807],
+      "scripture_ref": "Ephesians 6:14 — Stand therefore, having girded your loins with truth, and having put on the breastplate of righteousness.",
+      "theology": "Justice as armor. Those who stand for what is right are protected by their righteousness. Reduces damage to the party.",
+      "effect": { "type": "buff", "target": "party", "buff": "damage_reduction", "formula": "8 + justice * 3", "duration": 3 },
+      "mp_cost": 10,
+      "animation": "gesture_pray",
+      "visual": { "shield_glow": true, "color": "#c9a959" }
+    },
+
+    {
+      "id": "last_stand",
+      "name": "Martyrs' Stand",
+      "category": "fortitude",
+      "tier": 2,
+      "unlock": { "fortitude": 3 },
+      "ccc": [2473],
+      "scripture": "rev2_10",
+      "theology": "CCC 2473: 'Martyrdom is the supreme witness given to the truth of the faith.' When death is near, the martyr's courage makes them strongest. Survive at 1 HP.",
+      "effect": { "type": "passive", "trigger": "lethal_damage", "survive_at": 1, "cooldown_turns": 10 },
+      "visual": { "flash": "damage", "aura_glow": "#ffd700" }
+    },
+
+    {
+      "id": "martyrs_resolve",
+      "name": "Crown of Life",
+      "category": "fortitude",
+      "tier": 3,
+      "unlock": { "fortitude": 5 },
+      "ccc": [2473, 2474],
+      "scripture": "rev2_10",
+      "theology": "The crown promised to the faithful unto death. When HP drops below 10%, all stats double for 3 turns. The martyr is strongest at the moment of death.",
+      "effect": { "type": "passive", "trigger": "hp_below_10pct", "buff": "all_stats_double", "duration": 3 },
+      "visual": { "crown_glow": "#ffd700", "aura": true }
+    },
+
+    {
+      "id": "resist_temptation",
+      "name": "Fasting of the Desert",
+      "category": "temperance",
+      "tier": 1,
+      "unlock": { "temperance": 1 },
+      "ccc": [538, 1809],
+      "scripture": "mt4_1_11",
+      "scripture_ref": "Matthew 4:1-11 — Christ's temptation in the desert.",
+      "theology": "Christ fasted 40 days and resisted the devil three times. Temperance is the virtue of resistance. Grants immunity to temptation-type attacks.",
+      "effect": { "type": "buff", "target": "self", "buff": "temptation_immune", "duration": 5 },
+      "mp_cost": 4,
+      "animation": "gesture_pray",
+      "visual": { "color": "#c9a959" }
+    },
+
+    {
+      "id": "perfect_stillness",
+      "name": "Sabbath Rest",
+      "category": "temperance",
+      "tier": 3,
+      "unlock": { "temperance": 5 },
+      "ccc": [2168, 2172],
+      "theology": "The Sabbath rest is not inactivity but trust. CCC 2172: 'God's action is the model for human action.' Skip a turn to fully restore MP. Trust that God acts when you rest.",
+      "effect": { "type": "channel", "skip_turn": true, "restore_mp": "full" },
+      "animation": "gesture_pray",
+      "visual": { "particles": "dust_motes", "serenity": true }
+    },
+
+    {
+      "id": "de_profundis",
+      "name": "De Profundis",
+      "category": "faith",
+      "tier": 3,
+      "unlock": { "faith": 5 },
+      "ccc": [2559],
+      "scripture": "ps130_1_2",
+      "scripture_ref": "Psalm 130:1-2 — Out of the depths I cry to thee, O Lord! Lord, hear my voice!",
+      "theology": "The cry from the abyss. When the player dies, if faith is 5, they may choose to pray De Profundis. CCC 2559: 'Prayer is the raising of one's mind and heart to God.' From the depths of death, faith raises you.",
+      "effect": { "type": "revive", "target": "self", "condition": "death_screen", "restore_hp_pct": 30 },
+      "uses_per_battle": 1,
+      "visual": { "flash": "holy", "particles": "holy_motes", "rise_from_darkness": true }
+    },
+
+    {
+      "id": "communion_saints",
+      "name": "Cloud of Witnesses",
+      "category": "faith",
+      "tier": 3,
+      "unlock": { "faith": 4, "hope": 3 },
+      "ccc": [946, 957, 2683],
+      "scripture": "heb12_1",
+      "theology": "CCC 957: 'Communion with the dead... The Church has always honored their memory and offered prayers for the departed.' The saints of previous eras lend their strength. Mechanically: calls upon the accumulated virtue of all previous books.",
+      "effect": { "type": "buff", "target": "party", "buff": "all_stats", "formula": "total_virtue_all_books * 0.5", "duration": 3 },
+      "mp_cost": 15,
+      "animation": "attack_prayer",
+      "visual": { "ghost_witnesses": true, "particles": "holy_motes", "flash": "holy" },
+      "_note": "THIS is the cross-era mechanic made theological. Previous eras' saints strengthen you."
+    },
+
+    {
+      "id": "forgiveness",
+      "name": "Forgiveness",
+      "category": "charity",
+      "tier": 3,
+      "unlock": { "charity": 5 },
+      "ccc": [2842, 2844],
+      "scripture": "mt5_44",
+      "theology": "CCC 2844: 'Christian prayer extends to the forgiveness of enemies.' The highest expression of charity — forgiving those who harm you. Can end certain battles by converting the enemy's intent. Not all enemies can be forgiven (the Accuser cannot), but human enemies and lost souls can be.",
+      "effect": { "type": "pacify", "target": "single_enemy", "condition": "enemy_is_human_or_lost_soul", "ends_battle": true, "xp_bonus": "double" },
+      "mp_cost": 20,
+      "animation": "attack_prayer",
+      "visual": { "particles": "holy_motes", "white_glow": true, "enemy_expression_change": true }
+    },
+
+    {
+      "id": "exorcism_minor",
+      "name": "Vade Retro",
+      "category": "faith",
+      "tier": 2,
+      "unlock": { "faith": 3, "justice": 2 },
+      "ccc": [1673],
+      "scripture_ref": "Mark 16:17 — In my name they shall cast out devils.",
+      "theology": "CCC 1673: 'When the Church asks publicly and authoritatively, in the name of Jesus Christ, that a person or object be protected against the power of the Evil One and withdrawn from his dominion, it is called exorcism.' Minor exorcism — damages and may banish shadow/demon enemies.",
+      "effect": { "type": "damage_banish", "target": "single", "formula": "spr * 2 + faith * 5", "element": "holy", "banish_chance": "30 + faith * 10", "only_vs": ["shadow", "demon", "accuser_minion"] },
+      "mp_cost": 12,
+      "animation": "attack_prayer",
+      "visual": { "flash": "holy", "cross_burst": true, "color": "#ffd700" }
+    },
+
+    {
+      "id": "viaticum",
+      "name": "Viaticum",
+      "category": "charity",
+      "tier": 3,
+      "unlock": { "charity": 4, "faith": 3 },
+      "ccc": [1524, 1525],
+      "theology": "CCC 1524: 'The Eucharist received at the point of departure, the Viaticum, is the seed of eternal life and the power of resurrection.' The last communion. If an ally NPC is dying in a narrative scene, Usagi can offer Viaticum — granting them peace and unlocking special post-death bonuses.",
+      "effect": { "type": "narrative", "target": "dying_npc", "grants": "peaceful_death", "unlocks": "saint_intercession_later" },
+      "mp_cost": 0,
+      "visual": { "particles": "holy_motes", "golden_glow": true, "peaceful_expression": true }
+    },
+
+    {
+      "id": "rosary_decade",
+      "name": "Decade of the Rosary",
+      "category": "hope",
+      "tier": 2,
+      "unlock": { "hope": 2, "faith": 1 },
+      "ccc": [2678, 2708],
+      "theology": "CCC 2678: 'Medieval piety in the West developed the prayer of the rosary as a popular substitute for the Liturgy of the Hours.' Each decade meditates on a mystery of Christ's life. In battle: sustained prayer over multiple turns, growing in power.",
+      "effect": { "type": "channel_multi", "turns": 3, "per_turn": { "heal": "spr + hope * 2", "buff": "damage_reduction_5" }, "completion_bonus": { "full_heal": true, "cleanse_all": true } },
+      "mp_cost": 8,
+      "animation": "gesture_pray",
+      "visual": { "rosary_beads_glow": true, "color": "#87ceeb", "particles": "holy_motes" },
+      "_note": "Powerful but requires 3 turns of commitment. Risk/reward: interrupted by damage?"
+    },
+
+    {
+      "id": "holy_water",
+      "name": "Aspersion",
+      "category": "faith",
+      "tier": 1,
+      "unlock": { "faith": 1 },
+      "ccc": [1668],
+      "theology": "CCC 1668: 'Sacramentals are sacred signs which bear a resemblance to the sacraments.' Holy water recalls baptism and repels evil. A basic attack that scales with faith.",
+      "effect": { "type": "damage", "target": "single", "formula": "spr + faith * 3", "element": "holy", "requires_item": "holy_water_vial" },
+      "mp_cost": 2,
+      "animation": "gesture_surprise",
+      "visual": { "splash": true, "color": "#87ceeb" }
+    },
+
+    {
+      "id": "sign_of_cross",
+      "name": "Sign of the Cross",
+      "category": "faith",
+      "tier": 1,
+      "unlock": { "faith": 0 },
+      "ccc": [2157],
+      "theology": "The most basic Christian gesture. CCC 2157: 'The Christian begins his day, his prayers, and his activities with the Sign of the Cross.' Available always. Tiny buff, but it's free.",
+      "effect": { "type": "buff", "target": "self", "buff": "all_stats", "buff_amount": 1, "duration": 2 },
+      "mp_cost": 0,
+      "animation": "gesture_pray",
+      "visual": { "cross_trace": true, "color": "#ffd700", "subtle": true }
+    },
+
+    {
+      "id": "act_of_contrition_battle",
+      "name": "Act of Contrition",
+      "category": "temperance",
+      "tier": 2,
+      "unlock": { "temperance": 2, "charity": 1 },
+      "ccc": [1451],
+      "theology": "CCC 1451: 'Among the penitent's acts contrition occupies first place.' Repentance in battle — removes debuffs caused by moral failings (if the player made a harmful choice earlier, its negative combat effects can be cleansed).",
+      "effect": { "type": "cleanse", "target": "self", "removes": ["guilt", "moral_debuff", "virtue_penalty"], "restore_virtue_partial": true },
+      "mp_cost": 6,
+      "animation": "gesture_bow",
+      "visual": { "color": "#c9a959", "tears": true }
+    }
+  ],
+
+  "gifts_of_holy_spirit": {
+    "_source": "CCC 1830-1831, Isaiah 11:1-2",
+    "_note": "Seven gifts that function as passive abilities, unlocked by total virtue level. These are not earned — they are infused by grace. Mechanically, they unlock when the player's total virtue across all seven reaches certain thresholds.",
+
+    "wisdom": {
+      "ccc": [1831],
+      "unlock_total_virtue": 5,
+      "effect": "Bonus XP from all sources (+10%). Wisdom sees the meaning in everything.",
+      "passive": true
+    },
+    "understanding": {
+      "ccc": [1831],
+      "unlock_total_virtue": 8,
+      "effect": "Dialogue options reveal deeper context. NPCs share more information.",
+      "passive": true
+    },
+    "counsel": {
+      "ccc": [1831],
+      "unlock_total_virtue": 12,
+      "effect": "Moral choices show a subtle indicator of which option aligns with virtue. Not which is 'correct' — which requires the most love.",
+      "passive": true
+    },
+    "fortitude_gift": {
+      "ccc": [1831],
+      "unlock_total_virtue": 16,
+      "effect": "Cannot be reduced below 1 HP by a single attack. Grace sustains.",
+      "passive": true
+    },
+    "knowledge": {
+      "ccc": [1831],
+      "unlock_total_virtue": 20,
+      "effect": "All enemy weaknesses visible automatically. Hidden objects glow.",
+      "passive": true
+    },
+    "piety": {
+      "ccc": [1831],
+      "unlock_total_virtue": 25,
+      "effect": "Sacred areas restore HP/MP twice as fast. Prayer animations play faster.",
+      "passive": true
+    },
+    "fear_of_the_lord": {
+      "ccc": [1831],
+      "unlock_total_virtue": 30,
+      "effect": "Immune to all fear and despair. The Accuser's psychological attacks fail completely.",
+      "passive": true,
+      "_note": "The highest gift. Not terror — reverent awe. CCC 1831: 'They complete and perfect the virtues of those who receive them.'"
+    }
+  },
+
+  "sacramental_graces": {
+    "_source": "CCC 1210-1666",
+    "_note": "The seven sacraments function as major game events, not repeatable abilities. Each sacrament encountered in the narrative grants a permanent grace.",
+
+    "baptism": {
+      "ccc": [1213, 1265],
+      "narrative": "Usagi's backstory — baptized as an infant by Jesuit missionaries. The game begins after baptism.",
+      "grace": "All miracles available. Without baptism, none would be.",
+      "permanent": true
+    },
+    "confirmation": {
+      "ccc": [1285, 1303],
+      "narrative": "The Calling at the mountain summit. The Messenger confirms Usagi's mission.",
+      "grace": "+3 to all virtues permanently. Gifts of the Holy Spirit unlocked.",
+      "permanent": true,
+      "trigger": "the_calling"
+    },
+    "eucharist": {
+      "ccc": [1324, 1391],
+      "narrative": "Each hidden Mass attended. The source and summit of the Christian life.",
+      "grace": "Full HP/MP restoration. Temporary all-stat boost. Stacks with number of Masses attended.",
+      "repeatable_per_book": true,
+      "trigger": "hidden_chapel_mass"
+    },
+    "reconciliation": {
+      "ccc": [1422, 1468],
+      "narrative": "Confession scenes with priests in various eras.",
+      "grace": "Removes all negative moral choice effects. Partially restores lost virtue points.",
+      "repeatable_per_book": true,
+      "trigger": "confession_scene"
+    },
+    "anointing_of_sick": {
+      "ccc": [1499, 1520],
+      "narrative": "When Usagi is gravely wounded. Also administered to dying NPCs.",
+      "grace": "Full HP restore + temporary immunity to status effects.",
+      "trigger": "near_death_scene"
+    },
+    "holy_orders": {
+      "ccc": [1536],
+      "narrative": "Not for Usagi — but Father Tomas and other priests encountered. Their ordination means their blessings carry sacramental weight.",
+      "grace": "Prayers cast near an ordained priest are 50% more effective."
+    },
+    "matrimony": {
+      "ccc": [1601],
+      "narrative": "Encountered in various eras — faithful couples whose love witnesses to the Church.",
+      "grace": "Party bonds strengthened. Companion abilities enhanced.",
+      "trigger": "wedding_scene"
+    }
+  }
+}
