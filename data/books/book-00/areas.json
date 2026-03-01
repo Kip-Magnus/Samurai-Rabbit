@@ -2,78 +2,204 @@
   {
     "id": "kurosaki_village",
     "name": "Kurosaki Village",
+    "type": "village",
     "era": "book-00",
     "acts": [1, 2, 3],
     "palette": { "primary": "#4a7c59", "secondary": "#c9a959", "accent": "#2b4570", "sky": "#87ceeb", "time": "morning" },
-    "music": "track_pastoral_japan",
-    "ambience": ["birds", "water_stream", "wind_grass"],
+    "music": "exploration",
+    "ambience": ["forest"],
     "encounters": { "enabled": false, "rate": 0, "table": [] },
-    "npcs": ["obaa_chan", "ichiro", "gennosuke", "setsuko", "miko"],
-    "interactables": ["well", "rice_paddies", "hidden_chapel_entrance", "obaas_garden"],
+    "hasSavePoint": true,
+    "safeZone": true,
+    "connections": { "east": "village_outskirts", "south": "coastal_path" },
     "exits": [
-      { "to": "coastal_path", "x": 38, "y": 15, "direction": "east" },
-      { "to": "mountain_trail", "x": 20, "y": 0, "direction": "north", "locked": true, "unlockFlag": "act >= 4" }
+      { "to": "village_outskirts", "direction": "east" },
+      { "to": "coastal_path", "direction": "south" }
+    ],
+    "npcs": [
+      { "id": "obaa_chan", "species": "rabbit", "x": 5, "y": 5, "acts": [1, 2] },
+      { "id": "ichiro", "species": "rabbit", "x": 12, "y": 8, "acts": [1, 2, 3] },
+      { "id": "miko", "species": "rabbit", "x": 8, "y": 10, "acts": [1] },
+      { "id": "father_tomas", "species": "rabbit", "x": 9, "y": 4, "acts": [1, 2] }
+    ],
+    "interactables": ["well", "rice_paddies", "hidden_chapel_entrance", "obaas_garden"],
+    "hiddenItems": [
+      { "x": 3, "y": 3, "item": "kakure_prayer_scroll", "requiresPassive": "detect_hidden_artifacts" }
+    ]
+  },
+  {
+    "id": "village_outskirts",
+    "name": "Village Outskirts",
+    "type": "forest",
+    "era": "book-00",
+    "acts": [1, 2, 3, 4],
+    "palette": { "primary": "#4a7c59", "secondary": "#6b8e23", "accent": "#3a5a3a", "sky": "#87ceeb", "time": "morning" },
+    "music": "exploration",
+    "ambience": ["forest"],
+    "encounters": { "enabled": true, "rate": 0.12, "table": "village_outskirts", "levelRange": [1, 5] },
+    "hasSavePoint": false,
+    "connections": { "west": "kurosaki_village", "north": "bamboo_forest", "east": "coastal_path" },
+    "exits": [
+      { "to": "kurosaki_village", "direction": "west" },
+      { "to": "bamboo_forest", "direction": "north" },
+      { "to": "coastal_path", "direction": "east" }
+    ],
+    "npcs": [],
+    "interactables": ["old_shrine", "river_crossing"],
+    "hiddenItems": [
+      { "x": 15, "y": 3, "item": "foxs_charm" },
+      { "x": 7, "y": 12, "item": "throwing_stone", "quantity": 5 }
     ]
   },
   {
     "id": "coastal_path",
     "name": "Sotome Coastal Path",
+    "type": "coast",
     "era": "book-00",
-    "acts": [1],
-    "palette": { "primary": "#2b6ca3", "secondary": "#4a7c59", "accent": "#f5f0e8", "sky": "#87ceeb", "time": "morning" },
-    "music": "track_pastoral_japan",
-    "ambience": ["waves", "seabirds", "wind_cliff"],
-    "encounters": { "enabled": false, "rate": 0, "table": [] },
-    "npcs": ["gennosuke"],
-    "interactables": ["tide_pools", "overlook_point", "fishing_dock"],
+    "acts": [1, 3, 4],
+    "palette": { "primary": "#2b6ca3", "secondary": "#c2b280", "accent": "#f5f0e8", "sky": "#87ceeb", "time": "morning" },
+    "music": "exploration",
+    "ambience": ["coast"],
+    "encounters": { "enabled": true, "rate": 0.10, "table": "coast_road", "levelRange": [7, 10] },
+    "hasSavePoint": true,
+    "connections": { "west": "village_outskirts", "north": "kurosaki_village" },
     "exits": [
-      { "to": "kurosaki_village", "x": 0, "y": 15, "direction": "west" }
-    ]
+      { "to": "village_outskirts", "direction": "west" },
+      { "to": "kurosaki_village", "direction": "north" }
+    ],
+    "npcs": [
+      { "id": "gennosuke", "species": "rabbit", "x": 14, "y": 7, "acts": [1] }
+    ],
+    "interactables": ["tide_pools", "overlook_point", "fishing_dock"],
+    "hiddenItems": [],
+    "boss": { "id": "commander_mori", "act": 4, "triggerFlag": "act4_coast_confrontation" }
   },
   {
     "id": "burning_chapel",
     "name": "The Burning Chapel",
+    "type": "burning_chapel",
     "era": "book-00",
     "acts": [3],
     "palette": { "primary": "#8b0000", "secondary": "#ff4500", "accent": "#ffd700", "sky": "#1a1a2e", "time": "night_fire" },
-    "music": null,
-    "ambience": ["fire_roar", "wood_cracking", "distant_screams"],
-    "encounters": { "enabled": true, "rate": 100, "table": ["falling_beam", "smoke_cloud", "burning_debris"] },
-    "npcs": ["obaa_chan"],
-    "interactables": ["fallen_beam_obstacle", "smoke_wall", "obaa_chan_location"],
+    "music": "tension",
+    "ambience": ["fire"],
+    "encounters": { "enabled": true, "rate": 1.0, "table": "burning_chapel", "levelRange": [1, 3] },
+    "hasSavePoint": false,
+    "safeZone": false,
+    "connections": { "south": "kurosaki_village" },
     "exits": [
-      { "to": "kurosaki_village", "x": 0, "y": 20, "direction": "south" }
+      { "to": "kurosaki_village", "direction": "south" }
+    ],
+    "npcs": [
+      { "id": "obaa_chan", "species": "rabbit", "x": 10, "y": 3, "acts": [3] }
+    ],
+    "interactables": ["fallen_beam_obstacle", "smoke_wall", "obaa_chan_location", "altar_stone"],
+    "hiddenItems": [
+      { "x": 10, "y": 3, "item": "hidden_cross_dagger", "requiresInteraction": "search_altar_during_fire" },
+      { "x": 8, "y": 5, "item": "chapel_ash", "availableAfterAct": 3 },
+      { "x": 12, "y": 8, "item": "mothers_ring", "availableAfterAct": 3 }
     ]
   },
   {
-    "id": "mountain_trail",
-    "name": "Mountain Trail",
+    "id": "bamboo_forest",
+    "name": "Bamboo Forest",
+    "type": "bamboo_forest",
     "era": "book-00",
-    "acts": [4],
-    "palette": { "primary": "#2d3436", "secondary": "#4a5568", "accent": "#718096", "sky": "#0f0e17", "time": "night_rain" },
-    "music": null,
-    "ambience": ["rain_heavy", "wind_mountain", "thunder_distant"],
-    "encounters": { "enabled": false, "rate": 0, "table": [] },
-    "npcs": [],
-    "interactables": ["trail_cross_marker", "tomas_cave", "lightning_tree"],
+    "acts": [2, 3, 4],
+    "palette": { "primary": "#4a5a3a", "secondary": "#6b8e23", "accent": "#5a8a2a", "sky": "#87ceeb", "time": "afternoon" },
+    "music": "exploration",
+    "ambience": ["forest"],
+    "encounters": { "enabled": true, "rate": 0.15, "table": "bamboo_forest", "levelRange": [3, 7] },
+    "hasSavePoint": false,
+    "connections": { "south": "village_outskirts", "north": "mountain_path", "east": "hidden_chapel" },
     "exits": [
-      { "to": "kurosaki_village", "x": 20, "y": 29, "direction": "south" },
-      { "to": "mountain_summit", "x": 20, "y": 0, "direction": "north" }
-    ]
+      { "to": "village_outskirts", "direction": "south" },
+      { "to": "mountain_path", "direction": "north" },
+      { "to": "hidden_chapel", "direction": "east", "locked": true, "unlockFlag": "discovered_hidden_chapel" }
+    ],
+    "npcs": [],
+    "interactables": ["bamboo_grove", "stream_crossing"],
+    "hiddenItems": [
+      { "x": 4, "y": 7, "item": "camphor_wood", "requiresPassive": "detect_hidden_artifacts" },
+      { "x": 16, "y": 2, "item": "medicinal_herb", "quantity": 2 }
+    ],
+    "boss": { "id": "captain_hideki", "act": 3, "triggerFlag": "bamboo_forest_ambush" }
+  },
+  {
+    "id": "hidden_chapel",
+    "name": "Hidden Chapel",
+    "type": "hidden_chapel",
+    "era": "book-00",
+    "acts": [2, 3, 4],
+    "palette": { "primary": "#7a6a50", "secondary": "#5a4a3a", "accent": "#d4af37", "sky": null, "time": "interior" },
+    "music": "sacred",
+    "ambience": ["sacred"],
+    "encounters": { "enabled": false, "rate": 0, "table": [] },
+    "hasSavePoint": true,
+    "safeZone": true,
+    "connections": { "west": "bamboo_forest" },
+    "exits": [
+      { "to": "bamboo_forest", "direction": "west" }
+    ],
+    "npcs": [
+      { "id": "kakure_elder", "species": "rabbit", "x": 10, "y": 5, "acts": [2, 3, 4], "trader": true }
+    ],
+    "interactables": ["altar", "prayer_spot", "hidden_storage"],
+    "hiddenItems": [
+      { "x": 8, "y": 3, "item": "blessed_candle" },
+      { "x": 12, "y": 6, "item": "scapular_immaculate", "oneTime": true }
+    ],
+    "restBonus": "sacred_site",
+    "_note": "CCC 1324 — the Eucharist is the source and summit. No encounters ever. Sacred space."
+  },
+  {
+    "id": "mountain_path",
+    "name": "Mountain Path",
+    "type": "mountain",
+    "era": "book-00",
+    "acts": [3, 4],
+    "palette": { "primary": "#5a5040", "secondary": "#4a5568", "accent": "#718096", "sky": "#4a5568", "time": "dusk" },
+    "music": "tension",
+    "ambience": ["mountain"],
+    "encounters": { "enabled": true, "rate": 0.18, "table": "mountain_path", "levelRange": [5, 9] },
+    "hasSavePoint": true,
+    "connections": { "south": "bamboo_forest", "north": "mountain_summit" },
+    "exits": [
+      { "to": "bamboo_forest", "direction": "south" },
+      { "to": "mountain_summit", "direction": "north", "locked": true, "unlockFlag": "act >= 4" }
+    ],
+    "npcs": [
+      { "id": "mountain_craftsman", "species": "badger", "x": 14, "y": 8, "acts": [3, 4], "trader": true }
+    ],
+    "interactables": ["trail_cross_marker", "tomas_cave", "lightning_tree", "mountain_spring"],
+    "hiddenItems": [
+      { "x": 3, "y": 6, "item": "mountain_ginseng" },
+      { "x": 17, "y": 11, "item": "iron_scraps", "quantity": 3 }
+    ],
+    "boss": { "id": "despair_manifest", "act": 4, "triggerFlag": "mountain_grief_encounter" }
   },
   {
     "id": "mountain_summit",
     "name": "The Summit",
+    "type": "mountain_summit",
     "era": "book-00",
     "acts": [4],
     "palette": { "primary": "#1a1a2e", "secondary": "#c9a959", "accent": "#ffd700", "sky": "#0a0a15", "time": "night_clearing" },
-    "music": "track_choir_resolute",
-    "ambience": ["wind_gentle", "silence_sacred"],
+    "music": "accuser",
+    "ambience": ["mountain"],
     "encounters": { "enabled": false, "rate": 0, "table": [] },
-    "npcs": ["the_messenger"],
-    "interactables": ["prayer_spot", "portal_location"],
+    "hasSavePoint": false,
+    "safeZone": false,
+    "connections": { "south": "mountain_path" },
     "exits": [
-      { "to": "mountain_trail", "x": 20, "y": 29, "direction": "south" }
-    ]
+      { "to": "mountain_path", "direction": "south" }
+    ],
+    "npcs": [
+      { "id": "the_messenger", "species": "unknown", "x": 10, "y": 3, "acts": [4] }
+    ],
+    "interactables": ["prayer_spot", "portal_location"],
+    "hiddenItems": [],
+    "boss": { "id": "the_accuser_b00", "act": 4, "triggerFlag": "summit_accuser_confrontation" },
+    "_note": "No random encounters. The Accuser fight is the only encounter here. Sacred confrontation."
   }
 ]
