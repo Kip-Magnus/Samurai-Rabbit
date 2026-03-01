@@ -1,0 +1,61 @@
+[
+  {
+    "id": "falling_beam",
+    "name": "Falling Beam",
+    "era": "book-00",
+    "tier": 1,
+    "stats": { "hp": [1, 1], "atk": [10, 15], "def": [0, 0], "spd": [1, 1], "spr": [0, 0] },
+    "weakness": [],
+    "resistance": [],
+    "immune": [],
+    "behavior": {
+      "ai": "environmental",
+      "patterns": [
+        { "action": "collapse", "weight": 100, "condition": "player_adjacent" }
+      ]
+    },
+    "drops": { "xp": [0, 0], "gold": [0, 0], "items": [] },
+    "lore": "A burning roof beam crashing down in the chapel fire. Dodge or be crushed.",
+    "sprite": { "sheetId": "env_burning_beam", "palette": ["#8b4513", "#ff4500", "#ffd700"], "frameWidth": 32, "frameHeight": 40 }
+  },
+  {
+    "id": "smoke_cloud",
+    "name": "Choking Smoke",
+    "era": "book-00",
+    "tier": 1,
+    "stats": { "hp": [1, 1], "atk": [5, 8], "def": [0, 0], "spd": [3, 3], "spr": [0, 0] },
+    "weakness": [],
+    "resistance": ["physical"],
+    "immune": [],
+    "behavior": {
+      "ai": "environmental",
+      "patterns": [
+        { "action": "suffocate", "weight": 70, "condition": "always" },
+        { "action": "obscure_vision", "weight": 30, "condition": "always" }
+      ]
+    },
+    "drops": { "xp": [0, 0], "gold": [0, 0], "items": [] },
+    "lore": "Thick black smoke filling the burning chapel. It steals breath and sight.",
+    "sprite": { "sheetId": "env_smoke", "palette": ["#2d2d2d", "#4a4a4a", "#6b6b6b"], "frameWidth": 32, "frameHeight": 32 }
+  },
+  {
+    "id": "burning_debris",
+    "name": "Burning Debris",
+    "era": "book-00",
+    "tier": 1,
+    "stats": { "hp": [1, 1], "atk": [8, 12], "def": [0, 0], "spd": [1, 1], "spr": [0, 0] },
+    "weakness": [],
+    "resistance": [],
+    "immune": [],
+    "behavior": {
+      "ai": "environmental",
+      "patterns": [
+        { "action": "scatter_fire", "weight": 60, "condition": "always" },
+        { "action": "block_path", "weight": 40, "condition": "always" }
+      ]
+    },
+    "drops": { "xp": [0, 0], "gold": [0, 0], "items": [] },
+    "lore": "Scattered wreckage of the chapel, still burning. Find a way through.",
+    "sprite": { "sheetId": "env_debris", "palette": ["#8b4513", "#ff6347", "#ffa500"], "frameWidth": 24, "frameHeight": 24 }
+  }
+]
