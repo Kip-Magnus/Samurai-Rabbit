@@ -1,0 +1,79 @@
+[
+  {
+    "id": "kurosaki_village",
+    "name": "Kurosaki Village",
+    "era": "book-00",
+    "acts": [1, 2, 3],
+    "palette": { "primary": "#4a7c59", "secondary": "#c9a959", "accent": "#2b4570", "sky": "#87ceeb", "time": "morning" },
+    "music": "track_pastoral_japan",
+    "ambience": ["birds", "water_stream", "wind_grass"],
+    "encounters": { "enabled": false, "rate": 0, "table": [] },
+    "npcs": ["obaa_chan", "ichiro", "gennosuke", "setsuko", "miko"],
+    "interactables": ["well", "rice_paddies", "hidden_chapel_entrance", "obaas_garden"],
+    "exits": [
+      { "to": "coastal_path", "x": 38, "y": 15, "direction": "east" },
+      { "to": "mountain_trail", "x": 20, "y": 0, "direction": "north", "locked": true, "unlockFlag": "act >= 4" }
+    ]
+  },
+  {
+    "id": "coastal_path",
+    "name": "Sotome Coastal Path",
+    "era": "book-00",
+    "acts": [1],
+    "palette": { "primary": "#2b6ca3", "secondary": "#4a7c59", "accent": "#f5f0e8", "sky": "#87ceeb", "time": "morning" },
+    "music": "track_pastoral_japan",
+    "ambience": ["waves", "seabirds", "wind_cliff"],
+    "encounters": { "enabled": false, "rate": 0, "table": [] },
+    "npcs": ["gennosuke"],
+    "interactables": ["tide_pools", "overlook_point", "fishing_dock"],
+    "exits": [
+      { "to": "kurosaki_village", "x": 0, "y": 15, "direction": "west" }
+    ]
+  },
+  {
+    "id": "burning_chapel",
+    "name": "The Burning Chapel",
+    "era": "book-00",
+    "acts": [3],
+    "palette": { "primary": "#8b0000", "secondary": "#ff4500", "accent": "#ffd700", "sky": "#1a1a2e", "time": "night_fire" },
+    "music": null,
+    "ambience": ["fire_roar", "wood_cracking", "distant_screams"],
+    "encounters": { "enabled": true, "rate": 100, "table": ["falling_beam", "smoke_cloud", "burning_debris"] },
+    "npcs": ["obaa_chan"],
+    "interactables": ["fallen_beam_obstacle", "smoke_wall", "obaa_chan_location"],
+    "exits": [
+      { "to": "kurosaki_village", "x": 0, "y": 20, "direction": "south" }
+    ]
+  },
+  {
+    "id": "mountain_trail",
+    "name": "Mountain Trail",
+    "era": "book-00",
+    "acts": [4],
+    "palette": { "primary": "#2d3436", "secondary": "#4a5568", "accent": "#718096", "sky": "#0f0e17", "time": "night_rain" },
+    "music": null,
+    "ambience": ["rain_heavy", "wind_mountain", "thunder_distant"],
+    "encounters": { "enabled": false, "rate": 0, "table": [] },
+    "npcs": [],
+    "interactables": ["trail_cross_marker", "tomas_cave", "lightning_tree"],
+    "exits": [
+      { "to": "kurosaki_village", "x": 20, "y": 29, "direction": "south" },
+      { "to": "mountain_summit", "x": 20, "y": 0, "direction": "north" }
+    ]
+  },
+  {
+    "id": "mountain_summit",
+    "name": "The Summit",
+    "era": "book-00",
+    "acts": [4],
+    "palette": { "primary": "#1a1a2e", "secondary": "#c9a959", "accent": "#ffd700", "sky": "#0a0a15", "time": "night_clearing" },
+    "music": "track_choir_resolute",
+    "ambience": ["wind_gentle", "silence_sacred"],
+    "encounters": { "enabled": false, "rate": 0, "table": [] },
+    "npcs": ["the_messenger"],
+    "interactables": ["prayer_spot", "portal_location"],
+    "exits": [
+      { "to": "mountain_trail", "x": 20, "y": 29, "direction": "south" }
+    ]
+  }
+]
