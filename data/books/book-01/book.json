@@ -1,0 +1,81 @@
+{
+  "id": "book-01",
+  "title": "The Arena",
+  "subtitle": "Rome, 64 A.D.",
+  "era": "neronian_rome",
+  "year": 64,
+  "historical_basis": "The Neronian Persecution — Nero blames Christians for the Great Fire of Rome",
+  "theological_conflict": "Early Gnosticism — the body is a prison, material world is evil, therefore apostasy doesn't matter",
+  "heresy": "gnosticism",
+  "accuser_disguise": "Senator Gaius Petronius — a reasonable Roman who offers compromise",
+  "palette": {
+    "primary": "#8b4513",
+    "secondary": "#c9a959",
+    "accent": "#8b0000",
+    "sky_day": "#87ceeb",
+    "sky_night": "#1a1a2e",
+    "fire": "#ff4500"
+  },
+  "music_themes": ["roman_march", "catacomb_sacred", "arena_battle", "nero_fire"],
+  "acts": [
+    {
+      "act": 1,
+      "title": "The Catacombs",
+      "subtitle": "Beneath the streets of Rome",
+      "description": "Usagi arrives in darkness. The catacombs smell of lamp oil and fear. Christian voices echo in the tunnels.",
+      "areas_available": ["catacombs_entrance", "catacomb_chapel", "catacomb_tunnels"],
+      "advance_conditions": {
+        "flags": ["met_priscilla", "met_marcellus", "learned_roman_layout"]
+      },
+      "transition_cutscene": [
+        {"type": "fade_out", "duration": 1},
+        {"type": "dialogue", "speaker": "Priscilla", "text": "The soldiers are searching sector by sector. We must move to the deeper tunnels."},
+        {"type": "music", "mood": "tension"},
+        {"type": "fade_in", "duration": 1}
+      ]
+    },
+    {
+      "act": 2,
+      "title": "The Hidden Church",
+      "subtitle": "Faith and faction",
+      "description": "The Christian community is divided. Marcellus wants war. Demas offers comfortable lies. Peter calls for witness.",
+      "areas_available": ["catacombs_entrance", "catacomb_chapel", "catacomb_tunnels", "roman_streets_night", "trastevere_quarter"],
+      "advance_conditions": {
+        "flags": ["confronted_demas", "spoke_with_peter", "warned_community"]
+      }
+    },
+    {
+      "act": 3,
+      "title": "The Arena",
+      "subtitle": "Into the Colosseum",
+      "description": "Usagi is captured. The arena awaits. The beasts are hungry and the crowd thirsts for spectacle.",
+      "areas_available": ["roman_prison", "colosseum_undercroft", "colosseum_arena"],
+      "advance_conditions": {
+        "flags": ["survived_arena", "arena_miracle"]
+      }
+    },
+    {
+      "act": 4,
+      "title": "Peter's Blessing",
+      "subtitle": "The upside-down cross",
+      "description": "Peter goes to his crucifixion. The Accuser makes his offer. The faithful must choose.",
+      "areas_available": ["catacomb_chapel", "vatican_hill", "appian_way"],
+      "advance_conditions": {
+        "flags": ["beat_the_accuser_b01", "received_peters_blessing"]
+      },
+      "transition_cutscene": [
+        {"type": "fade_out", "duration": 2},
+        {"type": "dialogue", "speaker": "Peter", "text": "Go, little one. The desert calls. In Egypt, the truth is being tested again."},
+        {"type": "grant_item", "itemId": "peters_key_fragment", "quality": 6, "itemName": "Peter's Key Fragment"},
+        {"type": "iris_out", "cx": 160, "cy": 120, "duration": 1.5},
+        {"type": "notify", "text": "BOOK I — COMPLETE"},
+        {"type": "set_flag", "flag": {"id": "book_01_complete", "value": true}}
+      ]
+    }
+  ],
+  "ccc_citations": [
+    {"id": "CCC_2473", "text": "Martyrdom is the supreme witness given to the truth of the faith."},
+    {"id": "CCC_285", "text": "Since the beginning the Christian faith has been challenged by responses to the question of origins that differ from its own."},
+    {"id": "CCC_365", "text": "The unity of soul and body is so profound that one has to consider the soul to be the 'form' of the body."}
+  ]
+}
