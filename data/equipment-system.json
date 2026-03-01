@@ -1,0 +1,579 @@
+{
+  "_meta": {
+    "system": "Samurai Usagi Equipment & Item System",
+    "version": "1.0",
+    "philosophy": "Usagi is a persecuted Christian farmer, not a fantasy adventurer. Items are scavenged, gifted, hand-made, or consecrated. Nothing is bought from a gleaming shop. Every piece of equipment tells a story of poverty, faith, and making do with what God provides."
+  },
+
+  "equipment_slots": {
+    "weapon": {
+      "label": "Weapon",
+      "description": "What Usagi carries. The Pilgrim's Blade is the canonical weapon, but alternatives exist.",
+      "allowed_types": ["katana", "staff", "cross_blade", "improvised"]
+    },
+    "garment": {
+      "label": "Garment",
+      "description": "Outer clothing. Kimono, kosode, cassock, habit. Provides defense and sometimes spirit.",
+      "allowed_types": ["kosode", "kimono", "cassock", "habit", "armor_light", "cloak"]
+    },
+    "head": {
+      "label": "Head",
+      "description": "Hats, hoods, veils. Mostly utility — disguise, weather protection, spiritual focus.",
+      "allowed_types": ["sedge_hat", "hood", "tonsure", "veil", "headband"]
+    },
+    "accessory": {
+      "label": "Accessory",
+      "description": "One accessory slot. Rings, amulets, practical items.",
+      "allowed_types": ["ring", "amulet", "charm", "tool", "pendant"]
+    },
+    "relic": {
+      "label": "Relic / Scapular",
+      "description": "The most sacred slot. Obaa-chan's Cross, a scapular, rosary, saint's relic. Only one. Defines spiritual identity. If the player joins a religious order, this slot holds their order's relic.",
+      "allowed_types": ["cross", "scapular", "rosary", "relic", "order_symbol"]
+    }
+  },
+
+  "quality_grades": {
+    "_note": "Every piece of equipment has a quality grade affecting its stats. Quality is visible in the item name: 'Chipped Farmer's Sickle' vs 'Well-Made Pilgrim's Blade'. Items can be upgraded by craftsmen encountered in the game, but never in a generic 'blacksmith shop' — specific NPCs in specific narrative contexts.",
+
+    "grades": [
+      {
+        "id": 0, "name": "Broken",
+        "label": "Broken", "prefix": "Broken",
+        "stat_mult": 0.3, "durability_mult": 0.25,
+        "description": "Barely functional. Held together by hope and string.",
+        "visual": "cracked_sprite", "color_tint": "#5c4d3c"
+      },
+      {
+        "id": 1, "name": "Chipped",
+        "label": "Chipped", "prefix": "Chipped",
+        "stat_mult": 0.5, "durability_mult": 0.5,
+        "description": "Damaged but usable. The edge won't hold long.",
+        "visual": "worn_sprite", "color_tint": "#7a6852"
+      },
+      {
+        "id": 2, "name": "Rusted",
+        "label": "Rusted", "prefix": "Rusted",
+        "stat_mult": 0.65, "durability_mult": 0.6,
+        "description": "Corroded by salt air and neglect. Still cuts, barely.",
+        "visual": "rusted_sprite", "color_tint": "#8b5e3c"
+      },
+      {
+        "id": 3, "name": "Worn",
+        "label": "Worn", "prefix": "Worn",
+        "stat_mult": 0.8, "durability_mult": 0.75,
+        "description": "Well-used. The handle is smooth from years of hands. Reliable.",
+        "visual": "standard_sprite", "color_tint": "#a0784c"
+      },
+      {
+        "id": 4, "name": "Standard",
+        "label": "Standard", "prefix": "",
+        "stat_mult": 1.0, "durability_mult": 1.0,
+        "description": "Properly made. Nothing special, nothing wrong. Honest work.",
+        "visual": "standard_sprite", "color_tint": null
+      },
+      {
+        "id": 5, "name": "Well-Made",
+        "label": "Well-Made", "prefix": "Well-Made",
+        "stat_mult": 1.2, "durability_mult": 1.25,
+        "description": "Crafted with care by someone who knows their trade.",
+        "visual": "polished_sprite", "color_tint": "#c9a959"
+      },
+      {
+        "id": 6, "name": "Master-Forged",
+        "label": "Master-Forged", "prefix": "Master-Forged",
+        "stat_mult": 1.45, "durability_mult": 1.5,
+        "description": "The work of a master craftsman. Every line intentional. Every curve deliberate.",
+        "visual": "gleaming_sprite", "color_tint": "#d4af37"
+      },
+      {
+        "id": 7, "name": "Artificer Masterwork",
+        "label": "Artificer Masterwork", "prefix": "Artificer",
+        "stat_mult": 1.75, "durability_mult": 2.0,
+        "description": "Once-in-a-generation work. The craftsman wept when it was finished. Some say these are made by saints.",
+        "visual": "radiant_sprite", "color_tint": "#ffd700",
+        "rarity": "legendary",
+        "_note": "Only 1-2 per book. Always tied to a significant story moment or NPC quest."
+      }
+    ],
+
+    "upgrade_rules": {
+      "max_upgrade_per_craftsman": 2,
+      "cost_formula": "base_item_value * (target_grade - current_grade) * 1.5",
+      "craftsmen_per_book": "1-2 NPCs capable of upgrading, each in a specific narrative context",
+      "cannot_downgrade": true,
+      "artificer_cannot_be_crafted": "Artificer Masterwork items are found or given, never crafted on demand"
+    }
+  },
+
+  "blessing_system": {
+    "_source": "CCC 1667-1679 (Sacramentals)",
+    "_doctrine": "CCC 1670: 'Sacramentals do not confer the grace of the Holy Spirit in the way that the sacraments do, but by the Church's prayer, they prepare us to receive grace and dispose us to cooperate with it.'",
+
+    "how_blessing_works": "Any equipment item can be blessed. Blessed items gain bonus stats (especially SPR) and may gain special effects. Blessing is a permanent modification — once blessed, always blessed. An item's quality grade and blessing status are independent: you can have a Broken Blessed Sickle or a Master-Forged Unblessed Blade.",
+
+    "blessing_methods": [
+      {
+        "id": "priest_blessing",
+        "name": "Priestly Blessing",
+        "ccc": [1669],
+        "description": "A priest blesses the item with prayer and the Sign of the Cross. The most common form.",
+        "requirements": "Must find a priest NPC (Father Tomas, hidden chaplains in later eras). Priests are rare under persecution.",
+        "stat_bonus": { "spr": 2, "holy_damage_pct": 5 },
+        "visual": "faint_gold_glow",
+        "blessing_tier": 1
+      },
+      {
+        "id": "holy_water_blessing",
+        "name": "Aspersion (Holy Water)",
+        "ccc": [1668],
+        "description": "The item is sprinkled with holy water, recalling baptism. Can be done by the player if they have holy water and faith >= 2.",
+        "requirements": "Consumable: holy_water_vial. Player faith >= 2.",
+        "stat_bonus": { "spr": 1, "undead_damage_pct": 10 },
+        "visual": "blue_shimmer",
+        "blessing_tier": 1
+      },
+      {
+        "id": "chrism_anointing",
+        "name": "Chrism Anointing",
+        "ccc": [1241, 1289],
+        "description": "Anointed with sacred Chrism (oil mixed with balsam, consecrated by a bishop). The highest form of blessing. Extremely rare — Chrism must be found or given.",
+        "requirements": "Consumable: chrism_oil. Must be applied by a priest NPC.",
+        "stat_bonus": { "spr": 5, "all_stats": 1, "holy_damage_pct": 10, "status_resist_pct": 10 },
+        "visual": "golden_anoint_glow",
+        "blessing_tier": 3,
+        "_note": "Chrism is consecrated by a bishop (CCC 1297). In a persecuted church, this is vanishingly rare. Finding Chrism is a major event."
+      },
+      {
+        "id": "miracle_blessing",
+        "name": "Miracle Consecration",
+        "ccc": [1670],
+        "description": "Certain miracles, when cast near or upon an item, can bless it. The blessing reflects the miracle used.",
+        "requirements": "Cast a specific miracle while the item is equipped.",
+        "miracle_blessings": {
+          "divine_light": { "bonus": { "holy_damage_pct": 15 }, "name": "Light-Touched", "visual": "radiant_edge" },
+          "shield_faith": { "bonus": { "def": 3, "status_resist_pct": 10 }, "name": "Faith-Warded", "visual": "shield_shimmer" },
+          "ave_maria": { "bonus": { "spr": 3, "fear_resist": true }, "name": "Marian-Graced", "visual": "blue_star_glow" },
+          "communion_saints": { "bonus": { "all_stats": 2 }, "name": "Saint-Blessed", "visual": "ghost_glow" },
+          "forgiveness": { "bonus": { "charity": 1, "heal_power_pct": 10 }, "name": "Mercy-Touched", "visual": "warm_glow" }
+        },
+        "blessing_tier": 2,
+        "_note": "The player discovers this organically — casting Lux Aeterna while holding the Pilgrim's Blade makes it glow. No tutorial. A grace from devotion."
+      },
+      {
+        "id": "devotion_grace",
+        "name": "Grace from Devotion",
+        "ccc": [2015],
+        "description": "Unannounced, unscripted. When the player has used the same item faithfully for a long time AND their virtues are high, the item may spontaneously become blessed. The game never tells you this can happen. It just does.",
+        "requirements": "Item equipped for 100+ battles. Total virtue >= 15. Random chance per rest at a sacred site: 5%.",
+        "stat_bonus": { "spr": 3, "unique_passive": "varies_by_item" },
+        "visual": "warm_inner_glow",
+        "blessing_tier": 2,
+        "_note": "THIS is the surprise Kip asked for. The player doesn't know devotion graces exist. One day, after their hundredth battle with the same blade, they rest at the hidden chapel and the item description changes. 'The wood of the handle has grown warm. It does not cool.' CCC 2015: 'The way of perfection passes by way of the Cross.' Faithfulness is rewarded."
+      }
+    ],
+
+    "blessing_stacking": "An item can only be blessed ONCE. If a higher-tier blessing is applied, it replaces the lower one. Devotion graces stack with any other blessing (they are gifts, not rituals).",
+
+    "blessed_item_display": {
+      "name_format": "Blessed [Quality] [Item Name]",
+      "example": "Blessed Well-Made Pilgrim's Blade",
+      "miracle_blessed_format": "[Miracle Name] [Quality] [Item Name]",
+      "example_miracle": "Light-Touched Master-Forged Pilgrim's Blade",
+      "visual": "All blessed items have a subtle 1px gold outline in inventory. The glow intensifies with blessing tier."
+    }
+  },
+
+  "scapular_system": {
+    "_source": "CCC 1667-1679",
+    "_doctrine": "Scapulars are sacramentals — cloth worn over the shoulders as a sign of devotion to a particular aspect of the faith. Historically, they derive from the habits of religious orders but are given to laity as a sign of association.",
+
+    "description": "If Usagi remains laity (does not join a religious order), he can wear a scapular in his relic slot. Each scapular grants passive bonuses tied to its devotion. Scapulars are found, gifted, or earned — never bought.",
+
+    "scapulars": [
+      {
+        "id": "scapular_carmel",
+        "name": "Brown Scapular of Our Lady of Mount Carmel",
+        "order_origin": "Carmelite",
+        "ccc": [2677],
+        "description": "Two small pieces of brown wool connected by strings, worn over the shoulders. The Blessed Virgin's promise: 'Whosoever dies wearing this scapular shall not suffer eternal fire.'",
+        "stat_bonus": { "spr": 3, "hope": 1 },
+        "passive": "death_save_once_per_book",
+        "passive_description": "Once per book, if Usagi would die, the scapular glows blue and he survives with 1 HP.",
+        "found_in": "book-00",
+        "how_obtained": "Given by Father Tomas before the chapel burns. 'Take this. Our Lady watches over her children.'"
+      },
+      {
+        "id": "scapular_passion",
+        "name": "Red Scapular of the Passion",
+        "order_origin": "Lazarist",
+        "ccc": [618],
+        "description": "Red cloth bearing images of the instruments of the Passion. A reminder that suffering has meaning.",
+        "stat_bonus": { "def": 2, "fortitude": 1 },
+        "passive": "damage_reduction_when_low_hp",
+        "passive_description": "When HP below 25%, incoming damage reduced by 15%.",
+        "found_in": "book-01",
+        "how_obtained": "Found in the Roman catacombs, left by a martyr."
+      },
+      {
+        "id": "scapular_immaculate",
+        "name": "Green Scapular of the Immaculate Heart",
+        "order_origin": "Daughters of Charity",
+        "description": "Green cloth with an image of Mary's heart. Associated with conversion and healing of body and soul.",
+        "stat_bonus": { "spr": 2, "charity": 1 },
+        "passive": "passive_heal_per_turn",
+        "passive_description": "Restore 1% max HP per turn in battle.",
+        "found_in": "book-00",
+        "how_obtained": "Hidden in Obaa-chan's house, found after the fire. She kept it folded inside her prayer book."
+      },
+      {
+        "id": "scapular_seven_sorrows",
+        "name": "Black Scapular of the Seven Sorrows",
+        "order_origin": "Servite",
+        "ccc": [529],
+        "description": "Black cloth commemorating Mary's seven sorrows. For those who walk through grief.",
+        "stat_bonus": { "spr": 4 },
+        "passive": "immune_despair",
+        "passive_description": "Immune to the despair status effect.",
+        "found_in": "book-00",
+        "how_obtained": "Given by Ichiro (reluctantly) if Usagi helps him bury the dead after the chapel fire. 'My mother wore this. I don't believe anymore. Maybe you should have it.'"
+      }
+    ]
+  },
+
+  "religious_orders": {
+    "_source": "CCC 914-933",
+    "_doctrine": "CCC 915: 'The evangelical counsels are proposed in their multiplicity to every disciple of Christ.' CCC 916: 'The state of those who profess the evangelical counsels... belongs undeniably to the life and holiness of the Church.'",
+
+    "description": "At a key narrative moment (typically mid-book or between books), Usagi may be offered the chance to join a religious order. THIS CHOICE IS PERMANENT AND CANNOT BE UNDONE. It changes the relic slot, unlocks order-specific equipment/miracles/traders/graces, modifies stat growth, and alters dialogue options. Choosing to remain laity is equally valid — the scapular path is its own vocation.",
+
+    "when_offered": "After Book Zero, before Book One. The Messenger appears and asks: 'How will you walk this road? As a pilgrim among the people, or as one set apart?' The player chooses laity (keep scapular system) or is presented with the available orders.",
+
+    "laity_path": {
+      "name": "Lay Pilgrim",
+      "description": "Usagi remains a layperson. He walks among the faithful as one of them. The scapular system remains active. He can marry (narrative option in later books). His strength is his ordinariness — he is the Church as the people.",
+      "bonuses": {
+        "scapular_slot": true,
+        "trade_access": "civilian_traders",
+        "dialogue_options": "empathetic_lay",
+        "stat_emphasis": "balanced",
+        "unique_miracle": "none",
+        "marriage_option": true
+      },
+      "ccc": [897, 898],
+      "_note": "CCC 898: 'By reason of their special vocation it belongs to the laity to seek the kingdom of God by engaging in temporal affairs and directing them according to God's will.'"
+    },
+
+    "orders": [
+      {
+        "id": "jesuit",
+        "name": "Society of Jesus",
+        "latin": "Societas Iesu",
+        "abbreviation": "S.J.",
+        "founder": "Saint Ignatius of Loyola, 1540",
+        "charism": "Education, mission, intellectual rigor, 'finding God in all things'",
+        "ccc": [927],
+        "historical_relevance": "The Jesuits brought Christianity to Japan. Father Tomas is a Jesuit. This is the order most connected to Book Zero's story.",
+
+        "vow_effect": {
+          "description": "The Jesuit takes vows of poverty, chastity, and obedience, plus a special fourth vow of obedience to the Pope regarding missions.",
+          "stat_changes": { "spr": "+5", "atk": "+2", "def": "-1" },
+          "growth_modifier": { "spr": 1.3, "atk": 1.1, "def": 0.9 },
+          "_note": "Jesuits are scholars and missionaries. High spirit, decent attack (Ad Majorem Dei Gloriam — they fight for the greater glory of God), slightly less defense (poverty means less armor)."
+        },
+
+        "unlocks": {
+          "relic": {
+            "id": "jesuit_ihs_medal",
+            "name": "IHS Medal",
+            "description": "A small medal bearing the Christogram IHS — the Jesuit emblem. 'For the Greater Glory of God.'",
+            "stat_bonus": { "spr": 4, "prudence": 1 },
+            "passive": "xp_bonus_10pct",
+            "passive_description": "Education is the Jesuit charism. +10% XP from all sources."
+          },
+          "equipment_line": [
+            {
+              "id": "jesuit_cassock",
+              "name": "Jesuit Cassock",
+              "slot": "garment",
+              "type": "cassock",
+              "base_stats": { "def": 4, "spr": 6 },
+              "description": "Plain black cassock. No ornamentation. The Jesuits dress simply — their wealth is knowledge.",
+              "quality_range": [3, 6]
+            },
+            {
+              "id": "jesuit_biretta",
+              "name": "Jesuit Biretta",
+              "slot": "head",
+              "type": "tonsure",
+              "base_stats": { "spr": 3, "mp_regen": 1 },
+              "description": "A simple black cap. Marks the wearer as a man of learning and prayer."
+            },
+            {
+              "id": "jesuit_cross_blade",
+              "name": "Cross of the Mission",
+              "slot": "weapon",
+              "type": "cross_blade",
+              "base_stats": { "atk": 8, "spr": 8, "holy_damage_pct": 15 },
+              "description": "A processional cross refitted as a weapon. The vertical beam is sharpened. It is both cross and blade — the Jesuit paradox.",
+              "quality_range": [4, 7]
+            }
+          ],
+          "unique_miracle": {
+            "id": "ignatian_examen",
+            "name": "Ignatian Examen",
+            "description": "Saint Ignatius's daily spiritual exercise. In battle: reveals all enemy stats, weaknesses, and next actions for 3 turns.",
+            "ccc": [2468],
+            "effect": { "type": "reveal_all", "duration": 3 },
+            "mp_cost": 8
+          },
+          "traders": {
+            "description": "Jesuit mission networks. In later eras, Jesuit contacts provide access to rare books, medicines, and information.",
+            "trade_goods": ["rare_books", "medicines", "maps", "foreign_weapons"]
+          }
+        }
+      },
+
+      {
+        "id": "franciscan",
+        "name": "Order of Friars Minor",
+        "latin": "Ordo Fratrum Minorum",
+        "abbreviation": "O.F.M.",
+        "founder": "Saint Francis of Assisi, 1209",
+        "charism": "Poverty, humility, love of creation, peace",
+        "ccc": [2544],
+        "historical_relevance": "Franciscans were among the first Christian missionaries to many regions. Book Three (The Crusade) features Saint Francis's counter-witness to violence.",
+
+        "vow_effect": {
+          "description": "The Franciscan embraces radical poverty. No weapons above the simplest. No armor. Only a staff, a robe, and faith.",
+          "stat_changes": { "spr": "+8", "charity": "+2", "atk": "-3", "def": "-2" },
+          "growth_modifier": { "spr": 1.5, "atk": 0.7, "def": 0.7 },
+          "_note": "The PACIFIST path. Massive spirit boost, charity bonus, but significantly weaker physically. This is the hardest order to play — and the most rewarding. The Forgiveness miracle becomes much more powerful."
+        },
+
+        "unlocks": {
+          "relic": {
+            "id": "franciscan_tau_cross",
+            "name": "Tau Cross",
+            "description": "The T-shaped cross Saint Francis loved. A symbol of humility and penance.",
+            "stat_bonus": { "spr": 6, "charity": 2 },
+            "passive": "forgiveness_always_available",
+            "passive_description": "The Forgiveness miracle can be used without the charity 5 requirement. Francis's gift: radical mercy."
+          },
+          "equipment_line": [
+            {
+              "id": "franciscan_habit",
+              "name": "Franciscan Habit",
+              "slot": "garment",
+              "type": "habit",
+              "base_stats": { "def": 2, "spr": 10, "charity": 1 },
+              "description": "Rough brown wool, tied with a white cord with three knots (poverty, chastity, obedience). The simplest garment in the game — and the most powerful for spirit."
+            },
+            {
+              "id": "franciscan_sandals",
+              "name": "Franciscan Sandals",
+              "slot": "accessory",
+              "type": "charm",
+              "base_stats": { "spd": 3, "spr": 2 },
+              "description": "Simple rope sandals. Francis walked barefoot when he could. These are a concession to the road."
+            },
+            {
+              "id": "franciscan_staff",
+              "name": "Pilgrim's Staff",
+              "slot": "weapon",
+              "type": "staff",
+              "base_stats": { "atk": 3, "spr": 12, "def": 2 },
+              "description": "A walking staff, nothing more. Francis refused all weapons. 'The Lord is my strength.' This staff deals holy damage naturally based on SPR, not ATK.",
+              "special": "damage_scales_from_spr"
+            }
+          ],
+          "unique_miracle": {
+            "id": "canticle_of_sun",
+            "name": "Canticle of the Sun",
+            "description": "Saint Francis's great prayer: 'Praised be You, my Lord, with all Your creatures.' Heals the entire party and grants regen.",
+            "effect": { "type": "party_heal_regen", "heal_formula": "spr * 3", "regen": "spr_per_turn", "duration": 5 },
+            "mp_cost": 15
+          },
+          "traders": {
+            "description": "Franciscan hospitality. Simple food, herbs, cloth. Never weapons or armor.",
+            "trade_goods": ["herbs", "food", "cloth", "simple_tools"]
+          }
+        }
+      },
+
+      {
+        "id": "dominican",
+        "name": "Order of Preachers",
+        "latin": "Ordo Praedicatorum",
+        "abbreviation": "O.P.",
+        "founder": "Saint Dominic, 1216",
+        "charism": "Preaching, teaching, truth, the Rosary",
+        "ccc": [2708],
+        "historical_relevance": "Dominicans were theologians and preachers. The Rosary devotion is strongly Dominican. Book Two (The Council) features the fight for doctrinal truth.",
+
+        "vow_effect": {
+          "description": "The Dominican is a preacher of truth. Their weapon is the Word. Strong against deception and spiritual enemies.",
+          "stat_changes": { "spr": "+6", "prudence": "+2" },
+          "growth_modifier": { "spr": 1.3, "atk": 1.0, "def": 1.0 },
+          "_note": "The ANTI-DECEPTION path. Dominicans are the Accuser's worst nightmare in Book Two (Nicaea). Prudence bonus means they see through lies and deal extra damage to spiritual enemies."
+        },
+
+        "unlocks": {
+          "relic": {
+            "id": "dominican_rosary",
+            "name": "Dominican Rosary",
+            "description": "A full 15-decade rosary in black and white beads. The Dominican tradition holds that the Blessed Virgin herself gave the Rosary to Saint Dominic.",
+            "stat_bonus": { "spr": 5, "prudence": 1, "hope": 1 },
+            "passive": "rosary_auto_counter",
+            "passive_description": "When hit by a spiritual attack, 25% chance to automatically pray a decade of the Rosary (free heal + damage reduction for 1 turn)."
+          },
+          "equipment_line": [
+            {
+              "id": "dominican_habit",
+              "name": "Dominican Habit",
+              "slot": "garment",
+              "type": "habit",
+              "base_stats": { "def": 5, "spr": 7 },
+              "description": "White tunic under black cappa. Veritas — truth. The colors represent purity of doctrine and the darkness it illuminates."
+            },
+            {
+              "id": "dominican_hood",
+              "name": "Dominican Hood",
+              "slot": "head",
+              "type": "hood",
+              "base_stats": { "spr": 4, "prudence_bonus": 1 },
+              "description": "The black hood of the preacher. When raised, it focuses the mind on contemplation."
+            },
+            {
+              "id": "dominican_truth_blade",
+              "name": "Gladius Verbi",
+              "slot": "weapon",
+              "type": "cross_blade",
+              "base_stats": { "atk": 6, "spr": 10, "holy_damage_pct": 20 },
+              "description": "'The Sword of the Word.' A blade inscribed with Veritas on one side and John 8:32 on the other: 'The truth shall set you free.' Bonus damage against spiritual enemies and enemies using deception.",
+              "special": "bonus_vs_spiritual_50pct"
+            }
+          ],
+          "unique_miracle": {
+            "id": "veritas",
+            "name": "Veritas",
+            "description": "The Dominican's ultimate ability: speak pure truth. Dispels all enemy buffs, removes all illusions, and deals massive holy damage to spiritual enemies. Against the Accuser, it forces him to retreat 2 turns early.",
+            "effect": { "type": "dispel_and_damage", "dispels_all_buffs": true, "holy_damage_formula": "spr * 3", "accuser_retreat_bonus": 2 },
+            "mp_cost": 20
+          },
+          "traders": {
+            "description": "Dominican libraries and schools. Books, scrolls, ink, theological texts that function as lore items with stat bonuses when read.",
+            "trade_goods": ["theological_texts", "scrolls", "rare_books", "ink_and_paper"]
+          }
+        }
+      },
+
+      {
+        "id": "benedictine",
+        "name": "Order of Saint Benedict",
+        "latin": "Ordo Sancti Benedicti",
+        "abbreviation": "O.S.B.",
+        "founder": "Saint Benedict of Nursia, c. 529",
+        "charism": "Ora et labora — prayer and work. Stability, community, balance.",
+        "ccc": [2691],
+        "historical_relevance": "Benedictines preserved Western civilization through the Dark Ages. Their monasteries were centers of learning, agriculture, and sanctuary. The balanced path.",
+
+        "vow_effect": {
+          "description": "The Benedictine vows stability, obedience, and conversatio morum (conversion of life). The most balanced order — no extreme strengths or weaknesses.",
+          "stat_changes": { "all_stats": "+2" },
+          "growth_modifier": { "hp": 1.15, "mp": 1.15, "spr": 1.1, "atk": 1.1, "def": 1.15 },
+          "_note": "The BALANCED path. No stat is sacrificed. Slightly more HP and defense (Benedictine stability). The 'easy mode' order — but not weak. Stability IS strength."
+        },
+
+        "unlocks": {
+          "relic": {
+            "id": "benedictine_medal",
+            "name": "Medal of Saint Benedict",
+            "description": "The famous Jubilee Medal. One side shows Saint Benedict holding a cross and the Rule. The other bears the Vade Retro Satana prayer in abbreviation: V.R.S.N.S.M.V. — S.M.Q.L.I.V.B.",
+            "stat_bonus": { "def": 3, "spr": 3, "all_resist": 5 },
+            "passive": "vade_retro_auto",
+            "passive_description": "10% chance to automatically resist any status effect (the Vade Retro prayer activates on its own)."
+          },
+          "equipment_line": [
+            {
+              "id": "benedictine_habit",
+              "name": "Benedictine Habit",
+              "slot": "garment",
+              "type": "habit",
+              "base_stats": { "def": 6, "spr": 5, "hp_bonus": 10 },
+              "description": "Black habit of the Benedictine monk. Plain, sturdy, built to last — like the order itself."
+            },
+            {
+              "id": "benedictine_cowl",
+              "name": "Benedictine Cowl",
+              "slot": "head",
+              "type": "hood",
+              "base_stats": { "def": 2, "spr": 3, "mp_regen": 1 },
+              "description": "The monk's cowl, worn during the Liturgy of the Hours. Focuses prayer and protects the neck."
+            },
+            {
+              "id": "benedictine_cross_staff",
+              "name": "Abbot's Crosier",
+              "slot": "weapon",
+              "type": "staff",
+              "base_stats": { "atk": 7, "spr": 7, "def": 3 },
+              "description": "A shepherd's crook topped with a cross. The abbot's symbol of authority and care. Balanced between offense and defense.",
+              "special": "party_def_bonus_2"
+            }
+          ],
+          "unique_miracle": {
+            "id": "ora_et_labora",
+            "name": "Ora et Labora",
+            "description": "Prayer and Work. The Benedictine balance. Restores HP and MP simultaneously to the entire party.",
+            "effect": { "type": "party_heal_mp", "heal_formula": "spr * 2", "mp_restore": "spr * 1" },
+            "mp_cost": 12
+          },
+          "traders": {
+            "description": "Benedictine monasteries. Food, wine, medicines, crafted goods. The most complete trade access of any order.",
+            "trade_goods": ["food", "wine", "medicines", "crafted_goods", "herbs", "simple_weapons", "cloth"]
+          }
+        }
+      }
+    ]
+  },
+
+  "item_classes": {
+    "consumable": {
+      "description": "Used once, then gone. Healing items, status cures, battle items.",
+      "stackable": true,
+      "max_stack": 20,
+      "subtypes": ["healing", "mp_restore", "status_cure", "battle", "buff", "food"]
+    },
+    "equipment": {
+      "description": "Wearable items. Weapons, garments, headgear, accessories, relics.",
+      "stackable": false,
+      "has_quality": true,
+      "can_be_blessed": true,
+      "subtypes": ["weapon", "garment", "head", "accessory", "relic"]
+    },
+    "sacramental": {
+      "description": "Sacred objects with spiritual effects. Holy water, Chrism, blessed candles, relics of saints. Not 'magic items' — sacramentals per CCC 1667-1679.",
+      "stackable": true,
+      "max_stack": 5,
+      "subtypes": ["holy_water", "chrism", "blessed_object", "relic_fragment"]
+    },
+    "key_item": {
+      "description": "Story items that cannot be dropped or sold. Obaa-chan's Cross, Mori's Seal, the Breviary Page.",
+      "stackable": false,
+      "can_drop": false,
+      "can_sell": false
+    },
+    "material": {
+      "description": "Crafting/trade materials. Wolf pelts, iron scraps, medicinal herbs. Used for equipment upgrades or NPC trades.",
+      "stackable": true,
+      "max_stack": 50,
+      "subtypes": ["organic", "metal", "cloth", "rare"]
+    },
+    "lore_item": {
+      "description": "Readable items that provide backstory, scripture context, or stat bonuses when read. Letters, journal pages, theological texts.",
+      "stackable": false,
+      "readable": true,
+      "may_grant_bonus": true
+    }
+  }
+}
