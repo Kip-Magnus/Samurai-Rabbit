@@ -593,8 +593,8 @@ class WorldScene extends Phaser.Scene {
     }
 
     this.areaData = areaData;
-    this.mapW = areaData.dimensions?.width || 40;
-    this.mapH = areaData.dimensions?.height || 30;
+    this.mapW = areaData.dimensions?.width || 24;
+    this.mapH = areaData.dimensions?.height || 18;
     this.scaledTile = TILE * SPRITE_SCALE;
 
     // Setup atmosphere from area data
@@ -656,179 +656,217 @@ class WorldScene extends Phaser.Scene {
     const mapH = this.mapH;
     const scaledTile = this.scaledTile;
     const s = SPRITE_SCALE;
+    const pathHalf = Math.floor(mapH / 2);
+    const pathVert = Math.floor(mapW / 2);
 
-    // Store seededRand on the instance for minimap reuse
     this._seededRand = (x, y, sv) => {
       const n = Math.sin(x * 127.1 + y * 311.7 + sv * 73.5) * 43758.5453;
       return n - Math.floor(n);
     };
 
-    const groundRamp = buildRamp(palette.dominant || '#4a7c59');
-    const pathColor = palette.path || '#8b7355';
-    const darkGround = palette.shadow || '#2a3a2e';
+    const baseRGB = hexToRGB(palette.dominant || '#4a7c59');
+    const pathRGB = hexToRGB(palette.path || '#8b7355');
+    const gfx = this.add.graphics().setDepth(0);
 
-    // --- PASS 1: Ground tiles ---
-    const ground = this.add.graphics().setDepth(-10);
-
+    // ── Ground layer ──
     for (let ty = 0; ty < mapH; ty++) {
       for (let tx = 0; tx < mapW; tx++) {
         const x = tx * scaledTile;
         const y = ty * scaledTile;
         const seed = this._seededRand(tx, ty, 1);
-        const isPathH = (ty >= Math.floor(mapH / 2) - 1 && ty <= Math.floor(mapH / 2));
-        const isPathV = (tx >= Math.floor(mapW / 2) - 1 && tx <= Math.floor(mapW / 2));
+        const isPathH = (ty >= pathHalf - 1 && ty <= pathHalf);
+        const isPathV = (tx >= pathVert - 1 && tx <= pathVert);
         const isPath = isPathH || isPathV;
         const isEdge = (tx === 0 || ty === 0 || tx === mapW - 1 || ty === mapH - 1);
+        // Path-adjacent tiles get a dirt blend
+        const nearPath = !isPath && (
+          Math.abs(ty - pathHalf) <= 1 || Math.abs(ty - pathHalf + 1) <= 1 ||
+          Math.abs(tx - pathVert) <= 1 || Math.abs(tx - pathVert + 1) <= 1
+        );
 
         if (isPath) {
-          const rgb = hexToRGB(pathColor);
-          const v = Math.floor(seed * 15) - 7;
-          ground.fillStyle(Phaser.Display.Color.GetColor(
-            Math.min(255, Math.max(0, rgb.r + v)),
-            Math.min(255, Math.max(0, rgb.g + v)),
-            Math.min(255, Math.max(0, rgb.b + v))));
-          ground.fillRect(x, y, scaledTile, scaledTile);
-          // Path texture: sparse dots
-          if (seed > 0.7) {
-            ground.fillStyle(Phaser.Display.Color.GetColor(
-              Math.max(0, rgb.r - 20), Math.max(0, rgb.g - 20), Math.max(0, rgb.b - 20)), 0.4);
-            ground.fillRect(x + seed * 30, y + seed * 20, 2 * s, s);
+          // Dirt path with subtle variation (±5 only)
+          const v = Math.floor(seed * 10) - 5;
+          gfx.fillStyle(Phaser.Display.Color.GetColor(pathRGB.r + v, pathRGB.g + v, pathRGB.b + v));
+          gfx.fillRect(x, y, scaledTile, scaledTile);
+          // Pebbles
+          if (seed > 0.6) {
+            gfx.fillStyle(Phaser.Display.Color.GetColor(pathRGB.r - 15, pathRGB.g - 15, pathRGB.b - 12), 0.3);
+            gfx.fillRect(x + seed * 25 + 4, y + seed * 18 + 4, 2 * s, s);
+          }
+          if (seed > 0.8) {
+            gfx.fillStyle(Phaser.Display.Color.GetColor(pathRGB.r + 12, pathRGB.g + 12, pathRGB.b + 10), 0.25);
+            gfx.fillRect(x + seed * 12 + 10, y + seed * 8 + 10, 3 * s, s);
           }
         } else if (isEdge) {
-          const rgb = hexToRGB(darkGround);
-          ground.fillStyle(Phaser.Display.Color.GetColor(rgb.r, rgb.g, rgb.b));
-          ground.fillRect(x, y, scaledTile, scaledTile);
-          // Edge undergrowth
-          ground.fillStyle(Phaser.Display.Color.GetColor(40, 55, 30), 0.5);
-          ground.fillRect(x + 2, y + 2, scaledTile - 4, scaledTile - 4);
+          // Dark forest edge
+          gfx.fillStyle(Phaser.Display.Color.GetColor(25, 38, 22));
+          gfx.fillRect(x, y, scaledTile, scaledTile);
+          // Dense undergrowth texture
+          gfx.fillStyle(Phaser.Display.Color.GetColor(35, 52, 28), 0.7);
+          for (let i = 0; i < 4; i++) {
+            const bx = x + this._seededRand(tx, ty, 60 + i) * (scaledTile - 6);
+            const by = y + this._seededRand(tx, ty, 70 + i) * (scaledTile - 8);
+            gfx.fillRect(bx, by, 3 * s, 4 * s);
+          }
+        } else if (nearPath) {
+          // Transition: blend of dirt and grass
+          const blend = 0.3;
+          const r = Math.floor(baseRGB.r * (1 - blend) + pathRGB.r * blend);
+          const g = Math.floor(baseRGB.g * (1 - blend) + pathRGB.g * blend);
+          const b = Math.floor(baseRGB.b * (1 - blend) + pathRGB.b * blend);
+          const v = Math.floor(seed * 6) - 3;
+          gfx.fillStyle(Phaser.Display.Color.GetColor(r + v, g + v, b + v));
+          gfx.fillRect(x, y, scaledTile, scaledTile);
         } else {
-          const variant = Math.floor(seed * 4);
-          const rgb = hexToRGB(groundRamp[Math.min(variant, groundRamp.length - 1)]);
-          const v = Math.floor(this._seededRand(tx, ty, 2) * 12) - 6;
-          ground.fillStyle(Phaser.Display.Color.GetColor(
-            Math.min(255, Math.max(0, rgb.r + v)),
-            Math.min(255, Math.max(0, rgb.g + v)),
-            Math.min(255, Math.max(0, rgb.b + v))));
-          ground.fillRect(x, y, scaledTile, scaledTile);
-
-          // Grass tufts (most tiles)
-          if (seed > 0.3) {
-            const bladeRGB = hexToRGB(groundRamp[0]);
-            ground.fillStyle(Phaser.Display.Color.GetColor(bladeRGB.r, bladeRGB.g, bladeRGB.b), 0.45);
+          // Grass — SUBTLE variation only (±4 per channel)
+          const v = Math.floor(seed * 8) - 4;
+          gfx.fillStyle(Phaser.Display.Color.GetColor(
+            Math.min(255, Math.max(0, baseRGB.r + v)),
+            Math.min(255, Math.max(0, baseRGB.g + v)),
+            Math.min(255, Math.max(0, baseRGB.b + v))));
+          gfx.fillRect(x, y, scaledTile, scaledTile);
+          // Grass tufts — darker green blades
+          if (seed > 0.2) {
+            gfx.fillStyle(Phaser.Display.Color.GetColor(
+              Math.max(0, baseRGB.r - 18),
+              Math.max(0, baseRGB.g - 8),
+              Math.max(0, baseRGB.b - 15)), 0.4);
             for (let b = 0; b < 3; b++) {
-              const bx = x + this._seededRand(tx, ty, 10 + b) * (scaledTile - 6) + 2;
-              const by = y + this._seededRand(tx, ty, 20 + b) * (scaledTile - 10) + 2;
-              ground.fillRect(bx, by, s, (3 + Math.floor(seed * 3)) * s);
+              const bx = x + this._seededRand(tx, ty, 10 + b) * (scaledTile - 6) + 3;
+              const by = y + this._seededRand(tx, ty, 20 + b) * (scaledTile - 12) + 2;
+              gfx.fillRect(bx, by, s, (3 + Math.floor(seed * 2)) * s);
             }
           }
         }
       }
     }
 
-    // --- PASS 2: Detail objects (trees, rocks, flowers, bushes) on their own graphics ---
-    const details = this.add.graphics().setDepth(10);
-
+    // ── Detail objects (same graphics object, drawn on top) ──
     for (let ty = 2; ty < mapH - 2; ty++) {
       for (let tx = 2; tx < mapW - 2; tx++) {
         const seed = this._seededRand(tx, ty, 1);
         const seed2 = this._seededRand(tx, ty, 42);
-        const isPathH = (ty >= Math.floor(mapH / 2) - 1 && ty <= Math.floor(mapH / 2));
-        const isPathV = (tx >= Math.floor(mapW / 2) - 1 && tx <= Math.floor(mapW / 2));
+        const isPathH = (ty >= pathHalf - 1 && ty <= pathHalf);
+        const isPathV = (tx >= pathVert - 1 && tx <= pathVert);
         if (isPathH || isPathV) continue;
-
-        // Keep 1-tile buffer from paths
-        const nearPathH = Math.abs(ty - Math.floor(mapH / 2)) <= 2;
-        const nearPathV = Math.abs(tx - Math.floor(mapW / 2)) <= 2;
-        if (nearPathH && nearPathV) continue;
+        // 2-tile buffer from path intersection
+        if (Math.abs(ty - pathHalf) <= 2 && Math.abs(tx - pathVert) <= 2) continue;
+        // 1-tile buffer from any path
+        if (Math.abs(ty - pathHalf) <= 1 || Math.abs(ty - (pathHalf - 1)) <= 0) continue;
+        if (Math.abs(tx - pathVert) <= 1 || Math.abs(tx - (pathVert - 1)) <= 0) continue;
 
         const cx = tx * scaledTile + scaledTile / 2;
         const cy = ty * scaledTile + scaledTile / 2;
 
-        // --- Large trees (15% of eligible tiles) ---
-        if (seed > 0.85) {
-          // Shadow on ground
-          details.fillStyle(0x1a2a10, 0.3);
-          details.fillRect(cx - 7 * s, cy + 7 * s, 14 * s, 4 * s);
+        // ── LARGE TREES (12%) — dark green canopy, distinct from ground ──
+        if (seed > 0.88) {
+          // Ground shadow
+          gfx.fillStyle(0x000000, 0.15);
+          gfx.fillRect(cx - 6 * s, cy + 8 * s, 12 * s, 3 * s);
+          // Trunk (warm brown, thick)
+          gfx.fillStyle(Phaser.Display.Color.GetColor(85, 55, 28));
+          gfx.fillRect(cx - 2 * s, cy, 4 * s, 10 * s);
+          // Bark detail
+          gfx.fillStyle(Phaser.Display.Color.GetColor(65, 40, 20), 0.6);
+          gfx.fillRect(cx - s, cy + 3 * s, 2 * s, 4 * s);
+          // CANOPY — much darker than ground to be visible
+          // Bottom layer (widest, darkest)
+          gfx.fillStyle(Phaser.Display.Color.GetColor(30, 65, 35));
+          gfx.fillRect(cx - 8 * s, cy - 2 * s, 16 * s, 6 * s);
+          // Middle layer
+          gfx.fillStyle(Phaser.Display.Color.GetColor(35, 75, 40));
+          gfx.fillRect(cx - 6 * s, cy - 6 * s, 12 * s, 5 * s);
+          // Top/crown
+          gfx.fillStyle(Phaser.Display.Color.GetColor(40, 85, 45));
+          gfx.fillRect(cx - 4 * s, cy - 9 * s, 8 * s, 4 * s);
+          // Light dapples (bright green spots)
+          gfx.fillStyle(Phaser.Display.Color.GetColor(80, 140, 70), 0.6);
+          gfx.fillRect(cx - 5 * s, cy - 7 * s, 3 * s, 2 * s);
+          gfx.fillRect(cx + 2 * s, cy - 4 * s, 2 * s, 2 * s);
+          gfx.fillRect(cx - 2 * s, cy - 1 * s, 3 * s, s);
+        }
+        // ── SMALL TREES / BUSHES (10%) ──
+        else if (seed > 0.78) {
           // Trunk
-          details.fillStyle(Phaser.Display.Color.GetColor(75, 50, 25));
-          details.fillRect(cx - 2 * s, cy - 1 * s, 4 * s, 10 * s);
-          // Trunk bark texture
-          details.fillStyle(Phaser.Display.Color.GetColor(60, 38, 18), 0.5);
-          details.fillRect(cx - s, cy + 2 * s, 2 * s, 3 * s);
-          // Canopy layers (bottom to top for pixel-art foliage)
-          const lR = hexToRGB(palette.dominant || '#4a7c59');
-          const br = Math.floor(seed2 * 20);
-          // Canopy layer 1 (wide base)
-          details.fillStyle(Phaser.Display.Color.GetColor(lR.r + br - 10, lR.g + br, lR.b + br - 10));
-          details.fillRect(cx - 8 * s, cy - 3 * s, 16 * s, 7 * s);
-          // Canopy layer 2 (mid)
-          details.fillStyle(Phaser.Display.Color.GetColor(lR.r + br, lR.g + br + 10, lR.b + br));
-          details.fillRect(cx - 6 * s, cy - 7 * s, 12 * s, 5 * s);
-          // Canopy layer 3 (crown)
-          details.fillStyle(Phaser.Display.Color.GetColor(lR.r + br + 5, lR.g + br + 15, lR.b + br + 5));
-          details.fillRect(cx - 4 * s, cy - 10 * s, 8 * s, 4 * s);
-          // Highlight spots
-          details.fillStyle(Phaser.Display.Color.GetColor(
-            Math.min(255, lR.r + 50), Math.min(255, lR.g + 65), Math.min(255, lR.b + 40)), 0.5);
-          details.fillRect(cx - 5 * s, cy - 8 * s, 4 * s, 2 * s);
-          details.fillRect(cx + s, cy - 5 * s, 3 * s, 2 * s);
+          gfx.fillStyle(Phaser.Display.Color.GetColor(90, 60, 30));
+          gfx.fillRect(cx - s, cy + 2 * s, 2 * s, 5 * s);
+          // Canopy (dark, distinct)
+          gfx.fillStyle(Phaser.Display.Color.GetColor(35, 70, 38));
+          gfx.fillRect(cx - 5 * s, cy - 2 * s, 10 * s, 5 * s);
+          gfx.fillRect(cx - 3 * s, cy - 5 * s, 6 * s, 4 * s);
+          // Light spots
+          gfx.fillStyle(Phaser.Display.Color.GetColor(75, 130, 65), 0.5);
+          gfx.fillRect(cx - 3 * s, cy - 4 * s, 3 * s, 2 * s);
         }
-        // --- Small trees / bushes (10%) ---
-        else if (seed > 0.75) {
-          const lR = hexToRGB(palette.dominant || '#4a7c59');
-          // Small trunk
-          details.fillStyle(Phaser.Display.Color.GetColor(80, 55, 30));
-          details.fillRect(cx - s, cy + 2 * s, 2 * s, 5 * s);
-          // Small canopy
-          details.fillStyle(Phaser.Display.Color.GetColor(lR.r + 15, lR.g + 25, lR.b + 10));
-          details.fillRect(cx - 4 * s, cy - 2 * s, 8 * s, 5 * s);
-          details.fillRect(cx - 3 * s, cy - 5 * s, 6 * s, 4 * s);
-          // Highlight
-          details.fillStyle(Phaser.Display.Color.GetColor(
-            Math.min(255, lR.r + 45), Math.min(255, lR.g + 55), Math.min(255, lR.b + 35)), 0.4);
-          details.fillRect(cx - 2 * s, cy - 4 * s, 3 * s, 2 * s);
-        }
-        // --- Rocks (7%) ---
-        else if (seed > 0.68) {
-          const rSize = Math.floor(3 + seed2 * 5) * s;
+        // ── ROCKS (6%) ──
+        else if (seed > 0.72) {
+          const rw = Math.floor(4 + seed2 * 5) * s;
+          const rh = Math.floor(rw * 0.6);
           // Shadow
-          details.fillStyle(0x222222, 0.25);
-          details.fillRect(cx - rSize / 2 + s, cy + s, rSize, rSize * 0.4);
-          // Rock body
-          details.fillStyle(Phaser.Display.Color.GetColor(95, 90, 100));
-          details.fillRect(cx - rSize / 2, cy - rSize * 0.3, rSize, rSize * 0.6);
-          // Rock highlight
-          details.fillStyle(Phaser.Display.Color.GetColor(135, 130, 140), 0.5);
-          details.fillRect(cx - rSize / 2, cy - rSize * 0.3, rSize * 0.5, rSize * 0.25);
+          gfx.fillStyle(0x000000, 0.12);
+          gfx.fillRect(cx - rw / 2 + 2, cy + 2, rw, rh * 0.5);
+          // Rock body — gray-blue
+          gfx.fillStyle(Phaser.Display.Color.GetColor(100, 95, 108));
+          gfx.fillRect(cx - rw / 2, cy - rh / 2, rw, rh);
+          // Highlight top-left
+          gfx.fillStyle(Phaser.Display.Color.GetColor(145, 140, 155), 0.5);
+          gfx.fillRect(cx - rw / 2, cy - rh / 2, rw * 0.5, rh * 0.4);
+          // Dark crack
+          gfx.fillStyle(Phaser.Display.Color.GetColor(60, 55, 65), 0.4);
+          gfx.fillRect(cx - s, cy - rh * 0.2, s, rh * 0.5);
         }
-        // --- Flowers (8%) ---
-        else if (seed > 0.60) {
-          const flowerColors = [0xcc3333, 0xdddd44, 0xffeeff, 0xdd77cc, 0xff8844];
-          const fc = flowerColors[Math.floor(seed2 * 5)];
-          // Stem
-          details.fillStyle(0x3a6a2a, 0.7);
-          details.fillRect(cx, cy, s, 3 * s);
-          // Petals
-          details.fillStyle(fc, 0.85);
-          details.fillRect(cx - s, cy - s, 3 * s, 2 * s);
-          details.fillRect(cx, cy - 2 * s, s, s);
-          // Second flower nearby
-          if (seed2 > 0.5) {
-            const ox = Math.floor(seed2 * 6 - 3) * s;
-            details.fillStyle(0x3a6a2a, 0.7);
-            details.fillRect(cx + 5 * s + ox, cy + s, s, 2 * s);
-            details.fillStyle(flowerColors[Math.floor(seed * 5)], 0.85);
-            details.fillRect(cx + 4 * s + ox, cy - s, 3 * s, 2 * s);
+        // ── FLOWER CLUSTERS (8%) — big, colorful ──
+        else if (seed > 0.64) {
+          const colors = [
+            [220, 60, 60],   // red
+            [240, 200, 50],  // yellow
+            [220, 120, 200], // pink
+            [255, 150, 80],  // orange
+            [180, 130, 255], // lavender
+          ];
+          const c1 = colors[Math.floor(seed2 * 5)];
+          const c2 = colors[Math.floor(seed * 5)];
+          // Stems
+          gfx.fillStyle(Phaser.Display.Color.GetColor(50, 90, 40));
+          gfx.fillRect(cx - s, cy + s, s, 4 * s);
+          gfx.fillRect(cx + 4 * s, cy + 2 * s, s, 3 * s);
+          // Flower 1 — 5-pixel cross pattern
+          gfx.fillStyle(Phaser.Display.Color.GetColor(c1[0], c1[1], c1[2]));
+          gfx.fillRect(cx - 2 * s, cy - s, 4 * s, 3 * s);  // horizontal
+          gfx.fillRect(cx - s, cy - 2 * s, 2 * s, 5 * s);   // vertical
+          // Center dot
+          gfx.fillStyle(Phaser.Display.Color.GetColor(255, 240, 100), 0.8);
+          gfx.fillRect(cx - s / 2, cy, s, s);
+          // Flower 2
+          if (seed2 > 0.3) {
+            gfx.fillStyle(Phaser.Display.Color.GetColor(c2[0], c2[1], c2[2]));
+            gfx.fillRect(cx + 3 * s, cy, 4 * s, 3 * s);
+            gfx.fillRect(cx + 4 * s, cy - s, 2 * s, 5 * s);
+            gfx.fillStyle(Phaser.Display.Color.GetColor(255, 240, 100), 0.8);
+            gfx.fillRect(cx + 4.5 * s, cy + s, s, s);
           }
+          // Leaves
+          gfx.fillStyle(Phaser.Display.Color.GetColor(55, 100, 45), 0.6);
+          gfx.fillRect(cx - 3 * s, cy + 2 * s, 3 * s, 2 * s);
+          gfx.fillRect(cx + 4 * s, cy + 4 * s, 3 * s, 2 * s);
         }
-        // --- Tall grass patches (5%) ---
-        else if (seed > 0.55) {
-          const grassRGB = hexToRGB(groundRamp[0]);
-          details.fillStyle(Phaser.Display.Color.GetColor(grassRGB.r - 10, grassRGB.g + 15, grassRGB.b - 5), 0.65);
-          for (let g = 0; g < 5; g++) {
-            const gx = cx - 6 * s + this._seededRand(tx, ty, 30 + g) * 12 * s;
-            const gy = cy - 2 * s + this._seededRand(tx, ty, 40 + g) * 4 * s;
-            details.fillRect(gx, gy, s, (5 + Math.floor(this._seededRand(tx, ty, 50 + g) * 4)) * s);
+        // ── TALL GRASS CLUMPS (6%) ──
+        else if (seed > 0.58) {
+          // Distinct yellow-green, darker base
+          gfx.fillStyle(Phaser.Display.Color.GetColor(55, 95, 40), 0.7);
+          for (let g = 0; g < 6; g++) {
+            const gx = cx - 7 * s + this._seededRand(tx, ty, 30 + g) * 14 * s;
+            const gy = cy + this._seededRand(tx, ty, 40 + g) * 4 * s;
+            const gh = (5 + Math.floor(this._seededRand(tx, ty, 50 + g) * 4)) * s;
+            gfx.fillRect(gx, gy - gh, s, gh);
+          }
+          // Tips in lighter green
+          gfx.fillStyle(Phaser.Display.Color.GetColor(90, 140, 60), 0.5);
+          for (let g = 0; g < 3; g++) {
+            const gx = cx - 5 * s + this._seededRand(tx, ty, 33 + g) * 10 * s;
+            const gy = cy - 6 * s + this._seededRand(tx, ty, 43 + g) * 2 * s;
+            gfx.fillRect(gx, gy, s, 2 * s);
           }
         }
       }
@@ -964,7 +1002,7 @@ class WorldScene extends Phaser.Scene {
         const isPath = isPathH || isPathV;
         const isEdge = (tx === 0 || ty === 0 || tx === this.mapW - 1 || ty === this.mapH - 1);
         const seed = this._seededRand(tx, ty, 1);
-        const hasBigTree = seed > 0.85 && !isPath && !isEdge && tx > 1 && ty > 1;
+        const hasBigTree = seed > 0.88 && !isPath && !isEdge && tx > 1 && ty > 1;
 
         if (isPath) {
           ctx.fillStyle = `rgb(${pathRGB.r},${pathRGB.g},${pathRGB.b})`;
@@ -1387,8 +1425,8 @@ class WorldScene extends Phaser.Scene {
 
     // Set new area and player entry position
     state.currentAreaId = exit.to;
-    const newMapW = targetArea.dimensions?.width || 40;
-    const newMapH = targetArea.dimensions?.height || 30;
+    const newMapW = targetArea.dimensions?.width || 24;
+    const newMapH = targetArea.dimensions?.height || 18;
 
     // Place player at opposite edge
     switch (exit.direction) {
