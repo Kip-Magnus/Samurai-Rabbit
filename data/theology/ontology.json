@@ -1,0 +1,337 @@
+{
+  "_meta": {
+    "system": "Samurai Usagi Cross-Era Ontology",
+    "version": "1.0",
+    "theology": "Catholic — Catechism of the Catholic Church",
+    "core_doctrine": "Communion of Saints (CCC 946-962). The Church is one body across time. The faithful departed intercede for the living. This is NOT nostalgia — it is dogma. The cross-era mechanic IS the Communion of Saints.",
+    "typology": "CCC 128-130. The Old Testament prefigures the New. Events in earlier eras are 'types' fulfilled in later eras. The player recognizes patterns because salvation history has patterns — God works through rhyme, not repetition."
+  },
+
+  "eras": [
+    {
+      "id": "book-00",
+      "title": "The Calling",
+      "year": 1587,
+      "location": "Shimabara Peninsula, Japan",
+      "church_context": "Kakure Kirishitan — hidden Christians after Toyotomi Hideyoshi's edict of persecution. Jesuit-baptized communities practicing faith in secret.",
+      "ccc_themes": [675, 769, 2473],
+      "theological_arc": "The cost of faith. What does it mean to believe when belief means death? CCC 2473: Martyrdom is the supreme witness to the truth of the faith.",
+      "sacramental_focus": "Eucharist in hiding. The hidden Mass is the beating heart of Kakure faith. CCC 1324: The Eucharist is the source and summit of the Christian life.",
+      "patron_saint": "Paul Miki and Companions (d. 1597, Nagasaki)",
+      "saint_intercession_available_in": ["book-05"],
+      "typological_role": "Type: the Exile. Israel in Babylon. Faith preserved in foreign soil.",
+      "key_virtue": "faith",
+      "accuser_strategy": "despair",
+      "palette_theology": "Green (life/growth) → Red (blood/fire) → Gold (divine breakthrough)"
+    },
+    {
+      "id": "book-01",
+      "title": "The Arena",
+      "year": 64,
+      "location": "Rome",
+      "church_context": "Neronian persecution. Christians blamed for the Great Fire. Catacombs as refuge and worship space. Peter and Paul both present in Rome.",
+      "ccc_themes": [2473, 2474, 675],
+      "theological_arc": "Witness unto death. The word 'martyr' means 'witness' (CCC 2473). The Roman Christians did not seek death — they refused to deny truth.",
+      "sacramental_focus": "Baptism by blood. CCC 1258: The Church has always held the firm conviction that those who suffer death for the sake of the faith without having received Baptism are baptized by their death for and with Christ.",
+      "patron_saint": "Saints Peter and Paul",
+      "saint_intercession_available_in": ["book-02", "book-03", "book-04", "book-05"],
+      "typological_role": "Type: the Furnace. Shadrach, Meshach, Abednego. God present in the fire.",
+      "key_virtue": "fortitude",
+      "accuser_strategy": "fear",
+      "palette_theology": "Terracotta (earth/Rome) → Blood red (persecution) → Torch amber (faith in darkness) → White (catacomb peace)"
+    },
+    {
+      "id": "book-02",
+      "title": "The Council",
+      "year": 325,
+      "location": "Nicaea / Alexandria, Egypt",
+      "church_context": "Post-Constantine. Christianity legalized but now threatened from within by Arianism. Council of Nicaea defines the Creed. The battle shifts from persecution to heresy.",
+      "ccc_themes": [465, 242, 250],
+      "theological_arc": "Truth against corruption. CCC 465: The first ecumenical councils clarified the truth of the relationship between the Father and the Son. When the enemy cannot kill the Church, he tries to corrupt her from within.",
+      "sacramental_focus": "Confirmation — the strengthening of faith through the Creed. CCC 1285: Confirmation completes baptismal grace.",
+      "patron_saint": "Saint Athanasius (Athanasius contra mundum)",
+      "saint_intercession_available_in": ["book-03", "book-04", "book-05"],
+      "typological_role": "Type: the Wilderness. Israel at Sinai. Receiving the Law (the Creed) that defines who we are.",
+      "key_virtue": "prudence",
+      "accuser_strategy": "deception",
+      "palette_theology": "Gold sand (desert/eternity) → Lapis blue (truth/depth) → Imperial purple (worldly power threatening faith)"
+    },
+    {
+      "id": "book-03",
+      "title": "The Crusade",
+      "year": 1191,
+      "location": "The Holy Land",
+      "church_context": "Third Crusade. The most morally complex era. Christians committing violence in Christ's name. Francis of Assisi (later era) as the counter-witness. CCC 2302-2317 on peace and war.",
+      "ccc_themes": [2302, 2309, 2317],
+      "theological_arc": "When the faithful become the persecutors. The most painful book — Usagi must confront Christians doing evil. CCC 2309: The strict conditions for legitimate defense. The Accuser's greatest victory: making the Church resemble him.",
+      "sacramental_focus": "Reconciliation — the Church must confess her own sins. CCC 1422: Those who approach the sacrament of Penance obtain pardon from God.",
+      "patron_saint": "Saint Francis of Assisi",
+      "saint_intercession_available_in": ["book-04", "book-05"],
+      "typological_role": "Type: the Golden Calf. Israel worshipping what it made with its own hands. Power mistaken for holiness.",
+      "key_virtue": "justice",
+      "accuser_strategy": "righteous_anger",
+      "palette_theology": "Sun-bleached stone → Blood on sand → Franciscan brown (poverty/truth) → Desert star silver (peace)"
+    },
+    {
+      "id": "book-04",
+      "title": "The Reformation",
+      "year": 1534,
+      "location": "England / Continental Europe",
+      "church_context": "English Reformation. Henry VIII's break with Rome. Thomas More's martyrdom. The Church torn apart. CCC 817-819 on wounds to unity.",
+      "ccc_themes": [817, 820, 821],
+      "theological_arc": "Unity and division. CCC 820: 'Christ always gives his Church the gift of unity, but the Church must always pray and work to maintain, reinforce, and perfect the unity that Christ wills for her.' Usagi witnesses the Church fracture and must choose unity over faction.",
+      "sacramental_focus": "Holy Orders — what does it mean to be the Church when bishops themselves are divided? CCC 1536: Holy Orders is the sacrament through which the mission entrusted by Christ continues.",
+      "patron_saint": "Saint Thomas More",
+      "saint_intercession_available_in": ["book-05"],
+      "typological_role": "Type: the Divided Kingdom. Israel splits into Judah and Israel. Faithfulness when the institution itself breaks.",
+      "key_virtue": "temperance",
+      "accuser_strategy": "division",
+      "palette_theology": "Tudor green → Grey stone (institution) → Parchment gold (truth on paper) → Martyr red (More's blood)"
+    },
+    {
+      "id": "book-05",
+      "title": "The Return",
+      "year": 1638,
+      "location": "Shimabara Peninsula, Japan",
+      "church_context": "Shimabara Rebellion. The final destruction of open Japanese Christianity. But the Kakure Kirishitan survive in hiding for 250 years. Usagi returns to where it began.",
+      "ccc_themes": [675, 769, 946],
+      "theological_arc": "The Church endures. CCC 675: 'Before Christ's second coming the Church must pass through a final trial that will shake the faith of many believers.' 250 years of hidden faith — and the grass is still green. The same coast. The same God.",
+      "sacramental_focus": "The Eucharist again — but now without priests. How do the Kakure maintain faith without sacraments? CCC 1380: 'It is highly fitting that Christ should have wanted to remain present to his Church in this unique way.' The longing for the Eucharist they cannot receive IS their worship.",
+      "patron_saint": "Lorenzo Ruiz and Companions (d. 1637)",
+      "saint_intercession_available_in": [],
+      "typological_role": "Antitype: the Return from Exile. Israel comes home to Jerusalem. Everything is different. Everything is the same. God was faithful.",
+      "key_virtue": "hope",
+      "accuser_strategy": "forgetting",
+      "palette_theology": "Near-black oppression → Hidden gold (faith survived) → Mirror green (#4a7c59 — same as Book 00. The grass remembers.)"
+    }
+  ],
+
+  "communion_of_saints_system": {
+    "_source": "CCC 946-962",
+    "_doctrine": "CCC 954: 'The three states of the Church. When the Lord comes in glory, and all his angels with him, death will be no more and all things will be subject to him. But at the present time some of his disciples are pilgrims on earth. Others have died and are being purified, while still others are in glory, contemplating in full light, God himself.'",
+
+    "mechanic": "Saints from completed eras become available as intercessors in future eras. This is not a 'summon' system — it is prayer for intercession, which is core Catholic practice (CCC 2683).",
+
+    "how_it_works": [
+      "When a book is completed, key characters who died faithful become 'saints' in the game's memory.",
+      "In subsequent books, the miracle 'Cloud of Witnesses' calls upon these saints.",
+      "Each saint provides a bonus based on the virtue they most embodied in life.",
+      "The more books completed, the more saints available — the Cloud grows.",
+      "This is CCC 957: 'It is not merely by the title of example that we cherish the memory of those in heaven; we seek, rather, that by this devotion the union of the whole Church in the Spirit may be strengthened.'"
+    ],
+
+    "saint_registry_schema": {
+      "id": "string — character ID",
+      "name": "string — display name",
+      "book": "string — era of origin",
+      "virtue_embodied": "string — their dominant virtue",
+      "intercession_bonus": {
+        "type": "string — buff/heal/damage/passive",
+        "formula": "string — scales with their virtue level at death"
+      },
+      "feast_day_bonus": "If the liturgical calendar aligns, double intercession power."
+    },
+
+    "example_saints": [
+      {
+        "id": "obaa_chan",
+        "name": "Maria Hana (Obaa-chan)",
+        "book": "book-00",
+        "virtue_embodied": "faith",
+        "intercession_bonus": {
+          "type": "passive",
+          "effect": "Cross glows warmer near hidden Christian artifacts. +2 faith in battle.",
+          "narrative": "Her cross still warm. Her prayers still heard."
+        }
+      },
+      {
+        "id": "father_tomas",
+        "name": "Father Tomás de Almeida",
+        "book": "book-00",
+        "virtue_embodied": "charity",
+        "intercession_bonus": {
+          "type": "heal",
+          "effect": "Healing miracles +15% when invoked.",
+          "narrative": "He who gave his breviary to a burning chapel. The shepherd who would not leave."
+        }
+      }
+    ]
+  },
+
+  "typological_parallels": {
+    "_source": "CCC 128-130",
+    "_doctrine": "CCC 128: 'The Church, as early as apostolic times, and then constantly in her Tradition, has illuminated the unity of the divine plan in the two Testaments through typology, which discerns in God's works of the Old Covenant prefigurations of what he accomplished in the fullness of time in the person of his incarnate Son.'",
+
+    "how_it_works": "Events in earlier books 'rhyme' with later books. The engine tracks these parallels and surfaces them through visual echoes (same palette callback), dialogue references, and the Accuser's commentary. The player is meant to notice the patterns — because God works in patterns.",
+
+    "parallels": [
+      {
+        "type": "The Hidden Mass",
+        "instances": [
+          { "book": "book-00", "event": "hidden_chapel_mass", "context": "Kakure Kirishitan worship in secret" },
+          { "book": "book-01", "event": "catacomb_eucharist", "context": "Roman Christians in the catacombs" },
+          { "book": "book-05", "event": "kakure_orasho", "context": "250 years later, still hiding, still praying" }
+        ],
+        "theology": "The Eucharist endures. Empires rise and fall. The Mass continues in cellars and caves."
+      },
+      {
+        "type": "The Fumi-e (Forced Apostasy Test)",
+        "instances": [
+          { "book": "book-00", "event": "fumi_e_ceremony", "context": "Step on the image of Christ or die" },
+          { "book": "book-01", "event": "incense_to_caesar", "context": "Offer a pinch of incense to the Emperor's genius or die" },
+          { "book": "book-04", "event": "oath_of_supremacy", "context": "Swear the king is head of the Church or die" }
+        ],
+        "theology": "Every era demands the same choice in different costume: deny your faith or suffer. The test never changes. Only the tyrant's name."
+      },
+      {
+        "type": "The Grandmother's Witness",
+        "instances": [
+          { "book": "book-00", "event": "obaa_martyrdom", "context": "Obaa-chan refuses the fumi-e and dies" },
+          { "book": "book-01", "event": "perpetua_mother", "context": "A Roman mother faces the arena" },
+          { "book": "book-05", "event": "elder_woman_recognition", "context": "An old woman in Shimabara who remembers the old prayers" }
+        ],
+        "theology": "2 Timothy 1:5 — The faith of grandmothers. Lois to Eunice to Timothy. Obaa-chan to Usagi. The faith passes through women who remember."
+      },
+      {
+        "type": "The Fire",
+        "instances": [
+          { "book": "book-00", "event": "burning_chapel", "context": "The chapel burns" },
+          { "book": "book-01", "event": "great_fire_rome", "context": "Rome burns, Christians blamed" },
+          { "book": "book-03", "event": "burning_village", "context": "A village burns in the Holy Land" }
+        ],
+        "theology": "Daniel 3:25 — 'I see four men loose, walking in the midst of the fire, and they are not hurt; and the appearance of the fourth is like a son of the gods.' God is present in every fire."
+      },
+      {
+        "type": "The Blade's Meaning",
+        "instances": [
+          { "book": "book-00", "event": "blade_received", "context": "The Pilgrim's Blade — a tool, not a weapon" },
+          { "book": "book-03", "event": "blade_as_cross", "context": "Usagi refuses to use the blade for violence in the Crusade" },
+          { "book": "book-05", "event": "blade_laid_down", "context": "The blade is returned. The pilgrimage is over." }
+        ],
+        "theology": "The sword of the Spirit is the Word of God (Ephesians 6:17). The physical blade reflects spiritual truth. Its power comes from what it defends, not what it destroys."
+      }
+    ]
+  },
+
+  "the_accuser": {
+    "_source": "CCC 391-395, 2850-2854",
+    "_doctrine": "CCC 391: 'Behind the disobedient choice of our first parents lurks a seductive voice, opposed to God, which makes them fall into death out of envy.' CCC 395: 'The power of Satan is, nonetheless, not infinite. He is only a creature, powerful from the fact that he is pure spirit, but still a creature. He cannot prevent the building up of God's reign.'",
+
+    "name_theology": "Never named 'Satan' or 'the Devil' in-game. Always 'the Accuser' — from Hebrew 'ha-satan,' literally 'the accuser/adversary.' CCC 2852: 'He is the one who accuses the brothers.'",
+
+    "nature": "Not a boss to be killed. The Accuser cannot be destroyed by the player — only resisted, rebuked, and outlasted. CCC 395: his power is 'not infinite' but he is a real spiritual being, not a metaphor.",
+
+    "strategies_per_era": {
+      "book-00": {
+        "strategy": "despair",
+        "method": "Whispers that God has abandoned Japan. That the persecution proves faith is worthless. That Obaa-chan died for nothing.",
+        "ccc": [2091],
+        "counter_virtue": "hope"
+      },
+      "book-01": {
+        "strategy": "fear",
+        "method": "The terror of the arena. The lions. The crowd. Fear of pain. Fear of death. Fear that makes you deny Christ before you even decide to.",
+        "ccc": [1808],
+        "counter_virtue": "fortitude"
+      },
+      "book-02": {
+        "strategy": "deception",
+        "method": "Arianism sounds reasonable. 'Similar substance' is so close to 'same substance.' One word. One iota. The Accuser's best work is theology that is almost right.",
+        "ccc": [465],
+        "counter_virtue": "prudence"
+      },
+      "book-03": {
+        "strategy": "righteous_anger",
+        "method": "Deus vult. The Accuser doesn't tempt with evil — he tempts with good twisted. Holy war. Violence for God. The most dangerous temptation: doing evil while feeling righteous.",
+        "ccc": [2302],
+        "counter_virtue": "justice"
+      },
+      "book-04": {
+        "strategy": "division",
+        "method": "The Church is corrupt, so leave it. Reform it by destroying it. The Accuser splits the faithful against each other. Both sides believe they serve God.",
+        "ccc": [817],
+        "counter_virtue": "temperance"
+      },
+      "book-05": {
+        "strategy": "forgetting",
+        "method": "250 years. No priests. No sacraments. The prayers drift. The words change. The Accuser's final weapon is time. If you can't kill faith, wait for it to forget itself.",
+        "ccc": [675],
+        "counter_virtue": "faith"
+      }
+    },
+
+    "combat_mechanics": {
+      "accuser_cannot_be_killed": true,
+      "accuser_can_be_rebuked": "Vade Retro miracle drives him back temporarily",
+      "accuser_can_be_resisted": "High virtue prevents his status effects",
+      "accuser_attacks_are_spiritual": [
+        { "name": "Whisper of Despair", "effect": "despair_status", "counter": "hope >= 3" },
+        { "name": "Veil of Fear", "effect": "fear_status", "counter": "fortitude >= 3" },
+        { "name": "Honeyed Lie", "effect": "confusion_status", "counter": "prudence >= 3" },
+        { "name": "Righteous Mask", "effect": "berserk_status", "counter": "justice >= 3" },
+        { "name": "Memory Fade", "effect": "forget_status", "counter": "faith >= 3" }
+      ],
+      "_note": "The Accuser never attacks the body. Only the soul. His 'damage' is spiritual status effects. The counter is always virtue."
+    }
+  },
+
+  "liturgical_calendar": {
+    "_source": "CCC 1163-1173",
+    "_doctrine": "CCC 1163: 'Holy Mother Church considers it her duty to celebrate the saving work of her divine Spouse in a sacred commemoration on certain days throughout the course of the year.'",
+    "_note": "Game time maps to liturgical seasons, not real-world calendar. Each book's acts correspond to a liturgical arc.",
+
+    "mapping": {
+      "act_1": {
+        "season": "Ordinary Time",
+        "color": "green",
+        "tone": "Daily life. Routine. The faith lived in ordinary moments.",
+        "ccc": [1163]
+      },
+      "act_2": {
+        "season": "Lent",
+        "color": "violet",
+        "tone": "Tension rises. Fasting. Preparation for suffering. The shadow falls.",
+        "ccc": [1438]
+      },
+      "act_3": {
+        "season": "Passion / Triduum",
+        "color": "red",
+        "tone": "The cross. Martyrdom. Fire. The darkest moment. Good Friday.",
+        "ccc": [1168]
+      },
+      "act_4": {
+        "season": "Easter",
+        "color": "white_gold",
+        "tone": "Resurrection. Not escape from suffering — transformation through it. The calling. New life.",
+        "ccc": [1169]
+      }
+    },
+
+    "feast_day_bonuses": {
+      "description": "If the player encounters a saint's feast day during gameplay (mapped to in-game calendar), that saint's intercession is doubled.",
+      "implementation": "Each book has an internal calendar spanning its narrative. Feast days of patron saints and relevant saints trigger subtle bonuses."
+    }
+  },
+
+  "echo_system": {
+    "_note": "When the engine detects a typological parallel, it triggers visual and mechanical echoes.",
+
+    "visual_echoes": [
+      "Palette callback: briefly flash the palette of the earlier era during the parallel moment",
+      "Ghost overlay: 1-2 second translucent image of the parallel scene from the earlier book",
+      "Music motif: a musical phrase from the earlier era's theme plays underneath the current scene",
+      "Obaa-chan's cross: glows warmest during parallel moments"
+    ],
+
+    "mechanical_echoes": [
+      "Virtue bonus: if the player made the virtuous choice in the earlier parallel, they receive a buff now",
+      "Dialogue option: 'I have seen this before...' — Usagi remembers across eras",
+      "Accuser comment: the Accuser also notices the patterns and mocks them: 'Again? You think repetition is meaning?'"
+    ],
+
+    "implementation": {
+      "parallel_registry": "Cross-reference current event against typological_parallels. If match found, trigger echo.",
+      "intensity_scaling": "First parallel is subtle (palette flash only). Repeated patterns grow stronger. By Book 05, the echoes are overwhelming — the Cloud of Witnesses is LOUD."
+    }
+  }
+}
