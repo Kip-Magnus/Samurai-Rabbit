@@ -655,25 +655,26 @@ class WorldScene extends Phaser.Scene {
     const mapW = this.mapW;
     const mapH = this.mapH;
     const scaledTile = this.scaledTile;
+    const s = SPRITE_SCALE;
 
-    const gfx = this.add.graphics();
-    gfx.setDepth(-50);
+    // Store seededRand on the instance for minimap reuse
+    this._seededRand = (x, y, sv) => {
+      const n = Math.sin(x * 127.1 + y * 311.7 + sv * 73.5) * 43758.5453;
+      return n - Math.floor(n);
+    };
 
     const groundRamp = buildRamp(palette.dominant || '#4a7c59');
     const pathColor = palette.path || '#8b7355';
     const darkGround = palette.shadow || '#2a3a2e';
 
-    const seededRand = (x, y, s) => {
-      const n = Math.sin(x * 127.1 + y * 311.7 + s * 73.5) * 43758.5453;
-      return n - Math.floor(n);
-    };
+    // --- PASS 1: Ground tiles ---
+    const ground = this.add.graphics().setDepth(-10);
 
     for (let ty = 0; ty < mapH; ty++) {
       for (let tx = 0; tx < mapW; tx++) {
         const x = tx * scaledTile;
         const y = ty * scaledTile;
-
-        const seed = seededRand(tx, ty, 1);
+        const seed = this._seededRand(tx, ty, 1);
         const isPathH = (ty >= Math.floor(mapH / 2) - 1 && ty <= Math.floor(mapH / 2));
         const isPathV = (tx >= Math.floor(mapW / 2) - 1 && tx <= Math.floor(mapW / 2));
         const isPath = isPathH || isPathV;
@@ -681,95 +682,154 @@ class WorldScene extends Phaser.Scene {
 
         if (isPath) {
           const rgb = hexToRGB(pathColor);
-          const vary = Math.floor(seed * 15) - 7;
-          gfx.fillStyle(Phaser.Display.Color.GetColor(
-            Math.min(255, Math.max(0, rgb.r + vary)),
-            Math.min(255, Math.max(0, rgb.g + vary)),
-            Math.min(255, Math.max(0, rgb.b + vary))
-          ));
+          const v = Math.floor(seed * 15) - 7;
+          ground.fillStyle(Phaser.Display.Color.GetColor(
+            Math.min(255, Math.max(0, rgb.r + v)),
+            Math.min(255, Math.max(0, rgb.g + v)),
+            Math.min(255, Math.max(0, rgb.b + v))));
+          ground.fillRect(x, y, scaledTile, scaledTile);
+          // Path texture: sparse dots
+          if (seed > 0.7) {
+            ground.fillStyle(Phaser.Display.Color.GetColor(
+              Math.max(0, rgb.r - 20), Math.max(0, rgb.g - 20), Math.max(0, rgb.b - 20)), 0.4);
+            ground.fillRect(x + seed * 30, y + seed * 20, 2 * s, s);
+          }
         } else if (isEdge) {
           const rgb = hexToRGB(darkGround);
-          gfx.fillStyle(Phaser.Display.Color.GetColor(rgb.r, rgb.g, rgb.b));
+          ground.fillStyle(Phaser.Display.Color.GetColor(rgb.r, rgb.g, rgb.b));
+          ground.fillRect(x, y, scaledTile, scaledTile);
+          // Edge undergrowth
+          ground.fillStyle(Phaser.Display.Color.GetColor(40, 55, 30), 0.5);
+          ground.fillRect(x + 2, y + 2, scaledTile - 4, scaledTile - 4);
         } else {
           const variant = Math.floor(seed * 4);
           const rgb = hexToRGB(groundRamp[Math.min(variant, groundRamp.length - 1)]);
-          const vary = Math.floor(seededRand(tx, ty, 2) * 10) - 5;
-          gfx.fillStyle(Phaser.Display.Color.GetColor(
-            Math.min(255, Math.max(0, rgb.r + vary)),
-            Math.min(255, Math.max(0, rgb.g + vary)),
-            Math.min(255, Math.max(0, rgb.b + vary))
-          ));
-        }
+          const v = Math.floor(this._seededRand(tx, ty, 2) * 12) - 6;
+          ground.fillStyle(Phaser.Display.Color.GetColor(
+            Math.min(255, Math.max(0, rgb.r + v)),
+            Math.min(255, Math.max(0, rgb.g + v)),
+            Math.min(255, Math.max(0, rgb.b + v))));
+          ground.fillRect(x, y, scaledTile, scaledTile);
 
-        gfx.fillRect(x, y, scaledTile, scaledTile);
-
-        // Grass blades
-        if (!isPath && !isEdge && seed > 0.5) {
-          const bladeRGB = hexToRGB(groundRamp[0]);
-          gfx.fillStyle(Phaser.Display.Color.GetColor(bladeRGB.r, bladeRGB.g, bladeRGB.b), 0.5);
-          for (let b = 0; b < 3; b++) {
-            const bx = x + seededRand(tx, ty, 3 + b) * (scaledTile - 4) + 2;
-            const by = y + seededRand(tx, ty, 5 + b) * (scaledTile - 8) + 2;
-            gfx.fillRect(bx, by, SPRITE_SCALE, 4 * SPRITE_SCALE);
+          // Grass tufts (most tiles)
+          if (seed > 0.3) {
+            const bladeRGB = hexToRGB(groundRamp[0]);
+            ground.fillStyle(Phaser.Display.Color.GetColor(bladeRGB.r, bladeRGB.g, bladeRGB.b), 0.45);
+            for (let b = 0; b < 3; b++) {
+              const bx = x + this._seededRand(tx, ty, 10 + b) * (scaledTile - 6) + 2;
+              const by = y + this._seededRand(tx, ty, 20 + b) * (scaledTile - 10) + 2;
+              ground.fillRect(bx, by, s, (3 + Math.floor(seed * 3)) * s);
+            }
           }
         }
       }
     }
 
-    // Trees as separate sprites at higher depth so they render on top
-    const treeGfx = this.add.graphics();
-    treeGfx.setDepth(5);
+    // --- PASS 2: Detail objects (trees, rocks, flowers, bushes) on their own graphics ---
+    const details = this.add.graphics().setDepth(10);
 
     for (let ty = 2; ty < mapH - 2; ty++) {
       for (let tx = 2; tx < mapW - 2; tx++) {
-        const seed = seededRand(tx, ty, 1);
+        const seed = this._seededRand(tx, ty, 1);
+        const seed2 = this._seededRand(tx, ty, 42);
         const isPathH = (ty >= Math.floor(mapH / 2) - 1 && ty <= Math.floor(mapH / 2));
         const isPathV = (tx >= Math.floor(mapW / 2) - 1 && tx <= Math.floor(mapW / 2));
         if (isPathH || isPathV) continue;
 
+        // Keep 1-tile buffer from paths
+        const nearPathH = Math.abs(ty - Math.floor(mapH / 2)) <= 2;
+        const nearPathV = Math.abs(tx - Math.floor(mapW / 2)) <= 2;
+        if (nearPathH && nearPathV) continue;
+
         const cx = tx * scaledTile + scaledTile / 2;
         const cy = ty * scaledTile + scaledTile / 2;
-        const s = SPRITE_SCALE;
 
-        // Trees (~20% of tiles)
-        if (seed > 0.80) {
+        // --- Large trees (15% of eligible tiles) ---
+        if (seed > 0.85) {
+          // Shadow on ground
+          details.fillStyle(0x1a2a10, 0.3);
+          details.fillRect(cx - 7 * s, cy + 7 * s, 14 * s, 4 * s);
           // Trunk
-          treeGfx.fillStyle(Phaser.Display.Color.GetColor(90, 60, 30));
-          treeGfx.fillRect(cx - 2 * s, cy + 2 * s, 4 * s, 8 * s);
-          // Shadow
-          treeGfx.fillStyle(Phaser.Display.Color.GetColor(30, 40, 20), 0.4);
-          treeGfx.fillRect(cx - 6 * s, cy + 8 * s, 12 * s, 3 * s);
-          // Canopy (layered rectangles for pixel art look)
-          const leafRGB = hexToRGB(palette.dominant || '#4a7c59');
-          const br = Math.floor(seed * 25);
-          treeGfx.fillStyle(Phaser.Display.Color.GetColor(leafRGB.r + br, leafRGB.g + br + 10, leafRGB.b + br));
-          treeGfx.fillRect(cx - 7 * s, cy - 4 * s, 14 * s, 10 * s);
-          treeGfx.fillRect(cx - 5 * s, cy - 7 * s, 10 * s, 4 * s);
-          // Highlight
-          treeGfx.fillStyle(Phaser.Display.Color.GetColor(
-            Math.min(255, leafRGB.r + 50),
-            Math.min(255, leafRGB.g + 60),
-            Math.min(255, leafRGB.b + 40)
-          ), 0.5);
-          treeGfx.fillRect(cx - 5 * s, cy - 6 * s, 6 * s, 3 * s);
+          details.fillStyle(Phaser.Display.Color.GetColor(75, 50, 25));
+          details.fillRect(cx - 2 * s, cy - 1 * s, 4 * s, 10 * s);
+          // Trunk bark texture
+          details.fillStyle(Phaser.Display.Color.GetColor(60, 38, 18), 0.5);
+          details.fillRect(cx - s, cy + 2 * s, 2 * s, 3 * s);
+          // Canopy layers (bottom to top for pixel-art foliage)
+          const lR = hexToRGB(palette.dominant || '#4a7c59');
+          const br = Math.floor(seed2 * 20);
+          // Canopy layer 1 (wide base)
+          details.fillStyle(Phaser.Display.Color.GetColor(lR.r + br - 10, lR.g + br, lR.b + br - 10));
+          details.fillRect(cx - 8 * s, cy - 3 * s, 16 * s, 7 * s);
+          // Canopy layer 2 (mid)
+          details.fillStyle(Phaser.Display.Color.GetColor(lR.r + br, lR.g + br + 10, lR.b + br));
+          details.fillRect(cx - 6 * s, cy - 7 * s, 12 * s, 5 * s);
+          // Canopy layer 3 (crown)
+          details.fillStyle(Phaser.Display.Color.GetColor(lR.r + br + 5, lR.g + br + 15, lR.b + br + 5));
+          details.fillRect(cx - 4 * s, cy - 10 * s, 8 * s, 4 * s);
+          // Highlight spots
+          details.fillStyle(Phaser.Display.Color.GetColor(
+            Math.min(255, lR.r + 50), Math.min(255, lR.g + 65), Math.min(255, lR.b + 40)), 0.5);
+          details.fillRect(cx - 5 * s, cy - 8 * s, 4 * s, 2 * s);
+          details.fillRect(cx + s, cy - 5 * s, 3 * s, 2 * s);
         }
-        // Rocks (~7% of tiles)
-        else if (seed > 0.73) {
-          const rSize = Math.floor(4 + seed * 6) * s;
-          treeGfx.fillStyle(Phaser.Display.Color.GetColor(90, 90, 95));
-          treeGfx.fillRect(cx - rSize / 2, cy - rSize / 4, rSize, rSize / 2);
+        // --- Small trees / bushes (10%) ---
+        else if (seed > 0.75) {
+          const lR = hexToRGB(palette.dominant || '#4a7c59');
+          // Small trunk
+          details.fillStyle(Phaser.Display.Color.GetColor(80, 55, 30));
+          details.fillRect(cx - s, cy + 2 * s, 2 * s, 5 * s);
+          // Small canopy
+          details.fillStyle(Phaser.Display.Color.GetColor(lR.r + 15, lR.g + 25, lR.b + 10));
+          details.fillRect(cx - 4 * s, cy - 2 * s, 8 * s, 5 * s);
+          details.fillRect(cx - 3 * s, cy - 5 * s, 6 * s, 4 * s);
           // Highlight
-          treeGfx.fillStyle(Phaser.Display.Color.GetColor(130, 130, 135), 0.6);
-          treeGfx.fillRect(cx - rSize / 2, cy - rSize / 4, rSize / 2, rSize / 4);
+          details.fillStyle(Phaser.Display.Color.GetColor(
+            Math.min(255, lR.r + 45), Math.min(255, lR.g + 55), Math.min(255, lR.b + 35)), 0.4);
+          details.fillRect(cx - 2 * s, cy - 4 * s, 3 * s, 2 * s);
         }
-        // Flowers (~5%)
+        // --- Rocks (7%) ---
         else if (seed > 0.68) {
-          const colors = [0xdd4444, 0xdddd44, 0xffffff, 0xdd88dd];
-          const flowerColor = colors[Math.floor(seed * 40) % colors.length];
-          treeGfx.fillStyle(flowerColor, 0.8);
-          treeGfx.fillRect(cx - s, cy - s, 2 * s, 2 * s);
-          treeGfx.fillStyle(0x44aa44, 0.7);
-          treeGfx.fillRect(cx - s, cy + s, s, 2 * s);
+          const rSize = Math.floor(3 + seed2 * 5) * s;
+          // Shadow
+          details.fillStyle(0x222222, 0.25);
+          details.fillRect(cx - rSize / 2 + s, cy + s, rSize, rSize * 0.4);
+          // Rock body
+          details.fillStyle(Phaser.Display.Color.GetColor(95, 90, 100));
+          details.fillRect(cx - rSize / 2, cy - rSize * 0.3, rSize, rSize * 0.6);
+          // Rock highlight
+          details.fillStyle(Phaser.Display.Color.GetColor(135, 130, 140), 0.5);
+          details.fillRect(cx - rSize / 2, cy - rSize * 0.3, rSize * 0.5, rSize * 0.25);
+        }
+        // --- Flowers (8%) ---
+        else if (seed > 0.60) {
+          const flowerColors = [0xcc3333, 0xdddd44, 0xffeeff, 0xdd77cc, 0xff8844];
+          const fc = flowerColors[Math.floor(seed2 * 5)];
+          // Stem
+          details.fillStyle(0x3a6a2a, 0.7);
+          details.fillRect(cx, cy, s, 3 * s);
+          // Petals
+          details.fillStyle(fc, 0.85);
+          details.fillRect(cx - s, cy - s, 3 * s, 2 * s);
+          details.fillRect(cx, cy - 2 * s, s, s);
+          // Second flower nearby
+          if (seed2 > 0.5) {
+            const ox = Math.floor(seed2 * 6 - 3) * s;
+            details.fillStyle(0x3a6a2a, 0.7);
+            details.fillRect(cx + 5 * s + ox, cy + s, s, 2 * s);
+            details.fillStyle(flowerColors[Math.floor(seed * 5)], 0.85);
+            details.fillRect(cx + 4 * s + ox, cy - s, 3 * s, 2 * s);
+          }
+        }
+        // --- Tall grass patches (5%) ---
+        else if (seed > 0.55) {
+          const grassRGB = hexToRGB(groundRamp[0]);
+          details.fillStyle(Phaser.Display.Color.GetColor(grassRGB.r - 10, grassRGB.g + 15, grassRGB.b - 5), 0.65);
+          for (let g = 0; g < 5; g++) {
+            const gx = cx - 6 * s + this._seededRand(tx, ty, 30 + g) * 12 * s;
+            const gy = cy - 2 * s + this._seededRand(tx, ty, 40 + g) * 4 * s;
+            details.fillRect(gx, gy, s, (5 + Math.floor(this._seededRand(tx, ty, 50 + g) * 4)) * s);
+          }
         }
       }
     }
@@ -872,84 +932,98 @@ class WorldScene extends Phaser.Scene {
   }
 
   _createMinimap(state, areaData, palette) {
-    const mmW = 80;
-    const mmH = 60;
-    const mmX = this.scale.width - mmW - 6;
-    const mmY = 6;
+    const mmW = 90;
+    const mmH = 68;
+    const mmX = this.scale.width - mmW - 5;
+    const mmY = 5;
     const tileW = mmW / this.mapW;
     const tileH = mmH / this.mapH;
 
-    const groundRGB = hexToRGB(palette.dominant || '#4a7c59');
-    const pathRGB = hexToRGB(palette.path || '#8b7355');
-    const groundColor = Phaser.Display.Color.GetColor(groundRGB.r, groundRGB.g, groundRGB.b);
-    const pathColorVal = Phaser.Display.Color.GetColor(pathRGB.r, pathRGB.g, pathRGB.b);
+    // Draw minimap to an off-screen canvas, then create a texture from it
+    const canvas = document.createElement('canvas');
+    canvas.width = mmW + 4;
+    canvas.height = mmH + 4;
+    const ctx = canvas.getContext('2d');
 
     // Background
-    const mmBg = this.add.rectangle(mmX - 2, mmY - 2, mmW + 4, mmH + 4, 0x000000, 0.75)
-      .setOrigin(0).setScrollFactor(0).setDepth(9990);
+    ctx.fillStyle = 'rgba(0,0,0,0.85)';
+    ctx.fillRect(0, 0, mmW + 4, mmH + 4);
     // Border
-    this.add.rectangle(mmX - 2, mmY - 2, mmW + 4, mmH + 4)
-      .setOrigin(0).setScrollFactor(0).setDepth(9991).setStrokeStyle(1, 0xc9a959, 0.6);
+    ctx.strokeStyle = '#c9a959';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(0.5, 0.5, mmW + 3, mmH + 3);
 
-    // Draw terrain as tiny rectangles
+    const groundRGB = hexToRGB(palette.dominant || '#4a7c59');
+    const pathRGB = hexToRGB(palette.path || '#8b7355');
+
+    // Terrain
     for (let ty = 0; ty < this.mapH; ty++) {
       for (let tx = 0; tx < this.mapW; tx++) {
         const isPathH = (ty >= Math.floor(this.mapH / 2) - 1 && ty <= Math.floor(this.mapH / 2));
         const isPathV = (tx >= Math.floor(this.mapW / 2) - 1 && tx <= Math.floor(this.mapW / 2));
         const isPath = isPathH || isPathV;
         const isEdge = (tx === 0 || ty === 0 || tx === this.mapW - 1 || ty === this.mapH - 1);
+        const seed = this._seededRand(tx, ty, 1);
+        const hasBigTree = seed > 0.85 && !isPath && !isEdge && tx > 1 && ty > 1;
 
-        let color = groundColor;
-        let alpha = 0.6;
-        if (isPath) { color = pathColorVal; alpha = 0.8; }
-        else if (isEdge) { color = 0x1a1a2e; alpha = 0.9; }
-
-        this.add.rectangle(
-          mmX + tx * tileW, mmY + ty * tileH,
-          Math.ceil(tileW) + 0.5, Math.ceil(tileH) + 0.5,
-          color, alpha
-        ).setOrigin(0).setScrollFactor(0).setDepth(9992);
+        if (isPath) {
+          ctx.fillStyle = `rgb(${pathRGB.r},${pathRGB.g},${pathRGB.b})`;
+        } else if (isEdge) {
+          ctx.fillStyle = '#1a2a1e';
+        } else if (hasBigTree) {
+          ctx.fillStyle = `rgb(${Math.max(0,groundRGB.r-15)},${Math.min(255,groundRGB.g+10)},${Math.max(0,groundRGB.b-10)})`;
+        } else {
+          ctx.fillStyle = `rgb(${groundRGB.r},${groundRGB.g},${groundRGB.b})`;
+        }
+        ctx.fillRect(2 + tx * tileW, 2 + ty * tileH, Math.ceil(tileW) + 0.5, Math.ceil(tileH) + 0.5);
       }
     }
 
     // NPC dots
+    ctx.fillStyle = '#44ddff';
     if (this.npcs) {
       for (const npc of this.npcs) {
         const nx = npc.sprite.x / this.scaledTile;
         const ny = npc.sprite.y / this.scaledTile;
-        this.add.rectangle(mmX + nx * tileW - 1, mmY + ny * tileH - 1, 3, 3, 0x00ccff, 0.9)
-          .setOrigin(0).setScrollFactor(0).setDepth(9993);
+        ctx.fillRect(2 + nx * tileW - 1, 2 + ny * tileH - 1, 3, 3);
       }
     }
 
-    // Exit indicators on minimap edges
+    // Exit indicators
+    ctx.fillStyle = '#ffd700';
     if (areaData.exits) {
       for (const exit of areaData.exits) {
         let ex, ey;
         switch (exit.direction) {
-          case 'north': ex = mmX + mmW / 2 - 3; ey = mmY - 1; break;
-          case 'south': ex = mmX + mmW / 2 - 3; ey = mmY + mmH - 2; break;
-          case 'east': ex = mmX + mmW - 2; ey = mmY + mmH / 2 - 3; break;
-          case 'west': ex = mmX - 1; ey = mmY + mmH / 2 - 3; break;
+          case 'north': ex = mmW / 2; ey = 2; break;
+          case 'south': ex = mmW / 2; ey = mmH; break;
+          case 'east': ex = mmW; ey = mmH / 2; break;
+          case 'west': ex = 3; ey = mmH / 2; break;
           default: continue;
         }
-        this.add.rectangle(ex, ey, 6, 6, 0xffd700, 0.9)
-          .setOrigin(0).setScrollFactor(0).setDepth(9994);
+        ctx.fillRect(ex, ey, 5, 5);
       }
     }
 
-    // Player dot (updates each frame)
-    this.mmPlayerDot = this.add.rectangle(mmX, mmY, 4, 4, 0xff3333, 1)
-      .setOrigin(0).setScrollFactor(0).setDepth(9995);
+    // Create Phaser texture from canvas
+    const texKey = 'minimap_' + state.currentAreaId;
+    if (this.textures.exists(texKey)) this.textures.remove(texKey);
+    this.textures.addCanvas(texKey, canvas);
 
-    // Store minimap layout for update
-    this.mmOriginX = mmX;
-    this.mmOriginY = mmY;
+    // Display as a simple image, pinned to camera
+    this.add.image(mmX, mmY, texKey).setOrigin(0).setScrollFactor(0).setDepth(9990);
+
+    // Player dot
+    this.mmPlayerDot = this.add.rectangle(mmX, mmY, 4, 4, 0xff3333, 1)
+      .setScrollFactor(0).setDepth(9995).setOrigin(0);
+
+    this.mmOriginX = mmX + 2;
+    this.mmOriginY = mmY + 2;
     this.mmTileW = tileW;
     this.mmTileH = tileH;
 
     // Area label
-    this.add.text(mmX + mmW / 2, mmY + mmH + 4, areaData.name, {
+    this.add.text(mmX + mmW / 2 + 2, mmY + mmH + 7, areaData.name, {
       fontSize: '7px', color: '#c9a959', fontFamily: 'monospace',
     }).setOrigin(0.5, 0).setScrollFactor(0).setDepth(9996);
   }
