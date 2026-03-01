@@ -582,8 +582,20 @@ class WorldScene extends Phaser.Scene {
     const areaData = state.bookData.areasById[state.currentAreaId];
     if (!areaData) {
       console.error('No area data for:', state.currentAreaId);
+      // Fallback: pick first area
+      if (state.bookData.areas && state.bookData.areas.length > 0) {
+        const fallback = state.bookData.areas.find(a => a.id) || state.bookData.areas[0];
+        state.currentAreaId = fallback.id;
+        this.scene.restart();
+        return;
+      }
       return;
     }
+
+    this.areaData = areaData;
+    this.mapW = areaData.dimensions?.width || 20;
+    this.mapH = areaData.dimensions?.height || 15;
+    this.scaledTile = TILE * SPRITE_SCALE;
 
     // Setup atmosphere from area data
     this.effects.setupArea(areaData, palette);
@@ -597,19 +609,23 @@ class WorldScene extends Phaser.Scene {
     // Create NPCs
     this.npcs = [];
     if (areaData.npcs) {
-      for (const npcId of areaData.npcs) {
+      for (const npcRef of areaData.npcs) {
+        const npcId = typeof npcRef === 'string' ? npcRef : npcRef.id;
         const npcData = state.bookData.charactersById[npcId];
-        if (npcData) this._createNPC(npcData, spriteFactory, areaData);
+        if (npcData) this._createNPC(npcData, spriteFactory, areaData, npcRef);
       }
     }
+
+    // Draw exit markers on map edges
+    this._drawExitMarkers(areaData);
 
     // Touch / keyboard input
     this._setupInput();
 
     // Camera
     this.cameras.main.setBounds(0, 0,
-      (areaData.dimensions?.width || 20) * TILE * SPRITE_SCALE,
-      (areaData.dimensions?.height || 15) * TILE * SPRITE_SCALE
+      this.mapW * this.scaledTile,
+      this.mapH * this.scaledTile
     );
     this.cameras.main.startFollow(this.playerSprite, true, 0.1, 0.1);
     this.cameras.main.fadeIn(333);
@@ -618,15 +634,24 @@ class WorldScene extends Phaser.Scene {
     this.canInteract = true;
     this.interactionCooldown = 0;
 
+    // Encounter system
+    this.stepCounter = 0;
+    this.stepsSinceEncounter = 0;
+    this.encounterCooldown = 0;
+    this.lastGridX = state.player.x;
+    this.lastGridY = state.player.y;
+
+    // HUD
+    this._createHUD(state, areaData);
+
     // Area name toast
     this._showAreaName(areaData.name);
   }
 
   _buildTilemap(areaData, palette) {
-    const mapW = areaData.dimensions?.width || 20;
-    const mapH = areaData.dimensions?.height || 15;
-    const tileScale = SPRITE_SCALE;
-    const scaledTile = TILE * tileScale;
+    const mapW = this.mapW;
+    const mapH = this.mapH;
+    const scaledTile = this.scaledTile;
 
     const gfx = this.add.graphics();
     gfx.setDepth(-50);
@@ -634,48 +659,191 @@ class WorldScene extends Phaser.Scene {
     // Generate ground tiles procedurally from palette
     const groundRamp = buildRamp(palette.dominant || '#4a7c59');
     const pathColor = palette.path || '#8b7355';
+    const darkGround = palette.shadow || '#2a3a2e';
+
+    // Seeded random for consistent terrain
+    const seededRand = (x, y, s) => {
+      const n = Math.sin(x * 127.1 + y * 311.7 + s * 73.5) * 43758.5453;
+      return n - Math.floor(n);
+    };
 
     for (let ty = 0; ty < mapH; ty++) {
       for (let tx = 0; tx < mapW; tx++) {
         const x = tx * scaledTile;
         const y = ty * scaledTile;
 
-        // Simple procedural terrain
-        const seed = tx * 7 + ty * 13 + tx * ty;
-        const isPath = (ty === Math.floor(mapH / 2) || tx === Math.floor(mapW / 2));
+        const seed = seededRand(tx, ty, 1);
+        const isPathH = (ty >= Math.floor(mapH / 2) - 1 && ty <= Math.floor(mapH / 2));
+        const isPathV = (tx >= Math.floor(mapW / 2) - 1 && tx <= Math.floor(mapW / 2));
+        const isPath = isPathH || isPathV;
         const isEdge = (tx === 0 || ty === 0 || tx === mapW - 1 || ty === mapH - 1);
 
         if (isPath) {
           const rgb = hexToRGB(pathColor);
-          gfx.fillStyle(Phaser.Display.Color.GetColor(rgb.r, rgb.g, rgb.b));
+          const vary = Math.floor(seed * 15) - 7;
+          gfx.fillStyle(Phaser.Display.Color.GetColor(
+            Math.min(255, Math.max(0, rgb.r + vary)),
+            Math.min(255, Math.max(0, rgb.g + vary)),
+            Math.min(255, Math.max(0, rgb.b + vary))
+          ));
         } else if (isEdge) {
-          const rgb = hexToRGB(groundRamp[0]);
+          const rgb = hexToRGB(darkGround);
           gfx.fillStyle(Phaser.Display.Color.GetColor(rgb.r, rgb.g, rgb.b));
         } else {
-          // Varied grass
-          const variant = seed % 3;
-          const rgb = hexToRGB(groundRamp[variant === 0 ? 1 : variant === 1 ? 2 : 3]);
-          gfx.fillStyle(Phaser.Display.Color.GetColor(rgb.r, rgb.g, rgb.b));
+          const variant = Math.floor(seed * 4);
+          const rgb = hexToRGB(groundRamp[Math.min(variant, groundRamp.length - 1)]);
+          const vary = Math.floor(seededRand(tx, ty, 2) * 10) - 5;
+          gfx.fillStyle(Phaser.Display.Color.GetColor(
+            Math.min(255, Math.max(0, rgb.r + vary)),
+            Math.min(255, Math.max(0, rgb.g + vary)),
+            Math.min(255, Math.max(0, rgb.b + vary))
+          ));
         }
 
         gfx.fillRect(x, y, scaledTile, scaledTile);
 
-        // Grass blades in foreground (Visual DNA: 3-4 blade shapes, sub-pixel highlight shift)
-        if (!isPath && !isEdge && seed % 4 === 0) {
+        // Grass blades on non-path tiles
+        if (!isPath && !isEdge && seed > 0.6) {
           const bladeRGB = hexToRGB(groundRamp[0]);
-          gfx.fillStyle(Phaser.Display.Color.GetColor(bladeRGB.r, bladeRGB.g, bladeRGB.b), 0.6);
-          const bx = x + (seed % 12) + 4;
-          const by = y + (seed % 8) + 4;
-          gfx.fillRect(bx, by, tileScale, 4 * tileScale);
+          gfx.fillStyle(Phaser.Display.Color.GetColor(bladeRGB.r, bladeRGB.g, bladeRGB.b), 0.5);
+          for (let b = 0; b < 2; b++) {
+            const bx = x + seededRand(tx, ty, 3 + b) * (scaledTile - 4) + 2;
+            const by = y + seededRand(tx, ty, 5 + b) * (scaledTile - 8) + 2;
+            gfx.fillRect(bx, by, SPRITE_SCALE, 4 * SPRITE_SCALE);
+          }
+        }
+
+        // Trees (scattered on non-path, non-edge tiles)
+        if (!isPath && !isEdge && seed > 0.82 && tx > 1 && ty > 1 && tx < mapW - 2 && ty < mapH - 2) {
+          this._drawTree(gfx, x + scaledTile / 2, y + scaledTile / 2, palette, seed);
+        }
+
+        // Rocks
+        if (!isPath && !isEdge && seed > 0.75 && seed <= 0.82 && tx > 1 && ty > 1) {
+          const rockRGB = hexToRGB('#6b6b6b');
+          gfx.fillStyle(Phaser.Display.Color.GetColor(rockRGB.r, rockRGB.g, rockRGB.b), 0.7);
+          const rw = scaledTile * (0.3 + seed * 0.3);
+          const rh = rw * 0.6;
+          gfx.fillEllipse(x + scaledTile / 2, y + scaledTile / 2, rw, rh);
         }
       }
     }
   }
 
+  _drawTree(gfx, cx, cy, palette, seed) {
+    const s = SPRITE_SCALE;
+    // Trunk
+    gfx.fillStyle(Phaser.Display.Color.GetColor(90, 60, 30), 0.9);
+    gfx.fillRect(cx - 2 * s, cy, 4 * s, 8 * s);
+    // Canopy
+    const leafColor = palette.dominant || '#4a7c59';
+    const rgb = hexToRGB(leafColor);
+    const bright = Math.floor(seed * 30);
+    gfx.fillStyle(Phaser.Display.Color.GetColor(
+      Math.min(255, rgb.r + bright),
+      Math.min(255, rgb.g + bright + 10),
+      Math.min(255, rgb.b + bright)
+    ), 0.85);
+    gfx.fillEllipse(cx, cy - 4 * s, 14 * s, 12 * s);
+    // Highlight
+    gfx.fillStyle(Phaser.Display.Color.GetColor(
+      Math.min(255, rgb.r + 40),
+      Math.min(255, rgb.g + 50),
+      Math.min(255, rgb.b + 30)
+    ), 0.4);
+    gfx.fillEllipse(cx - 2 * s, cy - 6 * s, 8 * s, 6 * s);
+  }
+
+  _drawExitMarkers(areaData) {
+    if (!areaData.exits) return;
+    const scaledTile = this.scaledTile;
+    const mapW = this.mapW;
+    const mapH = this.mapH;
+
+    for (const exit of areaData.exits) {
+      let x, y, arrow, labelText;
+      const targetArea = exit.to;
+      // Find area name from data
+      const state = this.registry.get('gameState');
+      const targetData = state.bookData.areasById[targetArea];
+      const targetName = targetData ? targetData.name : targetArea.replace(/_/g, ' ');
+
+      switch (exit.direction) {
+        case 'north':
+          x = mapW * scaledTile / 2; y = scaledTile * 0.5;
+          arrow = '▲'; labelText = targetName;
+          break;
+        case 'south':
+          x = mapW * scaledTile / 2; y = (mapH - 0.5) * scaledTile;
+          arrow = '▼'; labelText = targetName;
+          break;
+        case 'east':
+          x = (mapW - 0.5) * scaledTile; y = mapH * scaledTile / 2;
+          arrow = '►'; labelText = targetName;
+          break;
+        case 'west':
+          x = scaledTile * 0.5; y = mapH * scaledTile / 2;
+          arrow = '◄'; labelText = targetName;
+          break;
+        default: continue;
+      }
+
+      // Arrow indicator
+      const arrowText = this.add.text(x, y, arrow, {
+        fontSize: '20px', color: '#ffd700', fontFamily: 'monospace',
+        stroke: '#000', strokeThickness: 3,
+      }).setOrigin(0.5).setDepth(200).setAlpha(0.7);
+
+      // Label below arrow
+      this.add.text(x, y + 18, labelText, {
+        fontSize: '9px', color: '#c9a959', fontFamily: 'serif',
+        stroke: '#000', strokeThickness: 2,
+      }).setOrigin(0.5).setDepth(200).setAlpha(0.6);
+
+      // Pulse
+      this.tweens.add({
+        targets: arrowText, alpha: { from: 0.4, to: 0.9 },
+        duration: 1200, yoyo: true, repeat: -1,
+      });
+    }
+  }
+
+  _createHUD(state, areaData) {
+    const p = state.player;
+
+    // HP bar
+    const hud = this.add.container(10, 10).setScrollFactor(0).setDepth(9999);
+
+    const hpBg = this.add.rectangle(0, 0, 100, 8, 0x333333, 0.7).setOrigin(0);
+    const hpPct = Math.max(0, p.hp / p.maxHp);
+    const hpColor = hpPct > 0.5 ? 0x44aa44 : hpPct > 0.25 ? 0xddaa00 : 0xdd3333;
+    this.hpBar = this.add.rectangle(0, 0, 100 * hpPct, 8, hpColor, 0.9).setOrigin(0);
+
+    const hpLabel = this.add.text(104, -2, `${p.hp}/${p.maxHp}`, {
+      fontSize: '9px', color: '#e8e0d8', fontFamily: 'monospace',
+    });
+
+    const lvlLabel = this.add.text(0, 12, `Lv.${p.level}  ${p.name || 'Usagi'}`, {
+      fontSize: '9px', color: '#c9a959', fontFamily: 'monospace',
+    });
+
+    hud.add([hpBg, this.hpBar, hpLabel, lvlLabel]);
+
+    // Encounter indicator for dangerous areas
+    if (areaData.encounters?.enabled) {
+      const dangerText = this.add.text(0, 26, '⚔ Enemies nearby', {
+        fontSize: '8px', color: '#dd5555', fontFamily: 'monospace',
+      });
+      hud.add(dangerText);
+    }
+  }
+
   _createPlayer(state, spriteFactory) {
-    const scaledTile = TILE * SPRITE_SCALE;
-    const x = state.player.x * scaledTile + scaledTile / 2;
-    const y = state.player.y * scaledTile + scaledTile / 2;
+    const scaledTile = this.scaledTile;
+    const startX = (state.player.x || Math.floor(this.mapW / 2));
+    const startY = (state.player.y || Math.floor(this.mapH / 2));
+    const x = startX * scaledTile + scaledTile / 2;
+    const y = startY * scaledTile + scaledTile / 2;
 
     const textureKey = spriteFactory.getOverworldKey('usagi');
     if (this.textures.exists(textureKey)) {
@@ -683,13 +851,11 @@ class WorldScene extends Phaser.Scene {
       this.playerSprite.setScale(SPRITE_SCALE);
       this.playerSprite.setDepth(100);
 
-      // Start idle animation
       const idleKey = `usagi_idle_${state.player.direction}`;
       if (this.anims.exists(idleKey)) {
         this.playerSprite.play(idleKey);
       }
     } else {
-      // Fallback: colored rectangle
       this.playerSprite = this.add.rectangle(x, y, 16 * SPRITE_SCALE, 24 * SPRITE_SCALE, 0xa0784c);
       this.playerSprite.setDepth(100);
     }
@@ -698,14 +864,19 @@ class WorldScene extends Phaser.Scene {
     this.moveTarget = null;
   }
 
-  _createNPC(npcData, spriteFactory, areaData) {
-    const scaledTile = TILE * SPRITE_SCALE;
-    const mapW = areaData.dimensions?.width || 20;
+  _createNPC(npcData, spriteFactory, areaData, npcRef) {
+    const scaledTile = this.scaledTile;
 
-    // Position NPC pseudo-randomly in the area
-    const hash = npcData.id.split('').reduce((s, c) => s + c.charCodeAt(0), 0);
-    const nx = (3 + (hash % (mapW - 6))) * scaledTile + scaledTile / 2;
-    const ny = (3 + ((hash * 7) % ((areaData.dimensions?.height || 15) - 6))) * scaledTile + scaledTile / 2;
+    // Use explicit position from area data if available, else pseudo-random
+    let nx, ny;
+    if (npcRef && npcRef.x !== undefined && npcRef.y !== undefined) {
+      nx = npcRef.x * scaledTile + scaledTile / 2;
+      ny = npcRef.y * scaledTile + scaledTile / 2;
+    } else {
+      const hash = npcData.id.split('').reduce((s, c) => s + c.charCodeAt(0), 0);
+      nx = (3 + (hash % (this.mapW - 6))) * scaledTile + scaledTile / 2;
+      ny = (3 + ((hash * 7) % (this.mapH - 6))) * scaledTile + scaledTile / 2;
+    }
 
     const textureKey = spriteFactory.getOverworldKey(npcData.id);
     let sprite;
@@ -714,11 +885,9 @@ class WorldScene extends Phaser.Scene {
       sprite = this.add.sprite(nx, ny, textureKey, 0);
       sprite.setScale(SPRITE_SCALE);
       sprite.setDepth(90);
-
       const idleKey = `${npcData.id}_idle_down`;
       if (this.anims.exists(idleKey)) sprite.play(idleKey);
     } else {
-      // Fallback
       const furColor = npcData.appearance?.furColor || '#cccccc';
       const rgb = hexToRGB(furColor);
       sprite = this.add.rectangle(nx, ny, 16 * SPRITE_SCALE, 24 * SPRITE_SCALE,
@@ -729,17 +898,27 @@ class WorldScene extends Phaser.Scene {
     // NPC name label
     this.add.text(nx, ny - 40, npcData.name, {
       fontSize: '10px', color: UI_COLORS.gold, fontFamily: 'monospace',
+      stroke: '#000', strokeThickness: 2,
     }).setOrigin(0.5).setDepth(91);
 
-    // Interaction zone
+    // Interaction indicator
+    const indicator = this.add.text(nx, ny - 55, '!', {
+      fontSize: '14px', color: '#ffd700', fontFamily: 'serif',
+      stroke: '#000', strokeThickness: 3,
+    }).setOrigin(0.5).setDepth(92);
+
+    this.tweens.add({
+      targets: indicator, y: ny - 60, alpha: { from: 0.5, to: 1 },
+      duration: 800, yoyo: true, repeat: -1,
+    });
+
     sprite.setInteractive({ useHandCursor: true });
     sprite.on('pointerdown', () => this._interactWithNPC(npcData));
 
-    this.npcs.push({ sprite, data: npcData });
+    this.npcs.push({ sprite, data: npcData, indicator });
   }
 
   _setupInput() {
-    // Keyboard
     if (this.input.keyboard) {
       this.cursors = this.input.keyboard.createCursorKeys();
       this.wasd = this.input.keyboard.addKeys({
@@ -752,11 +931,9 @@ class WorldScene extends Phaser.Scene {
       });
     }
 
-    // Touch d-pad (bottom-left of screen)
     this.touchDir = null;
     this._createTouchDPad();
 
-    // Menu button (top-right)
     const menuBtn = this.add.text(this.scale.width - 10, 10, '☰', {
       fontSize: '24px', color: UI_COLORS.gold, fontFamily: 'serif',
     }).setOrigin(1, 0).setScrollFactor(0).setDepth(10000).setInteractive({ useHandCursor: true });
@@ -774,11 +951,9 @@ class WorldScene extends Phaser.Scene {
     const size = 30;
     const gap = 5;
 
-    // D-pad background
     gfx.fillStyle(0xffffff, 0.1);
     gfx.fillCircle(cx, cy, 55);
 
-    // Direction buttons
     const dirs = [
       { dir: 'up', x: cx, y: cy - size - gap },
       { dir: 'down', x: cx, y: cy + size + gap },
@@ -800,7 +975,6 @@ class WorldScene extends Phaser.Scene {
       btn.on('pointerout', () => { if (this.touchDir === d.dir) this.touchDir = null; });
     }
 
-    // Action button (bottom-right)
     const actionBtn = this.add.circle(this.scale.width - 60, this.scale.height - 60, 25, 0xffd700, 0.3)
       .setScrollFactor(0).setDepth(10001).setInteractive({ useHandCursor: true });
     this.add.text(this.scale.width - 60, this.scale.height - 60, 'A', {
@@ -826,11 +1000,9 @@ class WorldScene extends Phaser.Scene {
   _tryInteract() {
     if (!this.canInteract) return;
 
-    const state = this.registry.get('gameState');
-    const scaledTile = TILE * SPRITE_SCALE;
+    const scaledTile = this.scaledTile;
     const interactDist = scaledTile * 1.5;
 
-    // Find nearest NPC
     let nearest = null;
     let nearestDist = Infinity;
 
@@ -854,13 +1026,11 @@ class WorldScene extends Phaser.Scene {
 
     const state = this.registry.get('gameState');
 
-    // Find dialogue for this NPC in current act
     let dialogueTree = null;
     if (state.bookData.dialogue) {
       dialogueTree = state.bookData.dialogue.find(d =>
         d.trigger && d.trigger.includes(npcData.id) && (!d.act || d.act === state.act)
       );
-      // Fallback: any dialogue referencing this character as speaker
       if (!dialogueTree) {
         dialogueTree = state.bookData.dialogue.find(d =>
           d.nodes && d.nodes[0] && d.nodes[0].speaker === npcData.id
@@ -877,7 +1047,6 @@ class WorldScene extends Phaser.Scene {
         },
       });
     } else {
-      // Generic greeting
       this.scene.launch('DialogueScene', {
         dialogue: {
           id: `generic_${npcData.id}`,
@@ -902,8 +1071,159 @@ class WorldScene extends Phaser.Scene {
     this.scene.launch('MenuScene');
   }
 
+  // ── Encounter System ──
+
+  _checkEncounter(state) {
+    const areaData = this.areaData;
+    if (!areaData.encounters || !areaData.encounters.enabled) return;
+    if (this.encounterCooldown > 0) return;
+
+    const rate = areaData.encounters.rate || 0.1;
+    // Scale chance up with steps since last encounter
+    const scaledRate = rate * (1 + this.stepsSinceEncounter * 0.05);
+    const roll = Math.random();
+
+    if (roll < scaledRate) {
+      this._triggerEncounter(state, areaData);
+    }
+  }
+
+  _triggerEncounter(state, areaData) {
+    this.encounterCooldown = 3; // min 3 steps before next encounter
+    this.stepsSinceEncounter = 0;
+
+    // Find enemies that can appear in this area
+    const areaId = state.currentAreaId;
+    const allEnemies = state.bookData.enemies || [];
+    const areaEnemies = allEnemies.filter(e =>
+      e.id && e.encounter_areas && e.encounter_areas.includes(areaId)
+    );
+
+    // Fallback: check encounter table name
+    const tableName = areaData.encounters.table;
+    let candidates = areaEnemies.length > 0 ? areaEnemies : allEnemies.filter(e =>
+      e.id && e.encounter_areas && e.encounter_areas.includes(tableName)
+    );
+
+    // Final fallback: any tier 1 enemies
+    if (candidates.length === 0) {
+      candidates = allEnemies.filter(e => e.id && (e.tier === 1 || e.tier === 2));
+    }
+
+    if (candidates.length === 0) return; // No enemies available
+
+    // Pick 1-3 enemies
+    const numEnemies = 1 + Math.floor(Math.random() * Math.min(3, candidates.length));
+    const picked = [];
+    for (let i = 0; i < numEnemies; i++) {
+      const idx = Math.floor(Math.random() * candidates.length);
+      picked.push(candidates[idx].id);
+    }
+
+    // Flash screen and transition to battle
+    this.cameras.main.flash(300, 255, 255, 255);
+    this.canInteract = false;
+
+    this.time.delayedCall(400, () => {
+      this.scene.pause();
+      this.scene.launch('BattleScene', {
+        enemyIds: picked,
+        onBattleEnd: (result, rewards) => {
+          this.scene.stop('BattleScene');
+          this.scene.resume('WorldScene');
+          this.canInteract = true;
+          if (result === 'defeat') {
+            // Restart from last save or title
+            this.scene.start('TitleScene');
+          }
+        },
+      });
+    });
+  }
+
+  // ── Area Transition System ──
+
+  _checkAreaTransition(state) {
+    const areaData = this.areaData;
+    if (!areaData.exits || areaData.exits.length === 0) return;
+
+    const scaledTile = this.scaledTile;
+    const px = this.playerSprite.x;
+    const py = this.playerSprite.y;
+    const margin = scaledTile * 0.5;
+
+    let matchedExit = null;
+
+    for (const exit of areaData.exits) {
+      switch (exit.direction) {
+        case 'north':
+          if (py < margin) matchedExit = exit;
+          break;
+        case 'south':
+          if (py > (this.mapH - 0.5) * scaledTile) matchedExit = exit;
+          break;
+        case 'east':
+          if (px > (this.mapW - 0.5) * scaledTile) matchedExit = exit;
+          break;
+        case 'west':
+          if (px < margin) matchedExit = exit;
+          break;
+      }
+    }
+
+    if (matchedExit) {
+      this._transitionToArea(state, matchedExit);
+    }
+  }
+
+  _transitionToArea(state, exit) {
+    if (this._transitioning) return;
+    this._transitioning = true;
+
+    const targetArea = state.bookData.areasById[exit.to];
+    if (!targetArea) {
+      console.warn('Target area not found:', exit.to);
+      this._transitioning = false;
+      return;
+    }
+
+    // Set new area and player entry position
+    state.currentAreaId = exit.to;
+    const newMapW = targetArea.dimensions?.width || 20;
+    const newMapH = targetArea.dimensions?.height || 15;
+
+    // Place player at opposite edge
+    switch (exit.direction) {
+      case 'north':
+        state.player.x = Math.floor(newMapW / 2);
+        state.player.y = newMapH - 2;
+        state.player.direction = 'up';
+        break;
+      case 'south':
+        state.player.x = Math.floor(newMapW / 2);
+        state.player.y = 1;
+        state.player.direction = 'down';
+        break;
+      case 'east':
+        state.player.x = 1;
+        state.player.y = Math.floor(newMapH / 2);
+        state.player.direction = 'right';
+        break;
+      case 'west':
+        state.player.x = newMapW - 2;
+        state.player.y = Math.floor(newMapH / 2);
+        state.player.direction = 'left';
+        break;
+    }
+
+    this.cameras.main.fadeOut(300, 0, 0, 0);
+    this.time.delayedCall(350, () => {
+      this.scene.restart();
+    });
+  }
+
   update(time, delta) {
-    if (!this.playerSprite) return;
+    if (!this.playerSprite || this._transitioning) return;
 
     const state = this.registry.get('gameState');
 
@@ -911,7 +1231,6 @@ class WorldScene extends Phaser.Scene {
     let dx = 0, dy = 0;
     let direction = state.player.direction;
 
-    // Keyboard input
     if (this.cursors) {
       if (this.cursors.up.isDown || (this.wasd && this.wasd.w.isDown)) { dy = -1; direction = 'up'; }
       else if (this.cursors.down.isDown || (this.wasd && this.wasd.s.isDown)) { dy = 1; direction = 'down'; }
@@ -919,7 +1238,6 @@ class WorldScene extends Phaser.Scene {
       else if (this.cursors.right.isDown || (this.wasd && this.wasd.d.isDown)) { dx = 1; direction = 'right'; }
     }
 
-    // Touch d-pad
     if (this.touchDir) {
       direction = this.touchDir;
       switch (this.touchDir) {
@@ -930,7 +1248,6 @@ class WorldScene extends Phaser.Scene {
       }
     }
 
-    // Keyboard interact
     if (this.wasd && Phaser.Input.Keyboard.JustDown(this.wasd.space)) {
       this._tryInteract();
     }
@@ -943,18 +1260,21 @@ class WorldScene extends Phaser.Scene {
     const moving = dx !== 0 || dy !== 0;
 
     if (moving) {
-      // Normalize diagonal
       if (dx !== 0 && dy !== 0) {
         const norm = 1 / Math.sqrt(2);
         dx *= norm;
         dy *= norm;
       }
 
-      this.playerSprite.x += dx * speed;
-      this.playerSprite.y += dy * speed;
+      const newX = this.playerSprite.x + dx * speed;
+      const newY = this.playerSprite.y + dy * speed;
+
+      // Clamp to map bounds (but allow edge for transitions)
+      this.playerSprite.x = Phaser.Math.Clamp(newX, 0, this.mapW * this.scaledTile);
+      this.playerSprite.y = Phaser.Math.Clamp(newY, 0, this.mapH * this.scaledTile);
+
       state.player.direction = direction;
 
-      // Play walk animation
       const walkKey = `usagi_walk_${direction}`;
       if (this.anims.exists(walkKey) && this.playerSprite.anims) {
         if (!this.playerSprite.anims.isPlaying || this.playerSprite.anims.currentAnim?.key !== walkKey) {
@@ -962,13 +1282,27 @@ class WorldScene extends Phaser.Scene {
         }
       }
 
-      // Update grid position
-      const scaledTile = TILE * SPRITE_SCALE;
-      state.player.x = Math.floor(this.playerSprite.x / scaledTile);
-      state.player.y = Math.floor(this.playerSprite.y / scaledTile);
+      // Track grid position for step counting
+      const scaledTile = this.scaledTile;
+      const gridX = Math.floor(this.playerSprite.x / scaledTile);
+      const gridY = Math.floor(this.playerSprite.y / scaledTile);
+      state.player.x = gridX;
+      state.player.y = gridY;
+
+      // Step-based encounter + transition checks
+      if (gridX !== this.lastGridX || gridY !== this.lastGridY) {
+        this.lastGridX = gridX;
+        this.lastGridY = gridY;
+        this.stepCounter++;
+        this.stepsSinceEncounter++;
+
+        if (this.encounterCooldown > 0) this.encounterCooldown--;
+
+        this._checkEncounter(state);
+        this._checkAreaTransition(state);
+      }
 
     } else {
-      // Idle animation
       const idleKey = `usagi_idle_${state.player.direction}`;
       if (this.anims.exists(idleKey) && this.playerSprite.anims) {
         if (!this.playerSprite.anims.isPlaying || !this.playerSprite.anims.currentAnim?.key.includes('idle')) {
