@@ -1,0 +1,519 @@
+[
+  {
+    "id": "obaa_morning",
+    "era": "book-00",
+    "act": 1,
+    "trigger": "game_start",
+    "nodes": [
+      {
+        "id": "start",
+        "speaker": "obaa_chan",
+        "portrait": "obaa_gentle",
+        "text": "Ah, the farmer rises. The rice was up before you.",
+        "next": "response"
+      },
+      {
+        "id": "response",
+        "speaker": "usagi",
+        "portrait": "usagi_sleepy",
+        "text": "The rice doesn't have to carry water from the well, Obaa-chan.",
+        "next": "task",
+        "effects": []
+      },
+      {
+        "id": "task",
+        "speaker": "obaa_chan",
+        "portrait": "obaa_smiling",
+        "text": "Go tend the paddies. Then bring water to my garden. We have chapel tonight.",
+        "next": null,
+        "effects": [{ "type": "setFlag", "flag": "chores_started", "value": true }]
+      }
+    ]
+  },
+  {
+    "id": "gennosuke_well",
+    "era": "book-00",
+    "act": 1,
+    "trigger": "interact_well",
+    "nodes": [
+      {
+        "id": "start",
+        "speaker": "gennosuke",
+        "portrait": "gennosuke_gruff",
+        "text": "Warship off the coast this morning. Probably nothing. Probably tax collectors.",
+        "next": "response"
+      },
+      {
+        "id": "response",
+        "speaker": "usagi",
+        "portrait": "usagi_worried",
+        "text": "Tax collectors don't come by warship.",
+        "next": "shrug"
+      },
+      {
+        "id": "shrug",
+        "speaker": "gennosuke",
+        "portrait": "gennosuke_gruff",
+        "text": "No. They don't.",
+        "next": null
+      }
+    ]
+  },
+  {
+    "id": "miko_flower",
+    "era": "book-00",
+    "act": 1,
+    "trigger": "interact_miko",
+    "nodes": [
+      {
+        "id": "start",
+        "speaker": "setsuko",
+        "portrait": "setsuko_tired",
+        "text": "Usagi, could you watch Miko for a moment? I need to finish the weeding.",
+        "next": "miko_gives"
+      },
+      {
+        "id": "miko_gives",
+        "speaker": "narrator",
+        "portrait": null,
+        "text": "Miko tugs your sleeve. She holds up a small wildflower — purple, with a bent stem.",
+        "next": "accept",
+        "effects": [
+          { "type": "giveItem", "item": "mikos_flower" },
+          { "type": "setFlag", "flag": "miko_flower_given", "value": true }
+        ]
+      },
+      {
+        "id": "accept",
+        "speaker": "usagi",
+        "portrait": "usagi_gentle",
+        "text": "Thank you, Miko. I'll keep it safe.",
+        "next": null
+      }
+    ]
+  },
+  {
+    "id": "obaa_garden_story",
+    "era": "book-00",
+    "act": 1,
+    "trigger": "interact_obaa_garden",
+    "nodes": [
+      {
+        "id": "start",
+        "speaker": "obaa_chan",
+        "portrait": "obaa_remembering",
+        "text": "When I was young, there was a great church in Nagasaki. Built of stone, with a bell that rang across the harbor.",
+        "next": "baptism"
+      },
+      {
+        "id": "baptism",
+        "speaker": "obaa_chan",
+        "portrait": "obaa_remembering",
+        "text": "Portuguese fathers sang Mass in Latin, and we sang back in Japanese. I was baptized there. The water was cold.",
+        "next": "bell"
+      },
+      {
+        "id": "bell",
+        "speaker": "obaa_chan",
+        "portrait": "obaa_gentle",
+        "text": "They tore it down. The stones are in the seawall now. But the bell — they never found it.",
+        "next": "bell_end"
+      },
+      {
+        "id": "bell_end",
+        "speaker": "obaa_chan",
+        "portrait": "obaa_smiling",
+        "text": "I like to think it's still out there, under the earth, still ringing where no one can hear.",
+        "next": null,
+        "effects": [
+          { "type": "setFlag", "flag": "heard_bell_story", "value": true },
+          { "type": "playSound", "sound": "distant_bell_faint" }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "hidden_chapel_mass",
+    "era": "book-00",
+    "act": 1,
+    "trigger": "enter_chapel_act1",
+    "nodes": [
+      {
+        "id": "start",
+        "speaker": "narrator",
+        "portrait": null,
+        "text": "The root cellar opens into a dirt-floored room lit by a single candle. A Maria Kannon sits on a shelf. Six villagers kneel.",
+        "next": "tomas_mass"
+      },
+      {
+        "id": "tomas_mass",
+        "speaker": "father_tomas",
+        "portrait": "tomas_praying",
+        "text": "In nomine Patris, et Filii, et Spiritus Sancti.",
+        "next": "orasho"
+      },
+      {
+        "id": "orasho",
+        "speaker": "narrator",
+        "portrait": null,
+        "text": "The congregation responds in Orasho — a garbled mixture of Latin and Japanese, passed down for decades. Father Tomas breaks a rice cake.",
+        "next": "communion"
+      },
+      {
+        "id": "communion",
+        "speaker": "narrator",
+        "portrait": null,
+        "text": "Usagi receives. It is unremarkable to him — what he has always done. He does not yet understand what he is being given.",
+        "next": null,
+        "effects": [{ "type": "setFlag", "flag": "attended_mass", "value": true }]
+      }
+    ]
+  },
+  {
+    "id": "soldiers_arrive",
+    "era": "book-00",
+    "act": 2,
+    "trigger": "act2_start",
+    "nodes": [
+      {
+        "id": "start",
+        "speaker": "ichiro",
+        "portrait": "ichiro_panicked",
+        "text": "Soldiers. Coming up the coast road. Twenty of them. My father says everyone must assemble at the village center.",
+        "next": "mori_address"
+      },
+      {
+        "id": "mori_address",
+        "speaker": "captain_mori",
+        "portrait": "mori_calm",
+        "text": "By order of the Regent, all households must register at the local Buddhist temple.",
+        "next": "mori_fumie"
+      },
+      {
+        "id": "mori_fumie",
+        "speaker": "captain_mori",
+        "portrait": "mori_calm",
+        "text": "Each household head will perform the fumi-e — stepping on the holy image. This proves you are not Christian.",
+        "next": "mori_reason"
+      },
+      {
+        "id": "mori_reason",
+        "speaker": "captain_mori",
+        "portrait": "mori_calm",
+        "text": "This is not punishment. This is protection. The foreign religion brings foreign armies. You have three days.",
+        "next": null,
+        "effects": [{ "type": "setFlag", "flag": "mori_arrived", "value": true }]
+      }
+    ]
+  },
+  {
+    "id": "chapel_debate",
+    "era": "book-00",
+    "act": 2,
+    "trigger": "enter_chapel_act2",
+    "nodes": [
+      {
+        "id": "start",
+        "speaker": "father_tomas",
+        "portrait": "tomas_grave",
+        "text": "I cannot tell you to step on the image. I also cannot tell you to die. This is between each soul and God.",
+        "next": "obaa_speaks"
+      },
+      {
+        "id": "obaa_speaks",
+        "speaker": "obaa_chan",
+        "portrait": "obaa_fierce",
+        "text": "The martyrs in Nagasaki did not step. The three boys walked to the cross singing. They were younger than any of you.",
+        "next": "headman"
+      },
+      {
+        "id": "headman",
+        "speaker": "ichiro",
+        "portrait": "ichiro_angry",
+        "text": "Those boys are dead. My family is alive. I intend to keep them that way.",
+        "next": "setsuko_plea"
+      },
+      {
+        "id": "setsuko_plea",
+        "speaker": "setsuko",
+        "portrait": "setsuko_anguished",
+        "text": "If I die, who raises Miko? Tell me. Who raises my daughter?",
+        "next": "ichiro_argument"
+      },
+      {
+        "id": "ichiro_argument",
+        "speaker": "ichiro",
+        "portrait": "ichiro_earnest",
+        "text": "It's a piece of bronze. God sees the heart. Step on it, go home, pray in secret. Survive.",
+        "next": "player_choice",
+        "effects": [{ "type": "triggerChoice", "choice": "chapel_stance" }]
+      },
+      {
+        "id": "player_choice",
+        "speaker": "narrator",
+        "portrait": null,
+        "text": "The room waits. Everyone looks at you.",
+        "next": null
+      }
+    ]
+  },
+  {
+    "id": "last_mass",
+    "era": "book-00",
+    "act": 2,
+    "trigger": "after_debate",
+    "nodes": [
+      {
+        "id": "start",
+        "speaker": "father_tomas",
+        "portrait": "tomas_grave",
+        "text": "I must leave tonight. If they find me here, everyone suffers.",
+        "next": "farewell"
+      },
+      {
+        "id": "farewell",
+        "speaker": "father_tomas",
+        "portrait": "tomas_praying",
+        "text": "For 250 years your ancestors worshipped the gods of this land. Then the Gospel came, and your grandparents heard something true.",
+        "next": "truth"
+      },
+      {
+        "id": "truth",
+        "speaker": "father_tomas",
+        "portrait": "tomas_grave",
+        "text": "Whatever happens tomorrow, that truth does not change. It does not depend on me. It does not depend on Rome.",
+        "next": "blessing"
+      },
+      {
+        "id": "blessing",
+        "speaker": "narrator",
+        "portrait": null,
+        "text": "He gives Obaa-chan a vial of holy water and his breviary. He blesses the community. He leaves through the mountain trail in the dark.",
+        "next": null,
+        "effects": [
+          { "type": "setFlag", "flag": "father_tomas_left", "value": true },
+          { "type": "setFlag", "flag": "father_tomas_prayer", "value": true }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "obaa_refusal",
+    "era": "book-00",
+    "act": 3,
+    "trigger": "fumie_ceremony",
+    "nodes": [
+      {
+        "id": "start",
+        "speaker": "narrator",
+        "portrait": null,
+        "text": "One by one they approach the bronze image. Gennosuke steps on it. He weeps. Setsuko steps on it holding Miko's hand. She does not look down.",
+        "next": "ichiro_steps"
+      },
+      {
+        "id": "ichiro_steps",
+        "speaker": "narrator",
+        "portrait": null,
+        "text": "Ichiro steps on it. He looks at you. His eyes say: come on. Just do it.",
+        "next": "obaa_called"
+      },
+      {
+        "id": "obaa_called",
+        "speaker": "narrator",
+        "portrait": null,
+        "text": "Then Obaa-chan is called. She walks to the platform. She is small. The image is at her feet.",
+        "next": "obaa_kneels"
+      },
+      {
+        "id": "obaa_kneels",
+        "speaker": "narrator",
+        "portrait": null,
+        "text": "She kneels. The soldiers think she is about to step on it. Instead, she picks up the bronze image, holds it to her chest, and kisses it.",
+        "next": "obaa_words"
+      },
+      {
+        "id": "obaa_words",
+        "speaker": "obaa_chan",
+        "portrait": "obaa_radiant",
+        "text": "This is my Lord. I will not step on my Lord.",
+        "next": "mori_response"
+      },
+      {
+        "id": "mori_response",
+        "speaker": "captain_mori",
+        "portrait": "mori_sad",
+        "text": "I admire your conviction. I wish it were not necessary to do what must be done.",
+        "next": "seized",
+        "effects": [{ "type": "setFlag", "flag": "obaa_seized", "value": true }]
+      },
+      {
+        "id": "seized",
+        "speaker": "narrator",
+        "portrait": null,
+        "text": "Two soldiers take Obaa-chan by the arms. She does not resist. She catches your eye and shakes her head — barely. She does not want you to die for her.",
+        "next": null,
+        "effects": [{ "type": "triggerChoice", "choice": "fumi_e" }]
+      }
+    ]
+  },
+  {
+    "id": "obaa_martyrdom",
+    "era": "book-00",
+    "act": 3,
+    "trigger": "reach_obaa_in_fire",
+    "nodes": [
+      {
+        "id": "start",
+        "speaker": "narrator",
+        "portrait": null,
+        "text": "She is praying. Not screaming. Praying.",
+        "next": "hand"
+      },
+      {
+        "id": "hand",
+        "speaker": "narrator",
+        "portrait": null,
+        "text": "She takes your hand. She presses the wooden cross into your palm.",
+        "next": "words1"
+      },
+      {
+        "id": "words1",
+        "speaker": "obaa_chan",
+        "portrait": "obaa_luminous",
+        "text": "I prayed for this moment my whole life. Not to die. To be ready to die.",
+        "next": "words2"
+      },
+      {
+        "id": "words2",
+        "speaker": "obaa_chan",
+        "portrait": "obaa_luminous",
+        "text": "Take the cross. Go to the mountain. God will show you.",
+        "next": "final"
+      },
+      {
+        "id": "final",
+        "speaker": "obaa_chan",
+        "portrait": "obaa_luminous",
+        "text": "I am not afraid.",
+        "next": null,
+        "effects": [
+          { "type": "giveItem", "item": "obaas_cross" },
+          { "type": "setFlag", "flag": "obaa_martyred", "value": true },
+          { "type": "playSound", "sound": "luminosity_chime" },
+          { "type": "visualEffect", "effect": "luminosity_death" }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "accusers_voice",
+    "era": "book-00",
+    "act": 4,
+    "trigger": "mountain_dark_point",
+    "nodes": [
+      {
+        "id": "start",
+        "speaker": "the_accuser",
+        "portrait": null,
+        "text": "She's dead because of this faith. You could have saved her.",
+        "next": "twist"
+      },
+      {
+        "id": "twist",
+        "speaker": "the_accuser",
+        "portrait": null,
+        "text": "Your parents drowned. Your grandmother burned. Everyone who loves you dies. Have you considered that you are the common element?",
+        "next": "offer"
+      },
+      {
+        "id": "offer",
+        "speaker": "the_accuser",
+        "portrait": null,
+        "text": "Put down the cross. Walk back to the village. Live.",
+        "next": null,
+        "effects": [{ "type": "triggerChoice", "choice": "mountain_voice" }]
+      }
+    ]
+  },
+  {
+    "id": "the_calling",
+    "era": "book-00",
+    "act": 4,
+    "trigger": "mountain_summit",
+    "nodes": [
+      {
+        "id": "start",
+        "speaker": "narrator",
+        "portrait": null,
+        "text": "The rain stops. The clouds break. Below, the Sotome coast stretches silver in the moonlight.",
+        "next": "prayer"
+      },
+      {
+        "id": "prayer",
+        "speaker": "usagi",
+        "portrait": "usagi_broken",
+        "text": "I don't understand any of this. But she told me to come here. So I'm here. What do You want from me?",
+        "next": "messenger_appears"
+      },
+      {
+        "id": "messenger_appears",
+        "speaker": "narrator",
+        "portrait": null,
+        "text": "Light steps through the air like a door opening. The mountain falls silent. Even the insects stop.",
+        "next": "messenger_speaks",
+        "effects": [{ "type": "visualEffect", "effect": "messenger_arrival" }]
+      },
+      {
+        "id": "messenger_speaks",
+        "speaker": "the_messenger",
+        "portrait": "messenger_luminous",
+        "text": "You asked what is wanted. You are asked to go.",
+        "next": "usagi_question"
+      },
+      {
+        "id": "usagi_question",
+        "speaker": "usagi",
+        "portrait": "usagi_bewildered",
+        "text": "Go where? I'm a farmer.",
+        "next": "messenger_answer"
+      },
+      {
+        "id": "messenger_answer",
+        "speaker": "the_messenger",
+        "portrait": "messenger_luminous",
+        "text": "Peter was a fisherman. David was a shepherd. God does not call the qualified. He qualifies the called.",
+        "next": "blade_given"
+      },
+      {
+        "id": "blade_given",
+        "speaker": "narrator",
+        "portrait": null,
+        "text": "The Messenger extends his hand. In it: a simple katana — unadorned, without inscription. The Blade of the Pilgrim.",
+        "next": "portal",
+        "effects": [
+          { "type": "giveItem", "item": "pilgrims_blade" },
+          { "type": "setFlag", "flag": "has_blade", "value": true }
+        ]
+      },
+      {
+        "id": "portal",
+        "speaker": "the_messenger",
+        "portrait": "messenger_luminous",
+        "text": "Rome. The year they call 64. The emperor has blamed the followers of the Way. They are praying. Go.",
+        "next": "step_through"
+      },
+      {
+        "id": "step_through",
+        "speaker": "narrator",
+        "portrait": null,
+        "text": "The ground opens — not like an earthquake, but like a door of light. Usagi looks back toward Kurosaki, toward everything he knows.",
+        "next": null,
+        "effects": [
+          { "type": "visualEffect", "effect": "portal_open" },
+          { "type": "setFlag", "flag": "book_00_complete", "value": true },
+          { "type": "transition", "to": "book-01" }
+        ]
+      }
+    ]
+  }
+]
