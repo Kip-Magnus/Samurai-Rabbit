@@ -1,0 +1,964 @@
+{
+  "_meta": {
+    "system": "Samurai Usagi Balance System",
+    "version": "1.0",
+    "philosophy": "Challenging but not impossible. Fun but not trivial. The game is about perseverance under persecution \u2014 combat should feel like a struggle that rewards faith and wisdom, not just grinding. Death should feel meaningful, not frustrating.",
+    "reference": "FF6 damage formulas, Chrono Trigger encounter pacing, Octopath difficulty curves"
+  },
+  "difficulty_modes": {
+    "_note": "Selectable at game start and changeable from the menu at any time. No shame in changing \u2014 even the saints needed help.",
+    "pilgrim": {
+      "name": "Pilgrim",
+      "description": "For those who want to walk the road and hear the story. Enemies are gentler, resources more plentiful. The journey matters more than the battle.",
+      "subtitle": "Walk in peace",
+      "enemy_hp_mult": 0.7,
+      "enemy_atk_mult": 0.7,
+      "enemy_def_mult": 0.8,
+      "enemy_spd_mult": 0.9,
+      "xp_mult": 1.5,
+      "gold_mult": 1.5,
+      "item_drop_bonus": 0.2,
+      "encounter_rate_mult": 0.7,
+      "ai_aggression": 0.6,
+      "player_heal_bonus": 1.3,
+      "virtue_gain_bonus": 1.2,
+      "accuser_status_duration_mult": 0.5,
+      "death_penalty": "none",
+      "revive_on_defeat": true,
+      "revive_hp_pct": 50,
+      "_design_note": "Story mode. You can still die if you're reckless, but the game guides you through. Ideal for people who love JRPGs for narrative, not min-maxing."
+    },
+    "disciple": {
+      "name": "Disciple",
+      "description": "The intended experience. Enemies test your resolve. Resources require stewardship. Prayer is not optional \u2014 it is survival.",
+      "subtitle": "Take up your cross",
+      "enemy_hp_mult": 1.0,
+      "enemy_atk_mult": 1.0,
+      "enemy_def_mult": 1.0,
+      "enemy_spd_mult": 1.0,
+      "xp_mult": 1.0,
+      "gold_mult": 1.0,
+      "item_drop_bonus": 0.0,
+      "encounter_rate_mult": 1.0,
+      "ai_aggression": 1.0,
+      "player_heal_bonus": 1.0,
+      "virtue_gain_bonus": 1.0,
+      "accuser_status_duration_mult": 1.0,
+      "death_penalty": "gold_loss_10pct",
+      "revive_on_defeat": false,
+      "_design_note": "The real game. Balanced for a player who uses all systems \u2014 miracles, items, guard, virtue scaling. Bosses require strategy. Random encounters require attention."
+    },
+    "martyr": {
+      "name": "Martyr",
+      "description": "For those who seek the cross. Enemies are relentless. Resources are scarce. Every battle is a test of faith. The Accuser shows no mercy.",
+      "subtitle": "Be faithful unto death",
+      "enemy_hp_mult": 1.4,
+      "enemy_atk_mult": 1.3,
+      "enemy_def_mult": 1.2,
+      "enemy_spd_mult": 1.15,
+      "xp_mult": 0.8,
+      "gold_mult": 0.7,
+      "item_drop_bonus": -0.1,
+      "encounter_rate_mult": 1.3,
+      "ai_aggression": 1.5,
+      "player_heal_bonus": 0.8,
+      "virtue_gain_bonus": 0.8,
+      "accuser_status_duration_mult": 1.5,
+      "death_penalty": "gold_loss_25pct_and_return_to_save",
+      "revive_on_defeat": false,
+      "boss_extra_phase": true,
+      "_design_note": "Hard mode. Bosses gain extra attack patterns. The Accuser's spiritual attacks last longer. Healing is weaker. This is for players who want the martyrdom to feel earned."
+    },
+    "saint": {
+      "name": "Saint",
+      "description": "The game fights back. Enemies use advanced tactics. Bosses have new phases. The Accuser remembers everything.",
+      "subtitle": "Through the fire",
+      "enemy_hp_mult": 1.8,
+      "enemy_atk_mult": 1.6,
+      "enemy_def_mult": 1.4,
+      "enemy_spd_mult": 1.2,
+      "xp_mult": 0.75,
+      "gold_mult": 0.65,
+      "item_drop_bonus": -0.15,
+      "encounter_rate_mult": 1.3,
+      "ai_aggression": 1.8,
+      "player_heal_bonus": 0.75,
+      "virtue_gain_bonus": 0.8,
+      "death_penalty": "gold_loss_50pct_item_loss_xp_loss",
+      "revive_on_defeat": false,
+      "cycle_required": 3,
+      "_design_note": "Unlocked via Divine Recycling after completing Martyr difficulty. Enemies gain new abilities, bosses have extra phases."
+    },
+    "apostle": {
+      "name": "Apostle",
+      "description": "The final cycle. No mercy. No safety net. Every enemy is at full power. One death per book is permanent.",
+      "subtitle": "Sent forth into the fire",
+      "enemy_hp_mult": 2.2,
+      "enemy_atk_mult": 2.0,
+      "enemy_def_mult": 1.7,
+      "enemy_spd_mult": 1.3,
+      "xp_mult": 0.65,
+      "gold_mult": 0.5,
+      "item_drop_bonus": -0.2,
+      "encounter_rate_mult": 1.5,
+      "ai_aggression": 2.0,
+      "player_heal_bonus": 0.65,
+      "virtue_gain_bonus": 0.7,
+      "death_penalty": "permadeath_per_book",
+      "revive_on_defeat": false,
+      "cycle_required": 4,
+      "_design_note": "The ultimate challenge. Completing this unlocks the True Ending. The Accuser remembers every choice across all cycles."
+    }
+  },
+  "level_system": {
+    "max_level": 100,
+    "xp_curve": {
+      "formula": "Phase 1 (1-30): 20 * level^1.65 | Phase 2 (31-60): phase1_cap + 45*(level-30)^1.75 | Phase 3 (61-100): phase2_cap + 80*(level-60)^1.85",
+      "base": 20,
+      "exponent": 1.65,
+      "_note": "XP needed to reach level N from level N-1. Slow start, steeper later but never grindy. Book Zero should take the player from level 1 to roughly 8-10.",
+      "table": [
+        0,
+        20,
+        62,
+        122,
+        196,
+        284,
+        384,
+        495,
+        618,
+        750,
+        893,
+        1045,
+        1206,
+        1377,
+        1556,
+        1744,
+        1940,
+        2144,
+        2356,
+        2576,
+        2803,
+        3038,
+        3281,
+        3530,
+        3787,
+        4051,
+        4322,
+        4600,
+        4884,
+        5175,
+        5473,
+        5518,
+        5624,
+        5780,
+        5982,
+        6225,
+        6508,
+        6828,
+        7185,
+        7577,
+        8003,
+        8462,
+        8954,
+        9478,
+        10032,
+        10617,
+        11233,
+        11877,
+        12551,
+        13253,
+        13984,
+        14743,
+        15529,
+        16343,
+        17183,
+        18050,
+        18944,
+        19864,
+        20809,
+        21781,
+        22778,
+        22858,
+        23066,
+        23388,
+        23817,
+        24349,
+        24979,
+        25705,
+        26526,
+        27438,
+        28441,
+        29533,
+        30713,
+        31980,
+        33332,
+        34769,
+        36289,
+        37893,
+        39579,
+        41346,
+        43195,
+        45123,
+        47132,
+        49219,
+        51385,
+        53629,
+        55951,
+        58350,
+        60826,
+        63378,
+        66005,
+        68709,
+        71487,
+        74341,
+        77269,
+        80271,
+        83346,
+        86496,
+        89718,
+        93013,
+        96381
+      ]
+    },
+    "stat_growth": {
+      "_note": "Per-level stat gains for Usagi. Growth is not flat \u2014 it follows a curve with two sweet spots (levels 5-8 and 15-20) separated by a plateau. This creates the classic JRPG feel where certain level-ups feel like breakthroughs.",
+      "hp": [
+        0,
+        5,
+        5,
+        6,
+        6,
+        8,
+        8,
+        9,
+        7,
+        7,
+        6,
+        6,
+        7,
+        8,
+        8,
+        9,
+        10,
+        10,
+        9,
+        8,
+        7,
+        7,
+        6,
+        6,
+        5,
+        5,
+        5,
+        4,
+        4,
+        4,
+        4
+      ],
+      "mp": [
+        0,
+        2,
+        2,
+        2,
+        3,
+        3,
+        3,
+        4,
+        3,
+        3,
+        3,
+        3,
+        3,
+        4,
+        4,
+        4,
+        5,
+        5,
+        4,
+        4,
+        3,
+        3,
+        3,
+        3,
+        3,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2
+      ],
+      "atk": [
+        0,
+        1,
+        1,
+        1,
+        1,
+        2,
+        1,
+        2,
+        1,
+        1,
+        1,
+        1,
+        1,
+        2,
+        1,
+        2,
+        2,
+        2,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0
+      ],
+      "def": [
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        2,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        2,
+        1,
+        2,
+        2,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      "spd": [
+        0,
+        0,
+        1,
+        0,
+        1,
+        1,
+        0,
+        1,
+        0,
+        1,
+        0,
+        1,
+        0,
+        1,
+        1,
+        0,
+        1,
+        1,
+        0,
+        1,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "spr": [
+        0,
+        1,
+        1,
+        2,
+        1,
+        2,
+        1,
+        2,
+        2,
+        1,
+        2,
+        1,
+        2,
+        2,
+        1,
+        2,
+        2,
+        3,
+        2,
+        2,
+        1,
+        2,
+        1,
+        2,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "_note_spr": "Spirit grows fastest because Usagi is a pilgrim, not a warrior. His strength is prayer, not the blade."
+    },
+    "cumulative_stats_at_key_levels": {
+      "_note": "What Usagi looks like at key story moments",
+      "level_1": {
+        "hp": 35,
+        "mp": 10,
+        "atk": 4,
+        "def": 5,
+        "spd": 6,
+        "spr": 8
+      },
+      "level_5": {
+        "hp": 57,
+        "mp": 19,
+        "atk": 8,
+        "def": 9,
+        "spd": 9,
+        "spr": 15
+      },
+      "level_10": {
+        "hp": 95,
+        "mp": 34,
+        "atk": 15,
+        "def": 15,
+        "spd": 13,
+        "spr": 23
+      },
+      "level_15": {
+        "hp": 132,
+        "mp": 51,
+        "atk": 21,
+        "def": 21,
+        "spd": 17,
+        "spr": 32
+      },
+      "level_20": {
+        "hp": 180,
+        "mp": 73,
+        "atk": 29,
+        "def": 29,
+        "spd": 21,
+        "spr": 45
+      },
+      "level_30": {
+        "hp": 232,
+        "mp": 99,
+        "atk": 38,
+        "def": 36,
+        "spd": 26,
+        "spr": 60
+      }
+    },
+    "phases": {
+      "novice": {
+        "levels": "1-30",
+        "description": "Learning the road. Book Zero through Book II."
+      },
+      "veteran": {
+        "levels": "31-60",
+        "description": "Walking with purpose. Books III through VI."
+      },
+      "saint": {
+        "levels": "61-100",
+        "description": "The final ascent. Books VII, VIII, and the return."
+      }
+    },
+    "expected_level_per_book": {
+      "book-00": {
+        "start": 1,
+        "end": 10
+      },
+      "book-01": {
+        "start": 10,
+        "end": 20
+      },
+      "book-02": {
+        "start": 20,
+        "end": 30
+      },
+      "book-03": {
+        "start": 30,
+        "end": 40
+      },
+      "book-04": {
+        "start": 38,
+        "end": 48
+      },
+      "book-05": {
+        "start": 46,
+        "end": 58
+      },
+      "book-06": {
+        "start": 55,
+        "end": 65
+      },
+      "book-07": {
+        "start": 63,
+        "end": 75
+      },
+      "book-08": {
+        "start": 72,
+        "end": 85
+      },
+      "final": {
+        "start": 82,
+        "end": 100
+      }
+    }
+  },
+  "damage_formulas": {
+    "_source": "Adapted from FF6 with modifications for virtue scaling",
+    "physical_attack": {
+      "formula": "(atk * level / 4 + atk * atk / 64) * variance - (def * def / 256)",
+      "variance": [
+        0.875,
+        1.125
+      ],
+      "_note": "FF6-style: attack scales quadratically so level-ups feel impactful. Defense also quadratic so high-defense enemies require holy damage or strategy, not just grinding."
+    },
+    "holy_damage": {
+      "formula": "(spr * level / 4 + spr * spr / 64) * (1 + faith * 0.08) * variance",
+      "_note": "Spirit-based, boosted by faith virtue. Ignores physical defense \u2014 holy damage bypasses armor. This is why prayer matters."
+    },
+    "healing": {
+      "formula": "(spr * 2 + charity * 3) * (1 + charity * 0.10) * variance",
+      "variance": [
+        0.9,
+        1.1
+      ],
+      "_note": "Charity makes healing stronger \u2014 CCC 1827 in mechanical form."
+    },
+    "enemy_physical": {
+      "formula": "(enemy_atk * difficulty_mult * variance) - (player_def * player_def / 256)",
+      "variance": [
+        0.85,
+        1.15
+      ]
+    },
+    "critical_hit": {
+      "base_chance": 0.06,
+      "prudence_bonus_per_level": 0.03,
+      "multiplier": 1.5,
+      "_note": "6% base + 3% per prudence level. At prudence 5, that's 21% crit rate. Prudence rewards."
+    },
+    "minimum_damage": 1,
+    "maximum_damage_per_hit": 9999
+  },
+  "encounter_tables": {
+    "_note": "Each area has an encounter table. Encounters are grouped into tiers matching expected player level ranges. The engine selects from the appropriate tier based on player level.",
+    "encounter_rate": {
+      "steps_per_check": 16,
+      "base_chance": 0.15,
+      "min_steps_between": 32,
+      "max_steps_between": 128,
+      "safe_zones": [
+        "hidden_chapel",
+        "safe_house",
+        "monastery"
+      ],
+      "_note": "Average ~1 encounter every 48-64 steps. Safe zones have zero encounters \u2014 sacred spaces are sacred."
+    },
+    "formation_types": {
+      "standard": {
+        "enemies": [
+          1,
+          3
+        ],
+        "description": "Normal random encounter"
+      },
+      "ambush": {
+        "chance": 0.1,
+        "enemy_first": true,
+        "description": "Enemies act first"
+      },
+      "preemptive": {
+        "chance": 0.08,
+        "player_first": true,
+        "description": "Player acts first"
+      },
+      "boss": {
+        "scripted": true,
+        "no_flee": true,
+        "description": "Story boss"
+      },
+      "accuser": {
+        "scripted": true,
+        "no_flee": true,
+        "spiritual_only": true,
+        "description": "The Accuser \u2014 spiritual combat only"
+      }
+    }
+  },
+  "enemy_design_rules": {
+    "tier_system": {
+      "tier_1": {
+        "level_range": [
+          1,
+          4
+        ],
+        "hp_range": [
+          12,
+          30
+        ],
+        "atk_range": [
+          3,
+          7
+        ],
+        "def_range": [
+          2,
+          5
+        ],
+        "spd_range": [
+          2,
+          5
+        ],
+        "spr_range": [
+          0,
+          3
+        ],
+        "xp_range": [
+          5,
+          15
+        ],
+        "gold_range": [
+          3,
+          10
+        ],
+        "description": "Early encounters. Teach basic combat. Player should win in 2-4 rounds."
+      },
+      "tier_2": {
+        "level_range": [
+          4,
+          8
+        ],
+        "hp_range": [
+          25,
+          60
+        ],
+        "atk_range": [
+          6,
+          12
+        ],
+        "def_range": [
+          4,
+          9
+        ],
+        "spd_range": [
+          4,
+          7
+        ],
+        "spr_range": [
+          2,
+          6
+        ],
+        "xp_range": [
+          12,
+          30
+        ],
+        "gold_range": [
+          8,
+          20
+        ],
+        "description": "Mid encounters. Require use of items and prayer. 3-6 rounds."
+      },
+      "tier_3": {
+        "level_range": [
+          7,
+          12
+        ],
+        "hp_range": [
+          50,
+          120
+        ],
+        "atk_range": [
+          10,
+          20
+        ],
+        "def_range": [
+          8,
+          15
+        ],
+        "spd_range": [
+          5,
+          10
+        ],
+        "spr_range": [
+          4,
+          10
+        ],
+        "xp_range": [
+          25,
+          60
+        ],
+        "gold_range": [
+          15,
+          40
+        ],
+        "description": "Late encounters. Full strategy needed. Guard timing matters."
+      },
+      "mini_boss": {
+        "level_range": [
+          5,
+          10
+        ],
+        "hp_range": [
+          80,
+          200
+        ],
+        "atk_range": [
+          12,
+          22
+        ],
+        "def_range": [
+          10,
+          18
+        ],
+        "spd_range": [
+          5,
+          8
+        ],
+        "spr_range": [
+          5,
+          12
+        ],
+        "xp_range": [
+          60,
+          120
+        ],
+        "gold_range": [
+          30,
+          80
+        ],
+        "abilities": 2,
+        "description": "Area guardians. Multiple attack patterns. Require miracle use."
+      },
+      "boss": {
+        "level_range": [
+          8,
+          15
+        ],
+        "hp_range": [
+          200,
+          500
+        ],
+        "atk_range": [
+          18,
+          30
+        ],
+        "def_range": [
+          12,
+          22
+        ],
+        "spd_range": [
+          6,
+          10
+        ],
+        "spr_range": [
+          8,
+          18
+        ],
+        "xp_range": [
+          150,
+          300
+        ],
+        "gold_range": [
+          80,
+          200
+        ],
+        "abilities": 4,
+        "phases": 2,
+        "description": "Story bosses. Multi-phase. Unique mechanics per boss."
+      }
+    },
+    "balance_targets": {
+      "_note": "How long fights should last, measured in player turns",
+      "tier_1_solo": "2-3 turns to kill",
+      "tier_1_group_of_3": "3-5 turns to clear",
+      "tier_2_solo": "3-5 turns",
+      "tier_2_group_of_2": "5-8 turns",
+      "tier_3_solo": "4-6 turns, requires prayer",
+      "mini_boss": "8-12 turns, requires strategy",
+      "boss": "15-25 turns, multi-phase, uses miracles + items + guard",
+      "accuser": "Cannot be killed. Survive X turns while resisting spiritual attacks."
+    },
+    "pacing_rules": {
+      "encounters_before_first_boss": "5-8 random encounters to learn combat",
+      "safe_rest_before_boss": "Always a save point and rest area before a boss",
+      "post_boss_breathing_room": "Reduced encounter rate for 1 area after boss",
+      "accuser_encounters": "Once per act (4 per book). Always preceded by story buildup.",
+      "difficulty_spike_warning": "If player dies 3 times in same area, offer to reduce difficulty"
+    }
+  },
+  "ai_behavior_patterns": {
+    "_note": "Enemy AI templates. Each enemy uses a pattern set with weighted actions. Smarter enemies shift weights based on player state.",
+    "patterns": {
+      "aggressive": {
+        "attack": 70,
+        "heavy_attack": 20,
+        "defend": 10,
+        "description": "Hits hard, rarely guards. Soldiers, beasts."
+      },
+      "defensive": {
+        "attack": 40,
+        "defend": 30,
+        "heal_self": 20,
+        "buff": 10,
+        "description": "Turtles up when hurt. Armored enemies."
+      },
+      "tactical": {
+        "attack": 40,
+        "special": 30,
+        "debuff": 20,
+        "defend": 10,
+        "description": "Uses status effects and weaknesses. Officers, sorcerers."
+      },
+      "spiritual": {
+        "whisper": 30,
+        "veil": 25,
+        "tempt": 25,
+        "accuse": 20,
+        "description": "The Accuser's pattern. All attacks are spiritual status effects."
+      },
+      "environmental": {
+        "hazard": 100,
+        "description": "Not a creature. Fire, smoke, falling objects."
+      },
+      "pack_hunter": {
+        "attack": 50,
+        "coordinate": 30,
+        "flee_if_alone": 20,
+        "description": "Stronger in groups. Flees when last survivor."
+      }
+    },
+    "adaptive_rules": {
+      "when_player_low_hp": "Aggressive enemies become more aggressive (+20% attack weight)",
+      "when_player_guarding": "Tactical enemies use debuffs instead of attacks",
+      "when_player_praying": "Aggressive enemies try to interrupt (attack during cast)",
+      "when_alone": "Pack hunters flee. Solo enemies become desperate (heavier attacks).",
+      "martyr_mode_extra": "Bosses gain 1 additional ability. Enemies coordinate better."
+    }
+  },
+  "rest_and_recovery": {
+    "inn_rest": {
+      "restore": "full",
+      "cost_formula": "level * 3 + 5"
+    },
+    "camp_rest": {
+      "restore_hp_pct": 50,
+      "restore_mp_pct": 30,
+      "cost": 0,
+      "requires": "safe_area"
+    },
+    "sacred_site_rest": {
+      "restore_hp_pct": 100,
+      "restore_mp_pct": 100,
+      "cost": 0,
+      "requires": "hidden_chapel",
+      "bonus": "virtue_gain_1_random"
+    },
+    "post_battle_regen": {
+      "hp_pct": 0,
+      "mp_pct": 0,
+      "_note": "No post-battle regen. Resources matter. This is persecution, not a picnic."
+    },
+    "save_points": {
+      "restore": false,
+      "location": "before_boss_and_key_moments",
+      "_note": "Save points do NOT heal. They're a bookmark, not a rest stop. Rest at sacred sites."
+    }
+  },
+  "flee_system": {
+    "base_success": 0.5,
+    "spd_bonus": "+(player_spd - avg_enemy_spd) * 0.05",
+    "consecutive_bonus": 0.15,
+    "boss_flee": false,
+    "accuser_flee": false,
+    "penalty": "no_xp_no_gold",
+    "_note": "Fleeing is always an option for random encounters. No shame in running from soldiers \u2014 discretion is a virtue (CCC 1806: prudence)."
+  },
+  "divine_recycling": {
+    "_doctrine": "God wastes nothing. Every prayer, every step, every wound is remembered and transformed. Divine Recycling is not repetition \u2014 it is refinement.",
+    "difficulty_chain": [
+      "pilgrim",
+      "disciple",
+      "martyr",
+      "saint",
+      "apostle"
+    ],
+    "stat_echo_rates": {
+      "pilgrim_to_disciple": 0.1,
+      "disciple_to_martyr": 0.12,
+      "martyr_to_saint": 0.13,
+      "saint_to_apostle": 0.15
+    },
+    "virtue_echo_rate": 0.5,
+    "virtue_echo_cap": 5.0,
+    "kept_systems": [
+      "blessings",
+      "devotion_graces",
+      "skill_tree",
+      "named_weapon_bonds",
+      "miracles",
+      "bestiary",
+      "lore",
+      "prestige_title",
+      "accuser_tracking",
+      "fumi_e_count",
+      "secret_path_flags"
+    ],
+    "reset_systems": [
+      "level",
+      "xp",
+      "gold",
+      "consumables",
+      "most_equipment",
+      "story_flags",
+      "area_progress",
+      "npc_relationships"
+    ],
+    "new_per_cycle": {
+      "martyr": [
+        "accuser_extended_dialogues",
+        "hidden_martyrdom_quests",
+        "secret_catacombs_area"
+      ],
+      "saint": [
+        "boss_extra_phases",
+        "hidden_saint_npcs",
+        "secret_relics",
+        "accuser_true_form_early"
+      ],
+      "apostle": [
+        "true_ending",
+        "accuser_final_forms",
+        "apostle_exclusive_miracles",
+        "all_secret_areas"
+      ]
+    }
+  }
+}
