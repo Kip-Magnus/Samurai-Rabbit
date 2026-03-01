@@ -1,0 +1,37 @@
+{
+  "env": {
+    "node": true,
+    "es2022": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 2022,
+    "sourceType": "script"
+  },
+  "rules": {
+    "no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+    "no-undef": "error",
+    "no-console": "off",
+    "no-constant-condition": "error",
+    "no-dupe-keys": "error",
+    "no-duplicate-case": "error",
+    "no-empty": ["error", { "allowEmptyCatch": true }],
+    "no-extra-semi": "error",
+    "no-irregular-whitespace": "error",
+    "no-unreachable": "error",
+    "curly": ["error", "all"],
+    "eqeqeq": ["error", "always"],
+    "no-eval": "error",
+    "no-implied-eval": "error",
+    "no-throw-literal": "error",
+    "no-var": "error",
+    "prefer-const": "error",
+    "no-shadow": "error",
+    "no-redeclare": "error",
+    "semi": ["error", "always"],
+    "quotes": ["error", "single", { "avoidEscape": true }],
+    "indent": ["error", 2, { "SwitchCase": 1 }],
+    "comma-dangle": ["error", "always-multiline"],
+    "no-trailing-spaces": "error",
+    "eol-last": ["error", "always"]
+  }
+}
