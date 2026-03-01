@@ -2087,18 +2087,10 @@ export function createGame(config = {}) {
     input: {
       touch: { capture: true },
     },
-    scene: [],
+    scene: [BootScene, TitleScene, WorldScene, BattleScene, DialogueScene, MenuScene],
   };
 
   const game = new Phaser.Game(phaserConfig);
-
-  // Add all scenes
-  game.scene.add('BootScene', BootScene);
-  game.scene.add('TitleScene', TitleScene);
-  game.scene.add('WorldScene', WorldScene);
-  game.scene.add('BattleScene', BattleScene);
-  game.scene.add('DialogueScene', DialogueScene);
-  game.scene.add('MenuScene', MenuScene);
 
   // Start boot scene with references
   game.scene.start('BootScene', {
